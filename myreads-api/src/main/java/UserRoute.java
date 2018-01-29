@@ -1,8 +1,5 @@
 import io.vertx.ext.web.RoutingContext;
 
-/**
- * Created by samng on 1/28/18.
- */
 public class UserRoute {
     // Get all users
     public void getAllUsers(RoutingContext routingContext) {
@@ -33,6 +30,7 @@ public class UserRoute {
                 .end("putUser");
     }
 
+    // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
         routingContext.response()
                 .setStatusCode(204)
