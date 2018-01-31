@@ -1,5 +1,0 @@
-#!/bin/sh
-
-app_jar=`ls -1 $APP_HOME/*-api*.jar`
-
-java -jar $app_jar "$@"
