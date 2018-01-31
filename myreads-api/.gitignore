@@ -4,6 +4,10 @@
 ### Vert.x ###
 .vertx/
 
+### Maven ###
+/target/
+/maven/
+
 ### Eclipse ###
 
 .metadata
