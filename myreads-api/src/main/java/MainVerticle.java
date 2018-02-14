@@ -9,6 +9,7 @@ import io.vertx.ext.web.Router;
 public class MainVerticle extends AbstractVerticle {
 
     private UserRoute userRoute;
+    public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
         userRoute = new UserRoute();
