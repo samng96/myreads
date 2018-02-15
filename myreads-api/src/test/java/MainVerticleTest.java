@@ -5,6 +5,7 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import me.samng.myreads.api.MainVerticle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

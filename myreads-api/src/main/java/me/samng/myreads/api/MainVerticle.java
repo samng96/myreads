@@ -1,3 +1,5 @@
+package me.samng.myreads.api;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
@@ -5,6 +7,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -40,9 +43,11 @@ public class MainVerticle extends AbstractVerticle {
     private Router setupUsers() {
         Router router = Router.router(vertx);
 
-        router.get("/:userId").handler(routingContext -> { userRoute.getUser(routingContext); });
-        router.put("/:userId").handler(routingContext -> { userRoute.putUser(routingContext); });
-        router.delete("/:userId").handler(routingContext -> { userRoute.deleteUser(routingContext); });
+        router.route().handler(BodyHandler.create());
+
+        router.get("/:id").handler(routingContext -> { userRoute.getUser(routingContext); });
+        router.put("/:id").handler(routingContext -> { userRoute.putUser(routingContext); });
+        router.delete("/:id").handler(routingContext -> { userRoute.deleteUser(routingContext); });
 
         router.get().handler(routingContext -> { userRoute.getAllUsers(routingContext); });
         router.post().handler(routingContext -> { userRoute.postUser(routingContext); });
