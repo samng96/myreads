@@ -8,14 +8,18 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import me.samng.myreads.api.routes.ReadingListRoute;
+import me.samng.myreads.api.routes.UserRoute;
 
 public class MainVerticle extends AbstractVerticle {
 
     private UserRoute userRoute;
+    private ReadingListRoute readingListRoute;
     public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
         userRoute = new UserRoute();
+        readingListRoute = new ReadingListRoute();
     }
 
     @Override
@@ -29,6 +33,7 @@ public class MainVerticle extends AbstractVerticle {
                             .end("myReads API service");
                 });
 
+        router.mountSubRouter("/users/:userId/readinglists", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
 
         vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {
@@ -51,6 +56,21 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get().handler(routingContext -> { userRoute.getAllUsers(routingContext); });
         router.post().handler(routingContext -> { userRoute.postUser(routingContext); });
+
+        return router;
+    }
+
+    private Router setupReadingLists() {
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.get("/:id").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
+        router.put("/:id").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
+        router.delete("/:id").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
+
+        router.get().handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
+        router.post().handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
         return router;
     }
