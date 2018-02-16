@@ -33,7 +33,7 @@ public class MainVerticle extends AbstractVerticle {
                             .end("myReads API service");
                 });
 
-        router.mountSubRouter("/users/:userId/readinglists", setupReadingLists());
+        router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
 
         vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {
@@ -65,12 +65,12 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/:id").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
-        router.put("/:id").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
-        router.delete("/:id").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
+        router.get("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
+        router.put("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
+        router.delete("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
 
-        router.get().handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
-        router.post().handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
+        router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
+        router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
         return router;
     }
