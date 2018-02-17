@@ -14,7 +14,7 @@ public class UserRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
 
         Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.datastoreKind)
+            .setKind(DatastoreHelpers.usersKind)
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -32,7 +32,7 @@ public class UserRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         UserEntity userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.keyFactory.newKey())
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUsersKey())
             .set("name", userEntity.name())
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
@@ -47,10 +47,8 @@ public class UserRoute {
 
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
-        String id = routingContext.request().getParam("id");
         Datastore datastore = DatastoreHelpers.getDatastore();
-
-        Key key = DatastoreHelpers.keyFactory.newKey(Long.decode(id));
+        Key key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
         Entity entity = datastore.get(key);
 
         if (entity == null) {
@@ -70,10 +68,10 @@ public class UserRoute {
     public void putUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
         UserEntity userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
-        userEntity.id = Long.decode(routingContext.request().getParam("id"));
+        userEntity.id = Long.decode(routingContext.request().getParam("userId"));
 
         // First get the entity
-        Key key = DatastoreHelpers.keyFactory.newKey(userEntity.id());
+        Key key = DatastoreHelpers.newUsersKey(userEntity.id());
         Entity newEntity = Entity.newBuilder(key)
             .set("name", userEntity.name())
             .set("email", userEntity.email())
@@ -93,7 +91,7 @@ public class UserRoute {
     // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Key key = DatastoreHelpers.keyFactory.newKey(Long.decode(routingContext.request().getParam("id")));
+        Key key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
         datastore.delete(key);
 
         routingContext.response()

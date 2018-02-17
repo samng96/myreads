@@ -50,9 +50,9 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/:id").handler(routingContext -> { userRoute.getUser(routingContext); });
-        router.put("/:id").handler(routingContext -> { userRoute.putUser(routingContext); });
-        router.delete("/:id").handler(routingContext -> { userRoute.deleteUser(routingContext); });
+        router.get("/:userId").handler(routingContext -> { userRoute.getUser(routingContext); });
+        router.put("/:userId").handler(routingContext -> { userRoute.putUser(routingContext); });
+        router.delete("/:userId").handler(routingContext -> { userRoute.deleteUser(routingContext); });
 
         router.get().handler(routingContext -> { userRoute.getAllUsers(routingContext); });
         router.post().handler(routingContext -> { userRoute.postUser(routingContext); });
@@ -65,9 +65,9 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
-        router.put("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
-        router.delete("/:userId/readingLists/:id").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
+        router.get("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
+        router.put("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
+        router.delete("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
 
         router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });

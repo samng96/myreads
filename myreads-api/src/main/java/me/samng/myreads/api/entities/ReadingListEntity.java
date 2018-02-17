@@ -1,10 +1,17 @@
 package me.samng.myreads.api.entities;
 
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.ListValue;
+import com.google.cloud.datastore.Value;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import io.vertx.core.json.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
@@ -23,4 +30,18 @@ public class ReadingListEntity {
 
     @JsonProperty("tags")
     public List<Long> tags;
+
+    public static ReadingListEntity fromEntity(Entity e) {
+        ReadingListEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {
+            Value<?> value = e.getValue(k);
+            if(value instanceof ListValue) {
+                return ImmutableList.copyOf(((ListValue)value).get())
+                    .stream().map(Value::get).collect(Collectors.toList());
+            }
+            Object thing = value.get();
+            return thing;
+        }), ReadingListEntity.class);
+        entity.id = e.getKey().getId();
+        return entity;
+    }
 }

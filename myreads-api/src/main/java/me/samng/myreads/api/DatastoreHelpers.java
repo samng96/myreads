@@ -1,17 +1,15 @@
 package me.samng.myreads.api;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.DatastoreOptions;
-import com.google.cloud.datastore.KeyFactory;
+import com.google.cloud.datastore.*;
 
 import java.io.FileInputStream;
 
 public class DatastoreHelpers {
     private static String keyPath = "/users/samng/gcp-samng-privatekey.json";
-    public static String datastoreKind = "users";
-    public static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId).setKind(datastoreKind);
-
+    public static String usersKind = "users";
+    public static String readingListsKind = "readingLists";
+    private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId).setKind(usersKind);
 
     public static Datastore getDatastore() {
         DatastoreOptions options = null;
@@ -26,5 +24,25 @@ public class DatastoreHelpers {
         }
 
         return options.getService();
+    }
+
+    public static IncompleteKey newUsersKey() {
+        keyFactory.setKind(usersKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newUsersKey(Long keyId) {
+        keyFactory.setKind(usersKind);
+        return keyFactory.newKey(keyId);
+    }
+
+    public static IncompleteKey newReadingListsKey() {
+        keyFactory.setKind(readingListsKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newReadingListsKey(Long keyId) {
+        keyFactory.setKind(readingListsKind);
+        return keyFactory.newKey(keyId);
     }
 }
