@@ -54,12 +54,14 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = Json.decodeValue(routingContext.getBody(), ReadingListEntity.class);
         long userId = Long.decode(routingContext.request().getParam("userId"));
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListsKey())
+        FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey())
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
-            .set("userId", userId)
-            .set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()))
-            .build();
+            .set("userId", userId);
+        if (readingListEntity.tags != null) {
+            builder.set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()));
+        }
+        FullEntity<IncompleteKey> insertEntity = builder.build();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -96,20 +98,22 @@ public class ReadingListRoute {
         long userId = Long.decode(routingContext.request().getParam("userId"));
 
         if (getListIfUserOwnsIt(datastore, userId, readingListEntity.id) == null) {
-            if (readingListEntity == null) {
-                routingContext.response()
-                    .setStatusCode(404)
-                    .putHeader("content-type", "text/plain")
-                    .end();
-                return;
-            }
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
         }
-        Entity newEntity = Entity.newBuilder(DatastoreHelpers.newReadingListsKey(readingListEntity.id))
+
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey(readingListEntity.id))
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
-            .set("userId", readingListEntity.userId())
-            .set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()))
-            .build();
+            .set("userId", readingListEntity.userId());
+        if (readingListEntity.tags != null)
+        {
+            builder.set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()));
+        }
+        Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);
             routingContext.response().setStatusCode(204);
