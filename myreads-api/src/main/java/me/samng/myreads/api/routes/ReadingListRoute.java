@@ -31,7 +31,17 @@ public class ReadingListRoute {
     // Get all lists for a given user - /users/{userId}/readinglists
     public void getAllReadingLists(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        long userId = Long.decode(routingContext.request().getParam("userId"));
+        long userId;
+        try {
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListsKind)
@@ -41,7 +51,7 @@ public class ReadingListRoute {
 
         // Iterate through the results to actually fetch them, then serialize them and return.
         ArrayList<ReadingListEntity> results = new ArrayList<ReadingListEntity>();
-        queryresult.forEachRemaining(user -> { results.add(ReadingListEntity.fromEntity(user)); });
+        queryresult.forEachRemaining(list -> { results.add(ReadingListEntity.fromEntity(list)); });
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -51,8 +61,19 @@ public class ReadingListRoute {
     // Post a new reading list - /users/{userId}/readingLists
     public void postReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListEntity readingListEntity = Json.decodeValue(routingContext.getBody(), ReadingListEntity.class);
-        long userId = Long.decode(routingContext.request().getParam("userId"));
+        ReadingListEntity readingListEntity;
+        long userId;
+        try {
+            readingListEntity = Json.decodeValue(routingContext.getBody(), ReadingListEntity.class);
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey())
             .set("name", readingListEntity.name())
@@ -73,8 +94,19 @@ public class ReadingListRoute {
     // Get a specific reading list, /users/{userId}/readingLists/{readingListId}
     public void getReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        long listId = Long.decode(routingContext.request().getParam("readingListId"));
-        long userId = Long.decode(routingContext.request().getParam("userId"));
+        long listId;
+        long userId;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
@@ -93,9 +125,20 @@ public class ReadingListRoute {
     // Update a list, /users/{userId}/readingLists/{readingListId}
     public void putReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListEntity readingListEntity = Json.decodeValue(routingContext.getBody(), ReadingListEntity.class);
-        readingListEntity.id = Long.decode(routingContext.request().getParam("readingListId"));
-        long userId = Long.decode(routingContext.request().getParam("userId"));
+        ReadingListEntity readingListEntity;
+        long userId;
+        try {
+            readingListEntity = Json.decodeValue(routingContext.getBody(), ReadingListEntity.class);
+            readingListEntity.id = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         if (getListIfUserOwnsIt(datastore, userId, readingListEntity.id) == null) {
             routingContext.response()
@@ -108,7 +151,7 @@ public class ReadingListRoute {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey(readingListEntity.id))
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
-            .set("userId", readingListEntity.userId());
+            .set("userId", userId);
         if (readingListEntity.tags != null)
         {
             builder.set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()));
@@ -128,8 +171,19 @@ public class ReadingListRoute {
     // Delete a user, /users/{userId}/readingLists/{readingListId}
     public void deleteReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        long listId = Long.decode(routingContext.request().getParam("readingListId"));
-        long userId = Long.decode(routingContext.request().getParam("userId"));
+        long listId;
+        long userId;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         if (getListIfUserOwnsIt(datastore, userId, listId) == null) {
             routingContext.response()

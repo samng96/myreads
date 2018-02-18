@@ -30,7 +30,17 @@ public class UserRoute {
     // Post a new user
     public void postUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        UserEntity userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
+        UserEntity userEntity;
+        try {
+            userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUsersKey())
             .set("name", userEntity.name())
@@ -48,7 +58,17 @@ public class UserRoute {
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Key key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+        Key key;
+        try {
+            key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
         Entity entity = datastore.get(key);
 
         if (entity == null) {
@@ -67,8 +87,18 @@ public class UserRoute {
     // Update a user, /users/{userId}
     public void putUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        UserEntity userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
-        userEntity.id = Long.decode(routingContext.request().getParam("userId"));
+        UserEntity userEntity;
+        try {
+            userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
+            userEntity.id = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         // First get the entity
         Key key = DatastoreHelpers.newUsersKey(userEntity.id());
@@ -91,7 +121,17 @@ public class UserRoute {
     // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Key key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+        Key key;
+        try {
+            key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
         datastore.delete(key);
 
         routingContext.response()

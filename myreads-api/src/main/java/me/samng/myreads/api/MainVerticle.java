@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import me.samng.myreads.api.routes.FollowedListRoute;
 import me.samng.myreads.api.routes.ReadingListRoute;
 import me.samng.myreads.api.routes.UserRoute;
 
@@ -15,11 +16,13 @@ public class MainVerticle extends AbstractVerticle {
 
     private UserRoute userRoute;
     private ReadingListRoute readingListRoute;
+    private FollowedListRoute followedListRoute;
     public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
         userRoute = new UserRoute();
         readingListRoute = new ReadingListRoute();
+        followedListRoute = new FollowedListRoute();
     }
 
     @Override
@@ -33,6 +36,7 @@ public class MainVerticle extends AbstractVerticle {
                             .end("myReads API service");
                 });
 
+        router.mountSubRouter("/users", setupFollowedLists());
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
 
@@ -71,6 +75,19 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
+
+        return router;
+    }
+
+    private Router setupFollowedLists() {
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.delete("/:userId/followedLists/:followedListId").handler(routingContext -> { followedListRoute.deleteFollowedList(routingContext); });
+
+        router.get("/:userId/followedLists").handler(routingContext -> { followedListRoute.getAllFollowedLists(routingContext); });
+        router.post("/:userId/followedLists").handler(routingContext -> { followedListRoute.postFollowedList(routingContext); });
 
         return router;
     }

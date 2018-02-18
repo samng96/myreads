@@ -9,7 +9,8 @@ public class DatastoreHelpers {
     private static String keyPath = "/users/samng/gcp-samng-privatekey.json";
     public static String usersKind = "users";
     public static String readingListsKind = "readingLists";
-    private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId).setKind(usersKind);
+    public static String followedListsKind = "followedLists";
+    private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
 
     public static Datastore getDatastore() {
         DatastoreOptions options = null;
@@ -43,6 +44,16 @@ public class DatastoreHelpers {
 
     public static Key newReadingListsKey(Long keyId) {
         keyFactory.setKind(readingListsKind);
+        return keyFactory.newKey(keyId);
+    }
+
+    public static IncompleteKey newFollowedListsKey() {
+        keyFactory.setKind(followedListsKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newFollowedListsKey(Long keyId) {
+        keyFactory.setKind(followedListsKind);
         return keyFactory.newKey(keyId);
     }
 }
