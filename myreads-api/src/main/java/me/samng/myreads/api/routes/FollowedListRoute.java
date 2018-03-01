@@ -1,13 +1,11 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
-import com.google.cloud.datastore.StructuredQuery.*;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.FollowedListEntity;
-import me.samng.myreads.api.entities.ReadingListEntity;
 
 import java.util.ArrayList;
 
@@ -74,6 +72,16 @@ public class FollowedListRoute {
             return;
         }
         long userId = Long.decode(routingContext.request().getParam("userId"));
+
+        if (userId == followedListEntity.ownerId()) {
+            // TODO: Put a better error message in the 400.
+            // Can't follow your own list.
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
 
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newFollowedListsKey())
             .set("userId", userId)
