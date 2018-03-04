@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(VertxUnitRunner.class)
-public class ReadingListRouteTest {
+public class ReadingListElementRouteTest {
     private Vertx vertx;
     private long userId = -1;
 
@@ -42,8 +42,8 @@ public class ReadingListRouteTest {
 
         Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
         Future<Long> getAllFut = postFut.compose(userId -> {
-            return TestHelper.getAllReadingLists(context, client, userId, 200).map(userId);
-        });
+                return TestHelper.getAllReadingLists(context, client, userId, 200).map(userId);
+            });
         getAllFut.compose(userId -> {
             return TestHelper.deleteUser(context, client, userId, 204);
         })
