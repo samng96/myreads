@@ -1,5 +1,6 @@
 package me.samng.myreads.api.entities;
 
+
 import com.google.cloud.datastore.Entity;
 import com.google.cloud.datastore.ListValue;
 import com.google.cloud.datastore.Value;
@@ -14,28 +15,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
-@Accessors(fluent = true)
-public class ReadingListEntity {
+@Accessors(fluent=true)
+public class ReadingListElementEntity {
     @JsonProperty("id")
     public long id;
 
     @JsonProperty("userId")
     public long userId;
 
+    @JsonProperty("listIds")
+    public List<Long> listIds;
+
     @JsonProperty("name")
-    public String name;
+    public long name;
 
     @JsonProperty("description")
     public String description;
 
+    @JsonProperty("amazonLink")
+    public String amazonLink;
+
     @JsonProperty("tagIds")
     public List<Long> tagIds;
 
-    @JsonProperty("readingListElementIds")
-    public List<Long> readingListElementIds;
-
-    public static ReadingListEntity fromEntity(Entity e) {
-        ReadingListEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {
+    public static ReadingListElementEntity fromEntity(Entity e) {
+        ReadingListElementEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {
             Value<?> value = e.getValue(k);
             if(value instanceof ListValue) {
                 return ImmutableList.copyOf(((ListValue)value).get())
@@ -43,7 +47,7 @@ public class ReadingListEntity {
             }
             Object thing = value.get();
             return thing;
-        }), ReadingListEntity.class);
+        }), ReadingListElementEntity.class);
         entity.id = e.getKey().getId();
         return entity;
     }

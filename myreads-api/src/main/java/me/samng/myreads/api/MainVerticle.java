@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import me.samng.myreads.api.routes.FollowedListRoute;
+import me.samng.myreads.api.routes.ReadingListElementRoute;
 import me.samng.myreads.api.routes.ReadingListRoute;
 import me.samng.myreads.api.routes.UserRoute;
 
@@ -17,11 +18,13 @@ public class MainVerticle extends AbstractVerticle {
     private UserRoute userRoute;
     private ReadingListRoute readingListRoute;
     private FollowedListRoute followedListRoute;
+    private ReadingListElementRoute readingListElementRoute;
     public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
         userRoute = new UserRoute();
         readingListRoute = new ReadingListRoute();
+        readingListElementRoute = new ReadingListElementRoute();
         followedListRoute = new FollowedListRoute();
     }
 
@@ -37,6 +40,7 @@ public class MainVerticle extends AbstractVerticle {
                 });
 
         router.mountSubRouter("/users", setupFollowedLists());
+        router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
 
@@ -69,6 +73,9 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
+        router.post("/:userId/readingLists/:readingListId/addReadingListElements").handler(routingContext -> { readingListRoute.addReadingListElementToReadingList(routingContext); });
+        router.delete("/:userId/readingLists/:readingListId/readingListElements/:readingListElementId").handler(routingContext -> { readingListRoute.deleteReadingListElementFromReadingList(routingContext); });
+
         router.get("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.getReadingList(routingContext); });
         router.put("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
         router.delete("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
@@ -88,6 +95,21 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get("/:userId/followedLists").handler(routingContext -> { followedListRoute.getAllFollowedLists(routingContext); });
         router.post("/:userId/followedLists").handler(routingContext -> { followedListRoute.postFollowedList(routingContext); });
+
+        return router;
+    }
+
+    private Router setupReadingListElements() {
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.get("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.getReadingListElement(routingContext); });
+        router.put("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.putReadingListElement(routingContext); });
+        router.delete("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.deleteReadingListElement(routingContext); });
+
+        router.get("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.getAllReadingListElement(routingContext); });
+        router.post("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.postReadingListElement(routingContext); });
 
         return router;
     }

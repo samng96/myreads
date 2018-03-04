@@ -15,7 +15,7 @@ public class FollowedListRoute {
         long userId,
         long listId) {
 
-        Key key = DatastoreHelpers.newFollowedListsKey(listId);
+        Key key = DatastoreHelpers.newFollowedListKey(listId);
         Entity entity = datastore.get(key);
         if (entity == null) {
             return null;
@@ -43,7 +43,7 @@ public class FollowedListRoute {
         }
 
         Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.followedListsKind)
+            .setKind(DatastoreHelpers.followedListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
@@ -83,7 +83,7 @@ public class FollowedListRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newFollowedListsKey())
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newFollowedListKey())
             .set("userId", userId)
             .set("listId", followedListEntity.listId())
             .set("ownerId", followedListEntity.ownerId())
@@ -120,7 +120,7 @@ public class FollowedListRoute {
                 .end();
             return;
         }
-        datastore.delete(DatastoreHelpers.newFollowedListsKey(listId));
+        datastore.delete(DatastoreHelpers.newFollowedListKey(listId));
 
         routingContext.response()
             .setStatusCode(204)

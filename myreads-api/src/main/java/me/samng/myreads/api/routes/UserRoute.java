@@ -14,7 +14,7 @@ public class UserRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
 
         Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.usersKind)
+            .setKind(DatastoreHelpers.userKind)
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -42,7 +42,7 @@ public class UserRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUsersKey())
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUserKey())
             .set("name", userEntity.name())
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
@@ -60,7 +60,7 @@ public class UserRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         Key key;
         try {
-            key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+            key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
         }
         catch (Exception e) {
             routingContext.response()
@@ -101,7 +101,7 @@ public class UserRoute {
         }
 
         // First get the entity
-        Key key = DatastoreHelpers.newUsersKey(userEntity.id());
+        Key key = DatastoreHelpers.newUserKey(userEntity.id());
         Entity newEntity = Entity.newBuilder(key)
             .set("name", userEntity.name())
             .set("email", userEntity.email())
@@ -123,7 +123,7 @@ public class UserRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         Key key;
         try {
-            key = DatastoreHelpers.newUsersKey(Long.decode(routingContext.request().getParam("userId")));
+            key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
         }
         catch (Exception e) {
             routingContext.response()

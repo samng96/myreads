@@ -7,9 +7,10 @@ import java.io.FileInputStream;
 
 public class DatastoreHelpers {
     private static String keyPath = "/users/samng/gcp-samng-privatekey.json";
-    public static String usersKind = "users";
-    public static String readingListsKind = "readingLists";
-    public static String followedListsKind = "followedLists";
+    public static String userKind = "user";
+    public static String readingListKind = "readingList";
+    public static String followedListKind = "followedList";
+    public static String readingListElementKind = "readingListElement";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
 
     public static Datastore getDatastore() {
@@ -27,33 +28,43 @@ public class DatastoreHelpers {
         return options.getService();
     }
 
-    public static IncompleteKey newUsersKey() {
-        keyFactory.setKind(usersKind);
+    public static IncompleteKey newUserKey() {
+        keyFactory.setKind(userKind);
         return keyFactory.newKey();
     }
 
-    public static Key newUsersKey(Long keyId) {
-        keyFactory.setKind(usersKind);
+    public static Key newUserKey(Long keyId) {
+        keyFactory.setKind(userKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newReadingListsKey() {
-        keyFactory.setKind(readingListsKind);
+    public static IncompleteKey newReadingListKey() {
+        keyFactory.setKind(readingListKind);
         return keyFactory.newKey();
     }
 
-    public static Key newReadingListsKey(Long keyId) {
-        keyFactory.setKind(readingListsKind);
+    public static Key newReadingListKey(Long keyId) {
+        keyFactory.setKind(readingListKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newFollowedListsKey() {
-        keyFactory.setKind(followedListsKind);
+    public static IncompleteKey newReadingElementListKey() {
+        keyFactory.setKind(readingListElementKind);
         return keyFactory.newKey();
     }
 
-    public static Key newFollowedListsKey(Long keyId) {
-        keyFactory.setKind(followedListsKind);
+    public static Key newReadingListElementKey(Long keyId) {
+        keyFactory.setKind(readingListElementKind);
+        return keyFactory.newKey(keyId);
+    }
+
+    public static IncompleteKey newFollowedListKey() {
+        keyFactory.setKind(followedListKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newFollowedListKey(Long keyId) {
+        keyFactory.setKind(followedListKind);
         return keyFactory.newKey(keyId);
     }
 }

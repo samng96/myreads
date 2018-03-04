@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
+import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class ReadingListRoute {
         long userId,
         long listId) {
 
-        Key key = DatastoreHelpers.newReadingListsKey(listId);
+        Key key = DatastoreHelpers.newReadingListKey(listId);
         Entity entity = datastore.get(key);
         if (entity == null) {
             return null;
@@ -44,7 +45,7 @@ public class ReadingListRoute {
         }
 
         Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.readingListsKind)
+            .setKind(DatastoreHelpers.readingListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
@@ -75,12 +76,12 @@ public class ReadingListRoute {
             return;
         }
 
-        FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey())
+        FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
             .set("userId", userId);
-        if (readingListEntity.tags != null) {
-            builder.set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()));
+        if (readingListEntity.tagIds != null) {
+            builder.set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()));
         }
         FullEntity<IncompleteKey> insertEntity = builder.build();
         Entity addedEntity = datastore.add(insertEntity);
@@ -148,13 +149,13 @@ public class ReadingListRoute {
             return;
         }
 
-        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListsKey(readingListEntity.id))
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey(readingListEntity.id))
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
             .set("userId", userId);
-        if (readingListEntity.tags != null)
+        if (readingListEntity.tagIds != null)
         {
-            builder.set("tags", ImmutableList.copyOf(readingListEntity.tags().stream().map(LongValue::new).iterator()));
+            builder.set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()));
         }
         Entity newEntity = builder.build();
         try {
@@ -192,11 +193,63 @@ public class ReadingListRoute {
                 .end();
             return;
         }
-        datastore.delete(DatastoreHelpers.newReadingListsKey(listId));
+        datastore.delete(DatastoreHelpers.newReadingListKey(listId));
 
         routingContext.response()
             .setStatusCode(204)
             .putHeader("content-type", "text/plain")
             .end();
+    }
+
+    // Remove an RLE from this list, /users/{userId}/readingLists/{readingListId}/readingListElements/{readingListElementId}
+    public void deleteReadingListElementFromReadingList(RoutingContext routingContext) {
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        long listId;
+        long userId;
+        long rleId;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            rleId = Long.decode(routingContext.request().getParam("readingListElementId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
+        if (readingListEntity == null) {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        if (readingListEntity.readingListElementIds().contains(rleId)) {
+            // We need to remove it from our reading list, but we also need to remove it from the RLE.
+
+            ReadingListElementEntity rleEntity = ReadingListElementRoute.getListIfUserOwnsIt(datastore, userId, rleId);
+            assert rleEntity != null;
+            assert rleEntity.listIds.contains(listId);
+        }
+        else {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(readingListEntity));
+    }
+
+    // Add an RLE to this list, /users/{userId}/readingLists/{readingListId}/addReadingListElement
+    public void addReadingListElementToReadingList(RoutingContext routingContext) {
     }
 }

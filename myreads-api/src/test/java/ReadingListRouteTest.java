@@ -15,8 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-
 @RunWith(VertxUnitRunner.class)
 public class ReadingListRouteTest {
     private Vertx vertx;
@@ -258,4 +256,6 @@ public class ReadingListRouteTest {
         })
             .setHandler(x -> { async.complete(); });
     }
+
+    // TODO: Need tags tests
 }

@@ -16,7 +16,7 @@ public class FollowedListEntity {
     @JsonProperty("ownerId")
     public long ownerId;
 
-    @JsonProperty("ListId")
+    @JsonProperty("listId")
     public long listId;
 
     @JsonProperty("userId")
