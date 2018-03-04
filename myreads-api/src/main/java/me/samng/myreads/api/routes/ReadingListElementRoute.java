@@ -162,6 +162,10 @@ public class ReadingListElementRoute {
     }
 
     // DELETE /users/{userId}/readingListElements/{readingListElementId}
+    // TODO: When we delete an RLE, make sure we remove it from every list that it's a part of. Should probably
+    // TODO: make the delete a helper method on datastoreHelpers, because we'll also want to untag it, and
+    // TODO: if it was the last element with that tag, we can remove the tag potentially? We also have to remove
+    // TODO: all comments attached to the RLE when it deletes.
     public void deleteReadingListElement(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
         long rleId;

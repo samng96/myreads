@@ -162,7 +162,12 @@ public class ReadingListRoute {
         routingContext.response().putHeader("content-type", "text/plain").end();
     }
 
-    // Delete a user, /users/{userId}/readingLists/{readingListId}
+    // Delete a reading list, /users/{userId}/readingLists/{readingListId}
+    // TODO: when we delete a list, we need to unlink all RLEs that were linked to this list.
+    //
+    // TODO: when we delete a list, we need to do something about the followed lists - do we soft delete here
+    // TODO: and allow the user to see that it's a list that's no longer around? Or do we have a singleton
+    // TODO: that is a deleted list that the follow then points to? Likely the latter.
     public void deleteReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
