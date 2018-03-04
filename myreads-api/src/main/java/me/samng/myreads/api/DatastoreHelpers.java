@@ -51,7 +51,7 @@ public class DatastoreHelpers {
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newReadingElementListKey() {
+    public static IncompleteKey newReadingListElementKey() {
         keyFactory.setKind(readingListElementKind);
         return keyFactory.newKey();
     }

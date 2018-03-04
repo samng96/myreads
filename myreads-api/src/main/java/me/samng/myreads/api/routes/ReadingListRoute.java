@@ -83,6 +83,9 @@ public class ReadingListRoute {
         if (readingListEntity.tagIds != null) {
             builder.set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()));
         }
+        if (readingListEntity.readingListElementIds != null) {
+            builder.set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
+        }
         FullEntity<IncompleteKey> insertEntity = builder.build();
         Entity addedEntity = datastore.add(insertEntity);
 
@@ -237,12 +240,12 @@ public class ReadingListRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(readingListEntity));
+            .end();
     }
 
     // Add an RLE to this list, /users/{userId}/readingLists/{readingListId}/addReadingListElement
-    // Note taht the payload is an array of RLE Ids.
-    public void addReadingListElementToReadingList(RoutingContext routingContext) {
+    // Note that the payload is an array of RLE Ids.
+    public void addReadingListElementsToReadingList(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
@@ -269,8 +272,9 @@ public class ReadingListRoute {
             return;
         }
 
-        // Note that we're not transactional!
-        // TODO: If we fail, return the of ids that we successfully updated.
+        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
+        // regardless of whether or not we have errors on the overall operation.
+        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(204);
         for (long rleId : rleIds) {
             boolean valid = true;
@@ -289,6 +293,7 @@ public class ReadingListRoute {
 
             if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity) &&
                 DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity)) {
+                addedIds.add(rleId);
             } else {
                 valid = false;
             }
@@ -301,6 +306,6 @@ public class ReadingListRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(readingListEntity));
+            .end(Json.encode(addedIds));
     }
 }
