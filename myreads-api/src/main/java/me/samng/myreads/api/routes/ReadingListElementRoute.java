@@ -8,7 +8,7 @@ import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 
 public class ReadingListElementRoute {
-    public static ReadingListElementEntity getListIfUserOwnsIt(
+    public static ReadingListElementEntity getReadingListElementIfUserOwnsIt(
         Datastore datastore,
         long userId,
         long readingListElementId) {
