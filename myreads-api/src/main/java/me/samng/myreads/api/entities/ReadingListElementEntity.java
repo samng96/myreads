@@ -27,7 +27,7 @@ public class ReadingListElementEntity {
     public List<Long> listIds;
 
     @JsonProperty("name")
-    public long name;
+    public String name;
 
     @JsonProperty("description")
     public String description;

@@ -99,7 +99,7 @@ public class DatastoreHelpers {
     public static boolean updateReadingListElementEntity(
         Datastore datastore,
         ReadingListElementEntity readingListElementEntity) {
-            Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey(readingListElementEntity.id))
+            Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(readingListElementEntity.id))
                 .set("name", readingListElementEntity.name())
                 .set("description", readingListElementEntity.description())
                 .set("userId", readingListElementEntity.userId())

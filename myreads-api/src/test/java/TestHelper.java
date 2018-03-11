@@ -5,6 +5,7 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import me.samng.myreads.api.entities.FollowedListEntity;
+import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
 import me.samng.myreads.api.entities.UserEntity;
 
@@ -15,7 +16,7 @@ public class TestHelper {
         TestContext context,
         WebClient client,
         int expectedStatusCode) {
-        Future<Void> fut = Future.future();
+        Future fut = Future.future();
 
         client.get(port, "localhost", "/users")
             .send(ar -> {
@@ -262,4 +263,103 @@ public class TestHelper {
         return fut;
     }
 
+    public static Future<Void> getAllReadingListElements(
+        TestContext context,
+        WebClient client,
+        Long userId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements")
+            .send(ar -> {
+                HttpResponse<Buffer> response = ar.result();
+
+                context.assertEquals(response.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+
+        return fut;
+    }
+
+    public static Future<Void> deleteReadingListElement(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.delete(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId)
+            .send(ar -> {
+                HttpResponse<Buffer> r = ar.result();
+
+                context.assertEquals(r.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+
+        return fut;
+    }
+
+    public static Future<Long> postReadingListElement(
+        TestContext context,
+        WebClient client,
+        ReadingListElementEntity entity,
+        long rleId,
+        int expectedStatusCode) {
+        Future<Long> fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + Long.toString(rleId) + "/readingListElements")
+            .sendJson(entity,
+                ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete(Long.decode(response.bodyAsString()));
+                });
+        return fut;
+    }
+
+    public static Future<Void> putReadingListElement(
+        TestContext context,
+        WebClient client,
+        ReadingListElementEntity entity,
+        long userId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.put(port, "localhost", "/users/" + Long.toString(userId) + "/readingListElements/" + entity.id)
+            .sendJson(entity,
+                ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
+        return fut;
+    }
+
+    public static Future<ReadingListElementEntity> getReadingListElement(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId)
+            .send(ar -> {
+                HttpResponse<Buffer> response = ar.result();
+
+                context.assertEquals(response.statusCode(), expectedStatusCode);
+
+                if (expectedStatusCode != 404) {
+                    ReadingListElementEntity entity = Json.decodeValue(response.body(), ReadingListElementEntity.class);
+                    fut.complete(entity);
+                }
+                else {
+                    fut.complete(null);
+                }
+            });
+        return fut;
+    }
 }
