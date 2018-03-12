@@ -284,16 +284,23 @@ public class ReadingListRoute {
         for (long rleId : rleIds) {
             boolean valid = true;
 
-            if (readingListEntity.readingListElementIds().contains(rleId)) {
+            if (readingListEntity.readingListElementIds() != null && readingListEntity.readingListElementIds().contains(rleId)) {
                 continue;
             }
 
             // We need to add it to our reading list, but we also need to add it to the RLE.
             ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
             assert rleEntity != null;
-            assert !rleEntity.listIds.contains(listId);
+            assert rleEntity.listIds == null || !rleEntity.listIds.contains(listId);
 
+            if (readingListEntity.readingListElementIds() == null) {
+                readingListEntity.readingListElementIds = new ArrayList<Long>();
+            }
             readingListEntity.readingListElementIds.add(rleId);
+
+            if (rleEntity.listIds() == null) {
+                rleEntity.listIds = new ArrayList<Long>();
+            }
             rleEntity.listIds.add(listId);
 
             if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity) &&

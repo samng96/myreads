@@ -266,7 +266,7 @@ public class TestHelper {
     public static Future<Void> getAllReadingListElements(
         TestContext context,
         WebClient client,
-        Long userId,
+        long userId,
         int expectedStatusCode) {
         Future fut = Future.future();
 
@@ -360,6 +360,45 @@ public class TestHelper {
                     fut.complete(null);
                 }
             });
+        return fut;
+    }
+
+    public static Future<Void> addRLEToReadingList(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long listId,
+        long[] rleIds,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingLists/" + listId + "/addReadingListElements")
+            .sendJson(rleIds,
+            ar -> {
+                HttpResponse<Buffer> response = ar.result();
+
+                context.assertEquals(response.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+        return fut;
+    }
+
+    public static Future<Void> removeRLEFromReadingList(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long listId,
+        long rleId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.delete(port, "localhost", "/users/" + userId + "/readingLists/" + listId + "/readingListElements/" + rleId)
+            .send(ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
         return fut;
     }
 }

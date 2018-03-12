@@ -5,6 +5,7 @@ import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.client.WebClient;
 import me.samng.myreads.api.MainVerticle;
+import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
 import me.samng.myreads.api.entities.UserEntity;
 import org.junit.After;
@@ -16,6 +17,8 @@ import org.junit.runner.RunWith;
 public class ReadingListRouteTest {
     private Vertx vertx;
     private long userId = -1;
+    private long listId = -1;
+    private long rleId = -1;
 
     @Before
     public void setUp(TestContext context) {
@@ -133,5 +136,61 @@ public class ReadingListRouteTest {
             .setHandler(x -> { async.complete(); });
     }
 
+    @Test
+    public void addElementToList(TestContext context) {
+        final Async async = context.async();
+
+        WebClient client = WebClient.create(vertx);
+
+        UserEntity entity = new UserEntity();
+        entity.email = "putUserTest@test.com";
+        entity.name = "testuser";
+        entity.userId = "testId";
+
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postListFut = postFut.compose(userId -> {
+            ReadingListEntity listEntity = new ReadingListEntity();
+            listEntity.userId = userId;
+            listEntity.description = "description";
+            listEntity.name = "listName";
+
+            this.userId = userId;
+
+            return TestHelper.postReadingList(context, client, listEntity, userId, 201); });
+        Future<Long> postRLEFut = postListFut.compose(listId -> {
+            ReadingListElementEntity rle = new ReadingListElementEntity();
+            rle.userId = userId;
+            rle.description = "description";
+            rle.name = "rleName For addElementToList";
+            rle.amazonLink = "some amazon link";
+
+            this.listId = listId;
+
+            return TestHelper.postReadingListElement(context, client, rle, userId, 201);
+        });
+        Future<Void> addToListFut = postRLEFut.compose(rleId -> {
+            this.rleId = rleId;
+
+            long[] rleIds = { rleId };
+            return TestHelper.addRLEToReadingList(context, client, this.userId, this.listId, rleIds, 204);
+        });
+        Future<ReadingListEntity> getFut = addToListFut.compose(x -> { return TestHelper.getReadingList(context, client, userId, listId, 200); });
+        Future<Void> removeFromListFut = getFut.compose(e -> {
+            context.assertEquals(e.readingListElementIds.size(), 1);
+            context.assertEquals(e.readingListElementIds.get(0), rleId);
+
+            return TestHelper.removeRLEFromReadingList(context, client, this.userId, this.listId, this.rleId, 204);
+        });
+        Future<ReadingListEntity> getAgainFut = removeFromListFut.compose(x -> { return TestHelper.getReadingList(context, client, userId, listId, 200); });
+        Future<Void> deleteFut = getAgainFut.compose(e -> {
+            context.assertEquals(e.readingListElementIds.size(), 0);
+
+            return TestHelper.deleteReadingList(context, client, this.userId, e.id, 204);
+        });
+        deleteFut.compose(x -> {
+            return TestHelper.deleteUser(context, client, this.userId, 204);
+        })
+            .setHandler(x -> { async.complete(); });
+    }
     // TODO: Need tags tests
 }
