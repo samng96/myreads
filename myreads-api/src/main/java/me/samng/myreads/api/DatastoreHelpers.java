@@ -3,6 +3,7 @@ package me.samng.myreads.api;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.datastore.*;
 import com.google.common.collect.ImmutableList;
+import me.samng.myreads.api.entities.CommentEntity;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
 
@@ -14,6 +15,7 @@ public class DatastoreHelpers {
     public static String readingListKind = "readingList";
     public static String followedListKind = "followedList";
     public static String readingListElementKind = "readingListElement";
+    public static String commentKind = "comment";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
 
     public static Datastore getDatastore() {
@@ -41,6 +43,15 @@ public class DatastoreHelpers {
         return keyFactory.newKey(keyId);
     }
 
+    public static IncompleteKey newCommentKey() {
+        keyFactory.setKind(commentKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newCommentKey(Long keyId) {
+        keyFactory.setKind(commentKind);
+        return keyFactory.newKey(keyId);
+    }
     public static IncompleteKey newReadingListKey() {
         keyFactory.setKind(readingListKind);
         return keyFactory.newKey();
@@ -113,6 +124,22 @@ public class DatastoreHelpers {
         {
             builder.set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()));
         }
+        Entity newEntity = builder.build();
+        try {
+            datastore.update(newEntity);
+            return true;
+        }
+        catch (DatastoreException e) {
+            return false;
+        }
+    }
+
+    public static boolean updateCommentEntity(Datastore datastore, CommentEntity commentEntity) {
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(commentEntity.id))
+            .set("commentText", commentEntity.commentText())
+            .set("userId", commentEntity.userId())
+            .set("readingListElementId", commentEntity.readingListElementId());
+
         Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);

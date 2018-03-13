@@ -8,10 +8,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-import me.samng.myreads.api.routes.FollowedListRoute;
-import me.samng.myreads.api.routes.ReadingListElementRoute;
-import me.samng.myreads.api.routes.ReadingListRoute;
-import me.samng.myreads.api.routes.UserRoute;
+import me.samng.myreads.api.routes.*;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -19,6 +16,7 @@ public class MainVerticle extends AbstractVerticle {
     private ReadingListRoute readingListRoute;
     private FollowedListRoute followedListRoute;
     private ReadingListElementRoute readingListElementRoute;
+    private CommentRoute commentRoute;
     public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
@@ -26,6 +24,7 @@ public class MainVerticle extends AbstractVerticle {
         readingListRoute = new ReadingListRoute();
         readingListElementRoute = new ReadingListElementRoute();
         followedListRoute = new FollowedListRoute();
+        commentRoute = new CommentRoute();
     }
 
     @Override
@@ -39,6 +38,7 @@ public class MainVerticle extends AbstractVerticle {
                             .end("myReads API service");
                 });
 
+        router.mountSubRouter("/users", setupComments());
         router.mountSubRouter("/users", setupFollowedLists());
         router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
@@ -51,6 +51,21 @@ public class MainVerticle extends AbstractVerticle {
                 fut.fail(result.cause());
             }});
         System.out.println("HTTP server started on port 8080");
+    }
+
+    private Router setupComments() {
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.put("/:userId/readingListElements/:readingListElementId/comments/:commentId").handler(routingContext -> { commentRoute.putComment(routingContext); });
+        router.delete("/:userId/readingListElements/:readingListElementId/comments/:commentId").handler(routingContext -> { commentRoute.deleteComment(routingContext); });
+        router.get("/:userId/readingListElements/:readingListElementId/comments/:commentId").handler(routingContext -> { commentRoute.getComment(routingContext); });
+
+        router.post("/:userId/readingListElements/:readingListElementId/comments").handler(routingContext -> { commentRoute.postComment(routingContext); });
+        router.get("/:userId/readingListElements/:readingListElementId/comments").handler(routingContext -> { commentRoute.getAllComments(routingContext); });
+
+        return router;
     }
 
     private Router setupUsers() {

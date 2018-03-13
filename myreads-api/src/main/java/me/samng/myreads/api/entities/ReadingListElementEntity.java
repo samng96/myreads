@@ -38,6 +38,9 @@ public class ReadingListElementEntity {
     @JsonProperty("tagIds")
     public List<Long> tagIds;
 
+    @JsonProperty("commentIds")
+    public List<Long> commentIds;
+
     public static ReadingListElementEntity fromEntity(Entity e) {
         ReadingListElementEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {
             Value<?> value = e.getValue(k);
