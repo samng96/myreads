@@ -17,6 +17,7 @@ public class MainVerticle extends AbstractVerticle {
     private FollowedListRoute followedListRoute;
     private ReadingListElementRoute readingListElementRoute;
     private CommentRoute commentRoute;
+    private TagRoute tagRoute;
     public static String AppId = "uplifted-road-163307";
 
     public MainVerticle() {
@@ -25,6 +26,7 @@ public class MainVerticle extends AbstractVerticle {
         readingListElementRoute = new ReadingListElementRoute();
         followedListRoute = new FollowedListRoute();
         commentRoute = new CommentRoute();
+        tagRoute = new TagRoute();
     }
 
     @Override
@@ -44,6 +46,8 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
 
+        router.mountSubRouter("/tags", setupTags());
+
         vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {
             if (result.succeeded()) {
                 fut.complete();
@@ -51,6 +55,19 @@ public class MainVerticle extends AbstractVerticle {
                 fut.fail(result.cause());
             }});
         System.out.println("HTTP server started on port 8080");
+    }
+
+    private Router setupTags() {
+        Router router = Router.router(vertx);
+
+        router.route().handler(BodyHandler.create());
+
+        router.get("/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
+
+        router.get().handler(routingContext -> { tagRoute.getAllTags(routingContext); });
+        router.post().handler(routingContext -> { tagRoute.postTag(routingContext); });
+
+        return router;
     }
 
     private Router setupComments() {

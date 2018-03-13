@@ -16,6 +16,7 @@ public class DatastoreHelpers {
     public static String followedListKind = "followedList";
     public static String readingListElementKind = "readingListElement";
     public static String commentKind = "comment";
+    public static String tagKind = "tag";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
 
     public static Datastore getDatastore() {
@@ -52,6 +53,17 @@ public class DatastoreHelpers {
         keyFactory.setKind(commentKind);
         return keyFactory.newKey(keyId);
     }
+
+    public static IncompleteKey newTagKey() {
+        keyFactory.setKind(tagKind);
+        return keyFactory.newKey();
+    }
+
+    public static Key newTagKey(Long keyId) {
+        keyFactory.setKind(tagKind);
+        return keyFactory.newKey(keyId);
+    }
+
     public static IncompleteKey newReadingListKey() {
         keyFactory.setKind(readingListKind);
         return keyFactory.newKey();

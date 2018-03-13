@@ -1,5 +1,8 @@
 package me.samng.myreads.api.entities;
 
+import com.google.cloud.datastore.Entity;
+import com.google.common.collect.Maps;
+import io.vertx.core.json.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -12,4 +15,10 @@ public class TagEntity {
 
     @JsonProperty("tagName")
     public String tagName;
+
+    public static TagEntity fromEntity(Entity e) {
+        TagEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), TagEntity.class);
+        entity.id = e.getKey().getId();
+        return entity;
+    }
 }
