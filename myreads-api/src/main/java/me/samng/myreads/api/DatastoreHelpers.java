@@ -147,7 +147,7 @@ public class DatastoreHelpers {
     }
 
     public static boolean updateCommentEntity(Datastore datastore, CommentEntity commentEntity) {
-        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(commentEntity.id))
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newCommentKey(commentEntity.id))
             .set("commentText", commentEntity.commentText())
             .set("userId", commentEntity.userId())
             .set("readingListElementId", commentEntity.readingListElementId());

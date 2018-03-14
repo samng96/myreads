@@ -4,10 +4,7 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
-import me.samng.myreads.api.entities.FollowedListEntity;
-import me.samng.myreads.api.entities.ReadingListElementEntity;
-import me.samng.myreads.api.entities.ReadingListEntity;
-import me.samng.myreads.api.entities.UserEntity;
+import me.samng.myreads.api.entities.*;
 
 public class TestHelper {
     private static int port = 8080;
@@ -304,11 +301,11 @@ public class TestHelper {
         TestContext context,
         WebClient client,
         ReadingListElementEntity entity,
-        long rleId,
+        long userId,
         int expectedStatusCode) {
         Future<Long> fut = Future.future();
 
-        client.post(port, "localhost", "/users/" + Long.toString(rleId) + "/readingListElements")
+        client.post(port, "localhost", "/users/" + Long.toString(userId) + "/readingListElements")
             .sendJson(entity,
                 ar -> {
                     HttpResponse<Buffer> response = ar.result();
@@ -399,6 +396,111 @@ public class TestHelper {
                     context.assertEquals(response.statusCode(), expectedStatusCode);
                     fut.complete();
                 });
+        return fut;
+    }
+
+    public static Future<Long> postComment(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        CommentEntity entity,
+        int expectedStatusCode) {
+        Future<Long> fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/comments")
+            .sendJson(entity,
+                ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete(Long.decode(response.bodyAsString()));
+                });
+        return fut;
+    }
+
+    public static Future<Void> putComment(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        CommentEntity entity,
+        int expectedStatusCode) {
+        Future<Void> fut = Future.future();
+
+        client.put(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/comments/" + entity.id)
+            .sendJson(entity,
+                ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
+        return fut;
+    }
+
+    public static Future<CommentEntity> getComment(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        long commentId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/comments/" + commentId)
+            .send(ar -> {
+                HttpResponse<Buffer> response = ar.result();
+
+                context.assertEquals(response.statusCode(), expectedStatusCode);
+
+                if (expectedStatusCode != 404) {
+                    CommentEntity entity = Json.decodeValue(response.body(), CommentEntity.class);
+                    fut.complete(entity);
+                }
+                else {
+                    fut.complete(null);
+                }
+            });
+        return fut;
+    }
+
+    public static Future<Void> getAllComments(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements" + rleId + "/comments")
+            .send(ar -> {
+                HttpResponse<Buffer> response = ar.result();
+
+                context.assertEquals(response.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+
+        return fut;
+    }
+
+    public static Future<Void> deleteComment(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        long commentId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.delete(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/comments/" + commentId)
+            .send(ar -> {
+                HttpResponse<Buffer> r = ar.result();
+
+                context.assertEquals(r.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+
         return fut;
     }
 }

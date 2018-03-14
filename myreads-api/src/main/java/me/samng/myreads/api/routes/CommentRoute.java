@@ -81,7 +81,7 @@ public class CommentRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newCommentKey())
             .set("commentText", commentEntity.commentText())
             .set("userId", userId)
             .set("readingListElementId", readingListElementId).build();
@@ -101,7 +101,7 @@ public class CommentRoute {
         long readingListElementId;
         try {
             commentEntity = Json.decodeValue(routingContext.getBody(), CommentEntity.class);
-            commentEntity.id = Long.decode(routingContext.request().getParam("readingListId"));
+            commentEntity.id = Long.decode(routingContext.request().getParam("commentId"));
             userId = Long.decode(routingContext.request().getParam("userId"));
             readingListElementId = Long.decode(routingContext.request().getParam("readingListElementId"));
         }
@@ -150,8 +150,8 @@ public class CommentRoute {
             return;
         }
 
-        CommentEntity readingListEntity = getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId);
-        if (readingListEntity == null) {
+        CommentEntity commentEntity = getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId);
+        if (commentEntity == null) {
             routingContext.response()
                 .setStatusCode(404)
                 .putHeader("content-type", "text/plain")
@@ -161,7 +161,7 @@ public class CommentRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(readingListEntity));
+            .end(Json.encode(commentEntity));
     }
 
     // DELETE /users/{userId}/readingListElements/{readingListElementId}/comments/{commentId}
