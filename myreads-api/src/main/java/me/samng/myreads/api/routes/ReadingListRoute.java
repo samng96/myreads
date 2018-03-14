@@ -219,7 +219,9 @@ public class ReadingListRoute {
         }
 
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
-        if (readingListEntity == null || !readingListEntity.readingListElementIds().contains(rleId)) {
+        if (readingListEntity == null ||
+            readingListEntity.readingListElementIds() == null ||
+            !readingListEntity.readingListElementIds().contains(rleId)) {
             routingContext.response()
                 .setStatusCode(404)
                 .putHeader("content-type", "text/plain")
@@ -280,7 +282,7 @@ public class ReadingListRoute {
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
         // regardless of whether or not we have errors on the overall operation.
         ArrayList<Long> addedIds = new ArrayList<Long>();
-        routingContext.response().setStatusCode(204);
+        routingContext.response().setStatusCode(200);
         for (long rleId : rleIds) {
             boolean valid = true;
 
@@ -318,6 +320,7 @@ public class ReadingListRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
+            //.end();
             .end(Json.encode(addedIds));
     }
 }

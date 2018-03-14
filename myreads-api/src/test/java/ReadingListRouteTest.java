@@ -172,16 +172,16 @@ public class ReadingListRouteTest {
             this.rleId = rleId;
 
             long[] rleIds = { rleId };
-            return TestHelper.addRLEToReadingList(context, client, this.userId, this.listId, rleIds, 204);
+            return TestHelper.addRLEToReadingList(context, client, this.userId, this.listId, rleIds, 200);
         });
-        Future<ReadingListEntity> getFut = addToListFut.compose(x -> { return TestHelper.getReadingList(context, client, userId, listId, 200); });
+        Future<ReadingListEntity> getFut = addToListFut.compose(x -> { return TestHelper.getReadingList(context, client, this.userId, this.listId, 200); });
         Future<Void> removeFromListFut = getFut.compose(e -> {
             context.assertEquals(e.readingListElementIds.size(), 1);
             context.assertEquals(e.readingListElementIds.get(0), rleId);
 
             return TestHelper.removeRLEFromReadingList(context, client, this.userId, this.listId, this.rleId, 204);
         });
-        Future<ReadingListEntity> getAgainFut = removeFromListFut.compose(x -> { return TestHelper.getReadingList(context, client, userId, listId, 200); });
+        Future<ReadingListEntity> getAgainFut = removeFromListFut.compose(x -> { return TestHelper.getReadingList(context, client, this.userId, this.listId, 200); });
         Future<Void> deleteFut = getAgainFut.compose(e -> {
             context.assertEquals(e.readingListElementIds.size(), 0);
 
