@@ -38,7 +38,7 @@ public class UserRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request body");
             return;
         }
 
@@ -66,7 +66,7 @@ public class UserRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
         Entity entity = datastore.get(key);
@@ -96,7 +96,7 @@ public class UserRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -129,7 +129,7 @@ public class UserRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
         datastore.delete(key);

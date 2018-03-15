@@ -38,7 +38,7 @@ public class ReadingListElementRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -70,7 +70,7 @@ public class ReadingListElementRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -107,7 +107,7 @@ public class ReadingListElementRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -139,7 +139,7 @@ public class ReadingListElementRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -178,7 +178,7 @@ public class ReadingListElementRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 

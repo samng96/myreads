@@ -40,7 +40,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -72,7 +72,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -108,7 +108,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -140,7 +140,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -180,7 +180,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -214,7 +214,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
@@ -266,7 +266,7 @@ public class ReadingListRoute {
             routingContext.response()
                 .setStatusCode(400)
                 .putHeader("content-type", "text/plain")
-                .end();
+                .end("Invalid request parameters");
             return;
         }
 
