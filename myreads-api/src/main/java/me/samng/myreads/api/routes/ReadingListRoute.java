@@ -8,8 +8,10 @@ import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
+import me.samng.myreads.api.entities.TagEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ReadingListRoute {
     private ReadingListEntity getListIfUserOwnsIt(
@@ -325,13 +327,145 @@ public class ReadingListRoute {
 
     // POST /users/{userId}/readlingLists/{readingListId}/addTags
     public void addTagsToReadingList(RoutingContext routingContext) {
+        long listId;
+        long userId;
+        Long[] tagIds;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            tagIds = Json.decodeValue(routingContext.getBody(), Long[].class);
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
+        if (readingListEntity == null) {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
+        // regardless of whether or not we have errors on the overall operation.
+        ArrayList<Long> addedIds = new ArrayList<Long>();
+        routingContext.response().setStatusCode(200);
+        for (long tagId : tagIds) {
+            boolean valid = true;
+
+            if (readingListEntity.tagIds() != null && readingListEntity.tagIds().contains(tagId)) {
+                continue;
+            }
+
+            if (readingListEntity.tagIds() == null) {
+                readingListEntity.tagIds = new ArrayList<Long>();
+            }
+            readingListEntity.tagIds.add(tagId);
+
+            if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
+                addedIds.add(tagId);
+            } else {
+                valid = false;
+            }
+
+            if (!valid) {
+                // TODO: What error should we give here when we fail to update an entity? Should it really be
+                // TODO: a 404? Or should this be some sort of 500? Or should we return some 202 type and retry?
+                routingContext.response().setStatusCode(404);
+                break;
+            }
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(addedIds));
     }
 
     // GET /users/{userId}/readlingLists/{readingListId}/tags
     public void getTagsForReadingList(RoutingContext routingContext) {
+        long listId;
+        long userId;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
+        if (readingListEntity == null) {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        List<TagEntity> tags = TagRoute.getTagEntities(datastore, readingListEntity.tagIds());
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(tags));
     }
 
     // DELETE /users/{userId}/readlingLists/{readingListId}/tags/{tagId}
     public void removeTagFromReadingList(RoutingContext routingContext) {
+        long listId;
+        long userId;
+        long tagId;
+        try {
+            listId = Long.decode(routingContext.request().getParam("readingListId"));
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            tagId = Long.decode(routingContext.request().getParam("tagId"));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
+        if (readingListEntity == null) {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        if (readingListEntity.tagIds() == null || !readingListEntity.tagIds().contains(tagId)) {
+            routingContext.response()
+                .setStatusCode(404)
+                .putHeader("content-type", "text/plain")
+                .end("Tag not found");
+            return;
+        }
+
+        readingListEntity.tagIds().remove(tagId);
+        if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
+            routingContext.response().setStatusCode(204);
+        } else {
+            routingContext.response().setStatusCode(404);
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end();
     }
 }

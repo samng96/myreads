@@ -7,9 +7,10 @@ import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.TagEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TagRoute {
-    private TagEntity getTagEntity(
+    private static TagEntity getTagEntity(
         Datastore datastore,
         long tagId) {
 
@@ -21,6 +22,18 @@ public class TagRoute {
         TagEntity tagEntity = TagEntity.fromEntity(entity);
         return tagEntity;
     }
+
+    public static List<TagEntity> getTagEntities(
+        Datastore datastore,
+        List<Long> tagIds) {
+        ArrayList<TagEntity> results = new ArrayList<>();
+
+        for (long tagId : tagIds) {
+            results.add(getTagEntity(datastore, tagId));
+        }
+        return results;
+    }
+
     // GET /tags
     public void getAllTags(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
