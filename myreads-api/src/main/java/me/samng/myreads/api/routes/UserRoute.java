@@ -29,7 +29,6 @@ public class UserRoute {
 
     // Post a new user
     public void postUser(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         UserEntity userEntity;
         try {
             userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
@@ -47,6 +46,7 @@ public class UserRoute {
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -57,7 +57,6 @@ public class UserRoute {
 
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         Key key;
         try {
             key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
@@ -69,6 +68,7 @@ public class UserRoute {
                 .end("Invalid request parameters");
             return;
         }
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity entity = datastore.get(key);
 
         if (entity == null) {
@@ -86,7 +86,6 @@ public class UserRoute {
 
     // Update a user, /users/{userId}
     public void putUser(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         UserEntity userEntity;
         try {
             userEntity = Json.decodeValue(routingContext.getBody(), UserEntity.class);
@@ -108,6 +107,7 @@ public class UserRoute {
             .set("userId", userEntity.userId())
             .build();
         try {
+            Datastore datastore = DatastoreHelpers.getDatastore();
             datastore.update(newEntity);
             routingContext.response().setStatusCode(204);
         }
@@ -120,7 +120,6 @@ public class UserRoute {
 
     // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         Key key;
         try {
             key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
@@ -132,6 +131,7 @@ public class UserRoute {
                 .end("Invalid request parameters");
             return;
         }
+        Datastore datastore = DatastoreHelpers.getDatastore();
         datastore.delete(key);
         // TODO: Not enough to just delete the user, gotta clean up the system when it gets deleted.
 

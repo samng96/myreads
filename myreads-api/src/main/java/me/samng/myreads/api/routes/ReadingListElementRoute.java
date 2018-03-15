@@ -29,7 +29,6 @@ public class ReadingListElementRoute {
 
     // GET /users/{userId}/readingListElements
     public void getAllReadingListElements(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long userId;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
@@ -46,6 +45,7 @@ public class ReadingListElementRoute {
             .setKind(DatastoreHelpers.readingListElementKind)
             .setFilter(StructuredQuery.PropertyFilter.eq("userId", userId))
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         QueryResults<Entity> queryresult = datastore.run(query);
 
         // Iterate through the results to actually fetch them, then serialize them and return.
@@ -59,7 +59,6 @@ public class ReadingListElementRoute {
 
     // POST /users/{userId}/readingListElements
     public void postReadingListElement(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListElementEntity rleEntity;
         long userId;
         try {
@@ -86,6 +85,7 @@ public class ReadingListElementRoute {
             builder.set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()));
         }
         FullEntity<IncompleteKey> insertEntity = builder.build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -96,7 +96,6 @@ public class ReadingListElementRoute {
 
     // GET /users/{userId}/readingListElements/{readingListElementId}
     public void getReadingListElement(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long rleId;
         long userId;
         try {
@@ -111,6 +110,7 @@ public class ReadingListElementRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListElementEntity rleEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (rleEntity == null) {
             routingContext.response()
@@ -127,7 +127,6 @@ public class ReadingListElementRoute {
 
     // PUT /users/{userId}/readingListElements/{readingListElementId}
     public void putReadingListElement(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListElementEntity rleEntity;
         long userId;
         try {
@@ -143,6 +142,7 @@ public class ReadingListElementRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getReadingListElementIfUserOwnsIt(datastore, userId, rleEntity.id) == null) {
             routingContext.response()
                 .setStatusCode(404)
@@ -167,7 +167,6 @@ public class ReadingListElementRoute {
     // TODO: if it was the last element with that tag, we can remove the tag potentially? We also have to remove
     // TODO: all comments attached to the RLE when it deletes.
     public void deleteReadingListElement(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long rleId;
         long userId;
         try {
@@ -182,6 +181,7 @@ public class ReadingListElementRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getReadingListElementIfUserOwnsIt(datastore, userId, rleId) == null) {
             routingContext.response()
                 .setStatusCode(404)

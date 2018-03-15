@@ -24,7 +24,6 @@ public class TagRoute {
     // GET /tags
     public void getAllTags(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.tagKind)
             .build();
@@ -41,7 +40,6 @@ public class TagRoute {
 
     // POST /tags
     public void postTag(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         TagEntity tagEntity;
 
         try {
@@ -57,6 +55,7 @@ public class TagRoute {
 
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagKey())
             .set("tagName", tagEntity.tagName()).build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -67,7 +66,6 @@ public class TagRoute {
 
     // GET /tags/{tagId}
     public void getTag(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long tagId;
         try {
             tagId = Long.decode(routingContext.request().getParam("tagId"));
@@ -79,6 +77,7 @@ public class TagRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         TagEntity tagEntity = getTagEntity(datastore, tagId);
         if (tagEntity == null) {
             routingContext.response()
@@ -95,7 +94,6 @@ public class TagRoute {
 
     // DELETE /tags/{tagId}
     public void deleteTag(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         Key key;
         try {
             key = DatastoreHelpers.newTagKey(Long.decode(routingContext.request().getParam("tagId")));
@@ -107,6 +105,7 @@ public class TagRoute {
                 .end("Invalid request parameters");
             return;
         }
+        Datastore datastore = DatastoreHelpers.getDatastore();
         datastore.delete(key);
         // TODO: Not enough to just delete the tag, gotta clean up the system when it gets deleted.
 

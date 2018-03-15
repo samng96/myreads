@@ -29,7 +29,6 @@ public class CommentRoute {
 
     // GET /users/{userId}/readingListElements/{readingListElementId}/comments
     public void getAllComments(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long userId;
         long rleId;
 
@@ -50,6 +49,7 @@ public class CommentRoute {
             .setFilter(StructuredQuery.PropertyFilter.eq("readingListElementId", rleId))
             .setFilter(StructuredQuery.PropertyFilter.eq("userId", userId))
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         QueryResults<Entity> queryresult = datastore.run(query);
 
         // Iterate through the results to actually fetch them, then serialize them and return.
@@ -63,7 +63,6 @@ public class CommentRoute {
 
     // POST /users/{userId}/readingListElements/{readingListElementId}/comments
     public void postComment(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         CommentEntity commentEntity;
         long userId;
         long readingListElementId;
@@ -85,6 +84,7 @@ public class CommentRoute {
             .set("commentText", commentEntity.commentText())
             .set("userId", userId)
             .set("readingListElementId", readingListElementId).build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -95,7 +95,6 @@ public class CommentRoute {
 
     // PUT /users/{userId}/readingListElements/{readingListElementId}/comments/{commentId}
     public void putComment(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         CommentEntity commentEntity;
         long userId;
         long readingListElementId;
@@ -113,6 +112,7 @@ public class CommentRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentEntity.id) == null) {
             routingContext.response()
                 .setStatusCode(404)
@@ -133,7 +133,6 @@ public class CommentRoute {
 
     // GET /users/{userId}/readingListElements/{readingListElementId}/comments/{commentId}
     public void getComment(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long commentId;
         long readingListElementId;
         long userId;
@@ -150,6 +149,7 @@ public class CommentRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         CommentEntity commentEntity = getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId);
         if (commentEntity == null) {
             routingContext.response()
@@ -166,7 +166,6 @@ public class CommentRoute {
 
     // DELETE /users/{userId}/readingListElements/{readingListElementId}/comments/{commentId}
     public void deleteComment(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long commentId;
         long readingListElementId;
         long userId;
@@ -183,6 +182,7 @@ public class CommentRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId) == null) {
             routingContext.response()
                 .setStatusCode(404)

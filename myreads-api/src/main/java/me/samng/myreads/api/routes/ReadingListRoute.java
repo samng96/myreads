@@ -31,7 +31,6 @@ public class ReadingListRoute {
 
     // Get all lists for a given user - /users/{userId}/readinglists
     public void getAllReadingLists(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long userId;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
@@ -48,6 +47,7 @@ public class ReadingListRoute {
             .setKind(DatastoreHelpers.readingListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         QueryResults<Entity> queryresult = datastore.run(query);
 
         // Iterate through the results to actually fetch them, then serialize them and return.
@@ -61,7 +61,6 @@ public class ReadingListRoute {
 
     // Post a new reading list - /users/{userId}/readingLists
     public void postReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListEntity readingListEntity;
         long userId;
         try {
@@ -87,6 +86,7 @@ public class ReadingListRoute {
             builder.set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
         }
         FullEntity<IncompleteKey> insertEntity = builder.build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -97,7 +97,6 @@ public class ReadingListRoute {
 
     // Get a specific reading list, /users/{userId}/readingLists/{readingListId}
     public void getReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
         try {
@@ -112,6 +111,7 @@ public class ReadingListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
@@ -128,7 +128,6 @@ public class ReadingListRoute {
 
     // Update a list, /users/{userId}/readingLists/{readingListId}
     public void putReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListEntity readingListEntity;
         long userId;
         try {
@@ -144,6 +143,7 @@ public class ReadingListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getListIfUserOwnsIt(datastore, userId, readingListEntity.id) == null) {
             routingContext.response()
                 .setStatusCode(404)
@@ -169,7 +169,6 @@ public class ReadingListRoute {
     // TODO: and allow the user to see that it's a list that's no longer around? Or do we have a singleton
     // TODO: that is a deleted list that the follow then points to? Likely the latter.
     public void deleteReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
         try {
@@ -184,6 +183,7 @@ public class ReadingListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getListIfUserOwnsIt(datastore, userId, listId) == null) {
             routingContext.response()
                 .setStatusCode(404)
@@ -201,7 +201,6 @@ public class ReadingListRoute {
 
     // Remove an RLE from this list, /users/{userId}/readingLists/{readingListId}/readingListElements/{readingListElementId}
     public void deleteReadingListElementFromReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
         long rleId;
@@ -218,6 +217,7 @@ public class ReadingListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null ||
             readingListEntity.readingListElementIds() == null ||
@@ -253,7 +253,6 @@ public class ReadingListRoute {
     // Add an RLE to this list, /users/{userId}/readingLists/{readingListId}/addReadingListElement
     // Note that the payload is an array of RLE Ids.
     public void addReadingListElementsToReadingList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
         Long[] rleIds;
@@ -270,6 +269,7 @@ public class ReadingListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()

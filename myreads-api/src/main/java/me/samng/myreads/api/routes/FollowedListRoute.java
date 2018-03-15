@@ -29,7 +29,6 @@ public class FollowedListRoute {
 
     // Get all followed lists for a given user - /users/{userId}/followedLists
     public void getAllFollowedLists(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long userId;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
@@ -46,6 +45,7 @@ public class FollowedListRoute {
             .setKind(DatastoreHelpers.followedListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         QueryResults<Entity> queryresult = datastore.run(query);
 
         // Iterate through the results to actually fetch them, then serialize them and return.
@@ -59,7 +59,6 @@ public class FollowedListRoute {
 
     // Post a new followed list - /users/{userId}/followedLists
     public void postFollowedList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         FollowedListEntity followedListEntity;
         try {
             followedListEntity = Json.decodeValue(routingContext.getBody(), FollowedListEntity.class);
@@ -87,6 +86,7 @@ public class FollowedListRoute {
             .set("listId", followedListEntity.listId())
             .set("ownerId", followedListEntity.ownerId())
             .build();
+        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
@@ -97,7 +97,6 @@ public class FollowedListRoute {
 
     // Delete a user, /users/{userId}/readingLists/{readingListId}
     public void deleteFollowedList(RoutingContext routingContext) {
-        Datastore datastore = DatastoreHelpers.getDatastore();
         long listId;
         long userId;
         try {
@@ -112,6 +111,7 @@ public class FollowedListRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
         if (getFollowedListIfUserOwnsIt(datastore, userId, listId) == null) {
             routingContext.response()
                 .setStatusCode(404)
