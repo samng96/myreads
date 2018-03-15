@@ -197,5 +197,15 @@ public class ReadingListElementRoute {
             .end();
     }
 
-    // TODO: Need to handle adding/removing tags from an RLE
+    // POST /users/{userId}/readlingListElements/{readingListElementId}/addTags
+    public void addTagsToReadingListElement(RoutingContext routingContext) {
+    }
+
+    // GET /users/{userId}/readlingListElements/{readingListElementId}/tags
+    public void getTagsForReadingListElement(RoutingContext routingContext) {
+    }
+
+    // DELETE /users/{userId}/readlingListElements/{readingListElementId}/tags/{tagId}
+    public void removeTagFromReadingListElement(RoutingContext routingContext) {
+    }
 }

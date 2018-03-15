@@ -105,6 +105,9 @@ public class MainVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
+        router.post("/:userId/readingLists/:readingListId/addTags").handler(routingContext -> { readingListRoute.addTagsToReadingList(routingContext); });
+        router.get("/:userId/readingLists/:readingListId/tags").handler(routingContext -> { readingListRoute.getTagsForReadingList(routingContext); });
+        router.delete("/:userId/readingLists/:readingListId/tags/:tagId").handler(routingContext -> { readingListRoute.removeTagFromReadingList(routingContext); });
 
         router.post("/:userId/readingLists/:readingListId/addReadingListElements").handler(routingContext -> { readingListRoute.addReadingListElementsToReadingList(routingContext); });
         router.delete("/:userId/readingLists/:readingListId/readingListElements/:readingListElementId").handler(routingContext -> { readingListRoute.deleteReadingListElementFromReadingList(routingContext); });
@@ -136,6 +139,9 @@ public class MainVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
 
         router.route().handler(BodyHandler.create());
+        router.post("/:userId/readingListElements/:readingListElementId/addTags").handler(routingContext -> { readingListElementRoute.addTagsToReadingListElement(routingContext); });
+        router.get("/:userId/readingListElements/:readingListElementId/tags").handler(routingContext -> { readingListElementRoute.getTagsForReadingListElement(routingContext); });
+        router.delete("/:userId/readingListElements/:readingListElementId/tags/:tagId").handler(routingContext -> { readingListElementRoute.removeTagFromReadingListElement(routingContext); });
 
         router.get("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.getReadingListElement(routingContext); });
         router.put("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.putReadingListElement(routingContext); });

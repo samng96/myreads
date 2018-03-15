@@ -323,5 +323,15 @@ public class ReadingListRoute {
             .end(Json.encode(addedIds));
     }
 
-    // TODO: Need to handle adding/removing tags from a list
+    // POST /users/{userId}/readlingLists/{readingListId}/addTags
+    public void addTagsToReadingList(RoutingContext routingContext) {
+    }
+
+    // GET /users/{userId}/readlingLists/{readingListId}/tags
+    public void getTagsForReadingList(RoutingContext routingContext) {
+    }
+
+    // DELETE /users/{userId}/readlingLists/{readingListId}/tags/{tagId}
+    public void removeTagFromReadingList(RoutingContext routingContext) {
+    }
 }
