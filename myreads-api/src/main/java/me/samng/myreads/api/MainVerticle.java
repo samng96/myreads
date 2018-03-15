@@ -63,6 +63,7 @@ public class MainVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
 
         router.get("/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
+        router.delete("/:tagId").handler(routingContext -> { tagRoute.deleteTag(routingContext); });
 
         router.get().handler(routingContext -> { tagRoute.getAllTags(routingContext); });
         router.post().handler(routingContext -> { tagRoute.postTag(routingContext); });

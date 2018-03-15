@@ -320,7 +320,6 @@ public class ReadingListRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            //.end();
             .end(Json.encode(addedIds));
     }
 }

@@ -92,4 +92,27 @@ public class TagRoute {
             .putHeader("content-type", "text/plain")
             .end(Json.encode(tagEntity));
     }
+
+    // DELETE /tags/{tagId}
+    public void deleteTag(RoutingContext routingContext) {
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        Key key;
+        try {
+            key = DatastoreHelpers.newTagKey(Long.decode(routingContext.request().getParam("tagId")));
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(400)
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+        datastore.delete(key);
+        // TODO: Not enough to just delete the tag, gotta clean up the system when it gets deleted.
+
+        routingContext.response()
+            .setStatusCode(204)
+            .putHeader("content-type", "text/plain")
+            .end();
+    }
 }

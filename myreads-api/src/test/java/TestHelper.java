@@ -503,4 +503,80 @@ public class TestHelper {
 
         return fut;
     }
+
+    public static Future<Void> getAllTags(
+        TestContext context,
+        WebClient client,
+        int expectedStatusCode) {
+            Future fut = Future.future();
+
+            client.get(port, "localhost", "/tags")
+                .send(ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
+            return fut;
+    }
+
+    public static Future<Long> postTag(
+        TestContext context,
+        WebClient client,
+        TagEntity entity,
+        int expectedStatusCode) {
+            Future<Long> fut = Future.future();
+
+            client.post(port, "localhost", "/tags")
+                .sendJson(entity,
+                    ar -> {
+                        HttpResponse<Buffer> response = ar.result();
+
+                        context.assertEquals(response.statusCode(), expectedStatusCode);
+                        fut.complete(Long.decode(response.bodyAsString()));
+                    });
+            return fut;
+        }
+
+    public static Future<TagEntity> getTag(
+        TestContext context,
+        WebClient client,
+        long tagId,
+        int expectedStatusCode) {
+            Future fut = Future.future();
+
+            client.get(port, "localhost", "/tags/" + tagId)
+                .send(ar -> {
+                    HttpResponse<Buffer> response = ar.result();
+
+                    context.assertEquals(response.statusCode(), expectedStatusCode);
+
+                    if (expectedStatusCode != 404) {
+                        TagEntity entity = Json.decodeValue(response.body(), TagEntity.class);
+                        fut.complete(entity);
+                    }
+                    else {
+                        fut.complete(null);
+                    }
+                });
+            return fut;
+    }
+
+    public static Future<Void> deleteTag(
+        TestContext context,
+        WebClient client,
+        long tagId,
+        int expectedStatusCode) {
+            Future fut = Future.future();
+
+            client.delete(port, "localhost", "/tags/" + tagId)
+                .send(ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
+
+            return fut;
+    }
 }

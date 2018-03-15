@@ -133,6 +133,7 @@ public class UserRoute {
             return;
         }
         datastore.delete(key);
+        // TODO: Not enough to just delete the user, gotta clean up the system when it gets deleted.
 
         routingContext.response()
                 .setStatusCode(204)
