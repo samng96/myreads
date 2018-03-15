@@ -6,6 +6,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.client.WebClient;
 import me.samng.myreads.api.MainVerticle;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
+import me.samng.myreads.api.entities.TagEntity;
 import me.samng.myreads.api.entities.UserEntity;
 import org.junit.After;
 import org.junit.Before;
@@ -16,6 +17,8 @@ import org.junit.runner.RunWith;
 public class ReadingListElementRouteTest {
     private Vertx vertx;
     private long userId = -1;
+    private long rleId = -1;
+    private long tagId = -1;
 
     @Before
     public void setUp(TestContext context) {
@@ -138,5 +141,67 @@ public class ReadingListElementRouteTest {
             .setHandler(x -> { async.complete(); });
     }
 
-    // TODO: Need tags tests
+    @Test
+    public void tagTest(TestContext context) {
+        final Async async = context.async();
+
+        WebClient client = WebClient.create(vertx);
+
+        UserEntity entity = new UserEntity();
+        entity.email = "tagReadingList@test.com";
+        entity.name = "testuser";
+        entity.userId = "testId";
+
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postListFut = postFut.compose(userId -> {
+            ReadingListElementEntity rle = new ReadingListElementEntity();
+            rle.userId = userId;
+            rle.description = "description";
+            rle.name = "listName";
+            rle.amazonLink = "tag test amazon link";
+
+            this.userId = userId;
+
+            return TestHelper.postReadingListElement(context, client, rle, userId, 201); });
+        Future<Long> postTagFut = postListFut.compose(rleId -> {
+            TagEntity tagEntity = new TagEntity();
+            tagEntity.tagName = "testReadingListElementTag";
+
+            this.rleId = rleId;
+
+            return TestHelper.postTag(context, client, tagEntity, 201);
+        });
+        Future<Long> addTagToListFut = postTagFut.compose(tagId -> {
+            long[] tagIds = { tagId };
+
+            this.tagId = tagId;
+
+            return TestHelper.addTagToReadingListElement(context, client, this.userId, this.rleId, tagIds, 200).map(tagId);
+        });
+        Future<TagEntity[]> getTagFut = addTagToListFut.compose(tagId -> {
+            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, 200);
+        });
+        Future<Void> removeTagFut = getTagFut.compose(tagEntities -> {
+            context.assertEquals(tagEntities.length, 1);
+            context.assertEquals(tagEntities[0].id, tagId);
+            context.assertEquals(tagEntities[0].tagName, "testReadingListElementTag");
+
+            return TestHelper.removeTagFromReadingListElement(context, client, this.userId, this.rleId, this.tagId, 204);
+        });
+        Future<TagEntity[]> checkTagFut = removeTagFut.compose(tagId -> {
+            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, 200);
+        });
+        Future<Void> deleteTagFut = checkTagFut.compose(tagEntities -> {
+            context.assertEquals(tagEntities.length, 0);
+
+            return TestHelper.deleteTag(context, client, this.tagId, 204);
+        });
+        Future<Void> deleteListFut = deleteTagFut.compose(x -> {
+            return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, 204);
+        });
+        deleteListFut.compose(x -> {
+            return TestHelper.deleteUser(context, client, this.userId, 204);
+        })
+            .setHandler(x -> { async.complete(); });
+    }
 }

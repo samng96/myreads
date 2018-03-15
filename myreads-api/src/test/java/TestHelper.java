@@ -640,4 +640,65 @@ public class TestHelper {
 
         return fut;
     }
+
+    public static Future<Void> addTagToReadingListElement(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        long[] tagIds,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/addTags")
+            .sendJson(tagIds,
+                ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete();
+                });
+
+        return fut;
+    }
+
+    public static Future<Void> removeTagFromReadingListElement(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        long tagId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.delete(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/tags/" + tagId)
+            .send(ar -> {
+                HttpResponse<Buffer> r = ar.result();
+
+                context.assertEquals(r.statusCode(), expectedStatusCode);
+                fut.complete();
+            });
+
+        return fut;
+    }
+
+    public static Future<TagEntity[]> getTagsForReadingListElement(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long rleId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/tags")
+            .send(ar -> {
+                HttpResponse<Buffer> r = ar.result();
+                TagEntity[] tags = Json.decodeValue(r.body(), TagEntity[].class);
+
+                context.assertEquals(r.statusCode(), expectedStatusCode);
+                fut.complete(tags);
+            });
+
+        return fut;
+    }
 }
