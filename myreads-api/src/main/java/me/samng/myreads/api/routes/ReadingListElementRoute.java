@@ -196,4 +196,6 @@ public class ReadingListElementRoute {
             .putHeader("content-type", "text/plain")
             .end();
     }
+
+    // TODO: Need to handle adding/removing tags from an RLE
 }
