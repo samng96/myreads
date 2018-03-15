@@ -54,7 +54,7 @@ public class FollowedListRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(results));
+            .end(Json.encode(results.toArray()));
     }
 
     // Post a new followed list - /users/{userId}/followedLists

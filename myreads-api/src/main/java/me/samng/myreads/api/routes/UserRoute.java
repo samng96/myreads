@@ -24,7 +24,7 @@ public class UserRoute {
 
         routingContext.response()
                 .putHeader("content-type", "text/plain")
-                .end(Json.encode(results));
+                .end(Json.encode(results.toArray()));
     }
 
     // Post a new user

@@ -58,7 +58,7 @@ public class CommentRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(results));
+            .end(Json.encode(results.toArray()));
     }
 
     // POST /users/{userId}/readingListElements/{readingListElementId}/comments

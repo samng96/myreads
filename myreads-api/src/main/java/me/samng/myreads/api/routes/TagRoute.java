@@ -48,7 +48,7 @@ public class TagRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(results));
+            .end(Json.encode(results.toArray()));
     }
 
     // POST /tags

@@ -56,7 +56,7 @@ public class ReadingListElementRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(results));
+            .end(Json.encode(results.toArray()));
     }
 
     // POST /users/{userId}/readingListElements
@@ -259,7 +259,7 @@ public class ReadingListElementRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(addedIds));
+            .end(Json.encode(addedIds.toArray()));
     }
 
     // GET /users/{userId}/readlingListElements/{readingListElementId}/tags
@@ -292,7 +292,7 @@ public class ReadingListElementRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .end(Json.encode(tags));
+            .end(Json.encode(tags.toArray()));
     }
 
     // DELETE /users/{userId}/readlingListElements/{readingListElementId}/tags/{tagId}
