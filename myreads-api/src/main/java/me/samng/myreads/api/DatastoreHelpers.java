@@ -1,13 +1,14 @@
 package me.samng.myreads.api;
 
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.datastore.*;
 import com.google.common.collect.ImmutableList;
-import me.samng.myreads.api.entities.CommentEntity;
-import me.samng.myreads.api.entities.ReadingListElementEntity;
-import me.samng.myreads.api.entities.ReadingListEntity;
+import me.samng.myreads.api.entities.*;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatastoreHelpers {
     private static String keyPath = "/users/samng/gcp-samng-privatekey.json";
@@ -92,6 +93,77 @@ public class DatastoreHelpers {
     public static Key newFollowedListKey(Long keyId) {
         keyFactory.setKind(followedListKind);
         return keyFactory.newKey(keyId);
+    }
+
+    public static List<UserEntity> getAllUsers(Datastore datastore) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.userKind)
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<UserEntity> results = new ArrayList<>();
+        queryresult.forEachRemaining(user -> results.add(UserEntity.fromEntity(user)));
+
+        return results;
+    }
+
+    public static List<ReadingListEntity> getAllReadingListsForUser(
+        Datastore datastore,
+        long userId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.readingListKind)
+            .setFilter(PropertyFilter.eq("userId", userId))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<ReadingListEntity> results = new ArrayList<>();
+        queryresult.forEachRemaining(list -> results.add(ReadingListEntity.fromEntity(list)));
+
+        return results;
+    }
+
+    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(
+        Datastore datastore,
+        long userId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.readingListElementKind)
+            .setFilter(PropertyFilter.eq("userId", userId))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<ReadingListElementEntity> results = new ArrayList<>();
+        queryresult.forEachRemaining(list -> results.add(ReadingListElementEntity.fromEntity(list)));
+
+        return results;
+    }
+
+    public static List<FollowedListEntity> getAllFollowedListsForUser(
+        Datastore datastore,
+        long userId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.followedListKind)
+            .setFilter(PropertyFilter.eq("userId", userId))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<FollowedListEntity> results = new ArrayList<>();
+        queryresult.forEachRemaining(followedList -> results.add(FollowedListEntity.fromEntity(followedList)));
+
+        return results;
+    }
+
+    public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
+        Key key = DatastoreHelpers.newReadingListKey(readingListId);
+        return ReadingListEntity.fromEntity(datastore.get(key));
+    }
+
+    public static ReadingListElementEntity getReadingListElement(Datastore datastore, long readingListElementId) {
+        Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
+        return ReadingListElementEntity.fromEntity(datastore.get(key));
     }
 
     public static boolean updateReadingListEntity(

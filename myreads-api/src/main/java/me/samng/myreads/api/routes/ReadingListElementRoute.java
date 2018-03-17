@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
+import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.TagEntity;
 
@@ -43,16 +44,8 @@ public class ReadingListElementRoute {
             return;
         }
 
-        Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.readingListElementKind)
-            .setFilter(StructuredQuery.PropertyFilter.eq("userId", userId))
-            .build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        QueryResults<Entity> queryresult = datastore.run(query);
-
-        // Iterate through the results to actually fetch them, then serialize them and return.
-        ArrayList<ReadingListElementEntity> results = new ArrayList<ReadingListElementEntity>();
-        queryresult.forEachRemaining(list -> { results.add(ReadingListElementEntity.fromEntity(list)); });
+        List<ReadingListElementEntity> results = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -164,10 +157,6 @@ public class ReadingListElementRoute {
     }
 
     // DELETE /users/{userId}/readingListElements/{readingListElementId}
-    // TODO: When we delete an RLE, make sure we remove it from every list that it's a part of. Should probably
-    // TODO: make the delete a helper method on datastoreHelpers, because we'll also want to untag it, and
-    // TODO: if it was the last element with that tag, we can remove the tag potentially? We also have to remove
-    // TODO: all comments attached to the RLE when it deletes.
     public void deleteReadingListElement(RoutingContext routingContext) {
         long rleId;
         long userId;
@@ -191,7 +180,7 @@ public class ReadingListElementRoute {
                 .end();
             return;
         }
-        datastore.delete(DatastoreHelpers.newReadingListElementKey(rleId));
+        EntityManager.DeleteReadingListElement(datastore, rleId);
 
         routingContext.response()
             .setStatusCode(204)
@@ -251,8 +240,8 @@ public class ReadingListElementRoute {
 
             if (!valid) {
                 // TODO: What error should we give here when we fail to update an entity? Should it really be
-                // TODO: a 404? Or should this be some sort of 500? Or should we return some 202 type and retry?
-                routingContext.response().setStatusCode(404);
+                // TODO: a 400? Or should this be some sort of 500? Or should we return some 202 type and retry?
+                routingContext.response().setStatusCode(400);
                 break;
             }
         }

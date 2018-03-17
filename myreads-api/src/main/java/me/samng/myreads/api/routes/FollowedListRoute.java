@@ -1,13 +1,12 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.FollowedListEntity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class FollowedListRoute {
     private FollowedListEntity getFollowedListIfUserOwnsIt(
@@ -41,16 +40,8 @@ public class FollowedListRoute {
             return;
         }
 
-        Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.followedListKind)
-            .setFilter(PropertyFilter.eq("userId", userId))
-            .build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        QueryResults<Entity> queryresult = datastore.run(query);
-
-        // Iterate through the results to actually fetch them, then serialize them and return.
-        ArrayList<FollowedListEntity> results = new ArrayList<FollowedListEntity>();
-        queryresult.forEachRemaining(followedList -> { results.add(FollowedListEntity.fromEntity(followedList)); });
+        List<FollowedListEntity> results = DatastoreHelpers.getAllFollowedListsForUser(datastore, userId);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")

@@ -4,23 +4,17 @@ import com.google.cloud.datastore.*;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
+import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.UserEntity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserRoute {
     // Get all users
     public void getAllUsers(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-
-        Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.userKind)
-            .build();
-        QueryResults<Entity> queryresult = datastore.run(query);
-
-        // Iterate through the results to actually fetch them, then serialize them and return.
-        ArrayList<UserEntity> results = new ArrayList<UserEntity>();
-        queryresult.forEachRemaining(user -> { results.add(UserEntity.fromEntity(user)); });
+        List<UserEntity> results = DatastoreHelpers.getAllUsers(datastore);
 
         routingContext.response()
                 .putHeader("content-type", "text/plain")
@@ -120,9 +114,9 @@ public class UserRoute {
 
     // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
-        Key key;
+        long userId = -1;
         try {
-            key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
+            userId = Long.decode(routingContext.request().getParam("userId")));
         }
         catch (Exception e) {
             routingContext.response()
@@ -131,12 +125,15 @@ public class UserRoute {
                 .end("Invalid request parameters");
             return;
         }
+
         Datastore datastore = DatastoreHelpers.getDatastore();
-        datastore.delete(key);
-        // TODO: Not enough to just delete the user, gotta clean up the system when it gets deleted.
+        int statusCode = 204;
+        if (!EntityManager.DeleteUser(datastore, userId)) {
+            statusCode = 400;
+        }
 
         routingContext.response()
-                .setStatusCode(204)
+                .setStatusCode(statusCode)
                 .putHeader("content-type", "text/plain")
                 .end();
     }

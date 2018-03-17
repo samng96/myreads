@@ -22,6 +22,9 @@ public class UserEntity {
     @JsonProperty("userId")
     public String userId;
 
+    @JsonProperty("isDeleted")
+    public boolean isDeleted;
+
     public static UserEntity fromEntity(Entity e) {
         UserEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), UserEntity.class);
         entity.id = e.getKey().getId();
