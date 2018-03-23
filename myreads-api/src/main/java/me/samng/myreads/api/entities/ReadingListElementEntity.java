@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,12 @@ public class ReadingListElementEntity {
 
     @JsonProperty("deleted")
     public boolean deleted;
+
+    public ReadingListElementEntity() {
+        tagIds = new ArrayList<>();
+        commentIds = new ArrayList<>();
+        listIds = new ArrayList<>();
+    }
 
     public static ReadingListElementEntity fromEntity(Entity e) {
         ReadingListElementEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {

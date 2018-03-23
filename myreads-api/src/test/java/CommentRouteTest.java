@@ -19,6 +19,7 @@ public class CommentRouteTest {
     private Vertx vertx;
     private long userId = -1;
     private long rleId = -1;
+    private long commentId = -1;
 
     @Before
     public void setUp(TestContext context) {
@@ -103,14 +104,21 @@ public class CommentRouteTest {
             return TestHelper.postComment(context, client, userId, rleId, commentEntity, HttpResponseStatus.CREATED.code());
         });
         Future<CommentEntity> getCommentFut = createCommentEntity.compose(commentId -> {
+            this.commentId = commentId;
+
             return TestHelper.getComment(context, client, this.userId, this.rleId, commentId, HttpResponseStatus.OK.code());
         });
-        Future<Void> deleteCommentFut = getCommentFut.compose(commentEntity -> {
+        Future<ReadingListElementEntity> getRleFut = getCommentFut.compose(commentEntity -> {
             context.assertEquals(commentEntity.readingListElementId, this.rleId);
             context.assertEquals(commentEntity.commentText, "commentTest");
             context.assertEquals(commentEntity.userId, this.userId);
 
-            return TestHelper.deleteComment(context, client, this.userId, this.rleId, commentEntity.id, HttpResponseStatus.NO_CONTENT.code());
+            return TestHelper.getReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.OK.code());
+        });
+        Future<Void> deleteCommentFut = getRleFut.compose(rleEntity -> {
+            context.assertTrue(rleEntity.commentIds.contains(this.commentId));
+
+            return TestHelper.deleteComment(context, client, this.userId, this.rleId, this.commentId, HttpResponseStatus.NO_CONTENT.code());
         });
         Future<Void> deleteRLEFut = deleteCommentFut.compose(x -> {
             return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());

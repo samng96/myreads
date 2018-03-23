@@ -6,6 +6,7 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.CommentEntity;
+import me.samng.myreads.api.entities.ReadingListElementEntity;
 
 import java.util.ArrayList;
 
@@ -81,14 +82,26 @@ public class CommentRoute {
             return;
         }
 
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        // First verify that we have the right reading list element in the system by getting it, then add
+        // the comment, then add the newly added comment's ID to the RLE.
+        ReadingListElementEntity rleEntity = DatastoreHelpers.getReadingListElement(datastore, readingListElementId);
+        if (rleEntity == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newCommentKey())
             .set("commentText", commentEntity.commentText())
             .set("userId", userId)
             .set("readingListElementId", readingListElementId).build();
-        Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
-        // TODO: Now add the comment to the reading list element.
+        rleEntity.commentIds.add(addedEntity.getKey().getId());
+        DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())

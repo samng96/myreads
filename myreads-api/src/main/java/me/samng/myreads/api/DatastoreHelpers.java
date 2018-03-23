@@ -208,6 +208,10 @@ public class DatastoreHelpers {
         {
             builder.set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()));
         }
+        if (readingListElementEntity.commentIds != null)
+        {
+            builder.set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()));
+        }
         Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);
