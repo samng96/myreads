@@ -34,8 +34,8 @@ public class ReadingListEntity {
     @JsonProperty("readingListElementIds")
     public List<Long> readingListElementIds;
 
-    @JsonProperty("isDeleted")
-    public boolean isDeleted;
+    @JsonProperty("deleted")
+    public boolean deleted;
 
     public static ReadingListEntity fromEntity(Entity e) {
         ReadingListEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {

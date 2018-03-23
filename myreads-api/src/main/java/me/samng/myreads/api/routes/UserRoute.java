@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
@@ -29,7 +30,7 @@ public class UserRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request body");
             return;
@@ -44,7 +45,7 @@ public class UserRoute {
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
-                .setStatusCode(201)
+                .setStatusCode(HttpResponseStatus.CREATED.code())
                 .putHeader("content-type", "text/plain")
                 .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -57,7 +58,7 @@ public class UserRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -67,7 +68,7 @@ public class UserRoute {
 
         if (entity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -87,7 +88,7 @@ public class UserRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -103,10 +104,10 @@ public class UserRoute {
         try {
             Datastore datastore = DatastoreHelpers.getDatastore();
             datastore.update(newEntity);
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         catch (DatastoreException e) {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response().putHeader("content-type", "text/plain").end();
@@ -116,20 +117,20 @@ public class UserRoute {
     public void deleteUser(RoutingContext routingContext) {
         long userId = -1;
         try {
-            userId = Long.decode(routingContext.request().getParam("userId")));
+            userId = Long.decode(routingContext.request().getParam("userId"));
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        int statusCode = 204;
+        int statusCode = HttpResponseStatus.NO_CONTENT.code();
         if (!EntityManager.DeleteUser(datastore, userId)) {
-            statusCode = 400;
+            statusCode = HttpResponseStatus.BAD_REQUEST.code();
         }
 
         routingContext.response()

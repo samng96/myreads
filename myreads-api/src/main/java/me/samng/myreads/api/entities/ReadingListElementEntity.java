@@ -41,8 +41,8 @@ public class ReadingListElementEntity {
     @JsonProperty("commentIds")
     public List<Long> commentIds;
 
-    @JsonProperty("isDeleted")
-    public boolean isDeleted;
+    @JsonProperty("deleted")
+    public boolean deleted;
 
     public static ReadingListElementEntity fromEntity(Entity e) {
         ReadingListElementEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {

@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
@@ -43,14 +44,14 @@ public class FollowedListRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<FollowedListEntity[]> getFut = postFut.compose(userId -> {
                 this.userId = userId;
 
-                return TestHelper.getFollowedLists(context, client, userId, 200);
+                return TestHelper.getFollowedLists(context, client, userId, HttpResponseStatus.OK.code());
             });
         getFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.userId, 204);
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -66,11 +67,11 @@ public class FollowedListRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> postOwnerFut = postFut.compose(userId -> {
                 this.userId = userId;
 
-                return TestHelper.postUser(context, client, entity, 201);
+                return TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
             });
         Future<Long> postListFut = postOwnerFut.compose(ownerId -> {
             ReadingListEntity listEntity = new ReadingListEntity();
@@ -80,7 +81,7 @@ public class FollowedListRouteTest {
 
             this.ownerId = ownerId;
 
-            return TestHelper.postReadingList(context, client, listEntity, ownerId, 201); });
+            return TestHelper.postReadingList(context, client, listEntity, ownerId, HttpResponseStatus.CREATED.code()); });
         Future<Long> postFollowedListFut = postListFut.compose(listId -> {
             FollowedListEntity followedListEntity = new FollowedListEntity();
             followedListEntity.listId = listId;
@@ -88,26 +89,26 @@ public class FollowedListRouteTest {
 
             this.listId = listId;
 
-            return TestHelper.postFollowedList(context, client, followedListEntity,  userId, 201);
+            return TestHelper.postFollowedList(context, client, followedListEntity,  userId, HttpResponseStatus.CREATED.code());
             });
         Future<FollowedListEntity[]> getFollowedListFut = postFollowedListFut.compose(listId -> {
-            return TestHelper.getFollowedLists(context, client, this.userId, 200);
+            return TestHelper.getFollowedLists(context, client, this.userId, HttpResponseStatus.OK.code());
             });
         Future<Long> deleteFollowedListFut = getFollowedListFut.compose(e -> {
             context.assertEquals(e[0].listId, this.listId);
             context.assertEquals(e[0].ownerId, this.ownerId);
             context.assertEquals(e[0].userId, this.userId);
 
-            return TestHelper.deleteFollowedList(context, client, this.userId, e[0].id(), 204).map(e[0].id);
+            return TestHelper.deleteFollowedList(context, client, this.userId, e[0].id(), HttpResponseStatus.NO_CONTENT.code()).map(e[0].id);
         });
         Future<Void> deleteListFut = deleteFollowedListFut.compose(e -> {
-            return TestHelper.deleteReadingList(context, client, this.ownerId, this.listId, 204);
+            return TestHelper.deleteReadingList(context, client, this.ownerId, this.listId, HttpResponseStatus.NO_CONTENT.code());
         });
         Future<Void> deleteUserFut = deleteListFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.userId, 204);
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteUserFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.ownerId, 204);
+            return TestHelper.deleteUser(context, client, this.ownerId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }

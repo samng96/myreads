@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
@@ -60,7 +61,7 @@ public class TagRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -72,7 +73,7 @@ public class TagRoute {
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
-            .setStatusCode(201)
+            .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
             .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -84,7 +85,7 @@ public class TagRoute {
             tagId = Long.decode(routingContext.request().getParam("tagId"));
         } catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -94,7 +95,7 @@ public class TagRoute {
         TagEntity tagEntity = getTagEntity(datastore, tagId);
         if (tagEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -113,7 +114,7 @@ public class TagRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -123,7 +124,7 @@ public class TagRoute {
         // TODO: Not enough to just delete the tag, gotta clean up the system when it gets deleted.
 
         routingContext.response()
-            .setStatusCode(204)
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
             .putHeader("content-type", "text/plain")
             .end();
     }

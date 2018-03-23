@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
@@ -33,7 +34,7 @@ public class UserRouteTest {
 
         WebClient client = WebClient.create(vertx);
 
-        TestHelper.getAllUsers(context, client, 200).setHandler(x -> { async.complete(); });
+        TestHelper.getAllUsers(context, client, HttpResponseStatus.OK.code()).setHandler(x -> { async.complete(); });
     }
 
     @Test
@@ -47,14 +48,14 @@ public class UserRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
-        Future<UserEntity> getFut = postFut.compose(userId -> { return TestHelper.getUser(context, client, userId, 200); });
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
+        Future<UserEntity> getFut = postFut.compose(userId -> { return TestHelper.getUser(context, client, userId, HttpResponseStatus.OK.code()); });
         getFut.compose(e -> {
             context.assertEquals(entity.email, e.email);
             context.assertEquals(entity.name, e.name);
             context.assertEquals(entity.userId, e.userId);
 
-            return TestHelper.deleteUser(context, client, e.id, 204);
+            return TestHelper.deleteUser(context, client, e.id, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -70,7 +71,7 @@ public class UserRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> putFut = postFut.compose(userId -> {
             UserEntity putEntity = new UserEntity();
             putEntity.id = userId;
@@ -78,15 +79,15 @@ public class UserRouteTest {
             putEntity.name = "changeduser";
             putEntity.userId = "changeid";
 
-            return TestHelper.putUser(context, client, putEntity, 204).map(userId);
+            return TestHelper.putUser(context, client, putEntity, HttpResponseStatus.NO_CONTENT.code()).map(userId);
         });
-        Future<UserEntity> getFut = putFut.compose(userId -> { return TestHelper.getUser(context, client, userId, 200); });
+        Future<UserEntity> getFut = putFut.compose(userId -> { return TestHelper.getUser(context, client, userId, HttpResponseStatus.OK.code()); });
         getFut.compose(e -> {
             context.assertEquals("changePutUserTest@test.com", e.email);
             context.assertEquals("changeduser", e.name);
             context.assertEquals("changeid", e.userId);
 
-            return TestHelper.deleteUser(context, client, e.id, 204);
+            return TestHelper.deleteUser(context, client, e.id, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -101,11 +102,11 @@ public class UserRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> deleteFut = postFut.compose(userId -> {
-            return TestHelper.deleteUser(context, client, userId, 204).map(userId);
+            return TestHelper.deleteUser(context, client, userId, HttpResponseStatus.NO_CONTENT.code()).map(userId);
         });
-        deleteFut.compose(userId -> { return TestHelper.getUser(context, client, userId, 404); })
+        deleteFut.compose(userId -> { return TestHelper.getUser(context, client, userId, HttpResponseStatus.NOT_FOUND.code()); })
             .setHandler(x -> { async.complete(); });
     }
 }

@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
@@ -34,7 +35,7 @@ public class FollowedListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -56,7 +57,7 @@ public class FollowedListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request body");
             return;
@@ -66,7 +67,7 @@ public class FollowedListRoute {
         if (userId == followedListEntity.ownerId()) {
             // Can't follow your own list.
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Can't follow your own list");
             return;
@@ -81,7 +82,7 @@ public class FollowedListRoute {
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
-            .setStatusCode(201)
+            .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
             .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -96,7 +97,7 @@ public class FollowedListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -105,7 +106,7 @@ public class FollowedListRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getFollowedListIfUserOwnsIt(datastore, userId, listId) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -113,7 +114,7 @@ public class FollowedListRoute {
         datastore.delete(DatastoreHelpers.newFollowedListKey(listId));
 
         routingContext.response()
-            .setStatusCode(204)
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
             .putHeader("content-type", "text/plain")
             .end();
     }

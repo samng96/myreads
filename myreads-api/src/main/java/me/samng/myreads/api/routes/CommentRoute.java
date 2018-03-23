@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
@@ -38,7 +39,7 @@ public class CommentRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -74,7 +75,7 @@ public class CommentRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -87,8 +88,10 @@ public class CommentRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);
 
+        // TODO: Now add the comment to the reading list element.
+
         routingContext.response()
-            .setStatusCode(201)
+            .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
             .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -106,7 +109,7 @@ public class CommentRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -115,17 +118,17 @@ public class CommentRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentEntity.id) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
         }
 
         if (DatastoreHelpers.updateCommentEntity(datastore, commentEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response().putHeader("content-type", "text/plain").end();
@@ -143,7 +146,7 @@ public class CommentRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -153,7 +156,7 @@ public class CommentRoute {
         CommentEntity commentEntity = getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId);
         if (commentEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -176,7 +179,7 @@ public class CommentRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -185,7 +188,7 @@ public class CommentRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getCommentIfOnCorrectUserAndRLE(datastore, userId, readingListElementId, commentId) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -193,7 +196,7 @@ public class CommentRoute {
         datastore.delete(DatastoreHelpers.newCommentKey(commentId));
 
         routingContext.response()
-            .setStatusCode(204)
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
             .putHeader("content-type", "text/plain")
             .end();
     }

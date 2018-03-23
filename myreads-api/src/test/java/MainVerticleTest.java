@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
@@ -43,7 +44,7 @@ public class MainVerticleTest {
                 .send(ar -> {
                     HttpResponse<Buffer> response = ar.result();
 
-                    context.assertEquals(response.statusCode(), 200);
+                    context.assertEquals(response.statusCode(), HttpResponseStatus.OK.code());
                     context.assertTrue(response.body().toString().contains("myReads API service"));
                     async.complete();
                 });

@@ -2,8 +2,10 @@ package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
 import com.google.common.collect.ImmutableList;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.client.HttpResponse;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
@@ -38,7 +40,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -62,7 +64,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -84,7 +86,7 @@ public class ReadingListElementRoute {
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
-            .setStatusCode(201)
+            .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
             .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -99,7 +101,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -109,7 +111,7 @@ public class ReadingListElementRoute {
         ReadingListElementEntity rleEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (rleEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -131,7 +133,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -140,17 +142,17 @@ public class ReadingListElementRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getReadingListElementIfUserOwnsIt(datastore, userId, rleEntity.id) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
         }
 
         if (DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response().putHeader("content-type", "text/plain").end();
@@ -166,7 +168,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -175,7 +177,7 @@ public class ReadingListElementRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getReadingListElementIfUserOwnsIt(datastore, userId, rleId) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -183,7 +185,7 @@ public class ReadingListElementRoute {
         EntityManager.DeleteReadingListElement(datastore, rleId);
 
         routingContext.response()
-            .setStatusCode(204)
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
             .putHeader("content-type", "text/plain")
             .end();
     }
@@ -200,7 +202,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -210,7 +212,7 @@ public class ReadingListElementRoute {
         ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -219,7 +221,7 @@ public class ReadingListElementRoute {
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
         // regardless of whether or not we have errors on the overall operation.
         ArrayList<Long> addedIds = new ArrayList<Long>();
-        routingContext.response().setStatusCode(200);
+        routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
         for (long tagId : tagIds) {
             boolean valid = true;
 
@@ -228,7 +230,7 @@ public class ReadingListElementRoute {
             }
 
             if (readingListElementEntity.tagIds() == null) {
-                readingListElementEntity.tagIds = new ArrayList<Long>();
+                readingListElementEntity.tagIds = new ArrayList<>();
             }
             readingListElementEntity.tagIds.add(tagId);
 
@@ -239,9 +241,7 @@ public class ReadingListElementRoute {
             }
 
             if (!valid) {
-                // TODO: What error should we give here when we fail to update an entity? Should it really be
-                // TODO: a 400? Or should this be some sort of 500? Or should we return some 202 type and retry?
-                routingContext.response().setStatusCode(400);
+                routingContext.response().setStatusCode(HttpResponseStatus.SERVICE_UNAVAILABLE.code());
                 break;
             }
         }
@@ -261,7 +261,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -271,7 +271,7 @@ public class ReadingListElementRoute {
         ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -296,7 +296,7 @@ public class ReadingListElementRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -306,7 +306,7 @@ public class ReadingListElementRoute {
         ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -314,7 +314,7 @@ public class ReadingListElementRoute {
 
         if (readingListElementEntity.tagIds() == null || !readingListElementEntity.tagIds().contains(tagId)) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end("Tag not found");
             return;
@@ -322,9 +322,9 @@ public class ReadingListElementRoute {
 
         readingListElementEntity.tagIds().remove(tagId);
         if (DatastoreHelpers.updateReadingListElementEntity(datastore, readingListElementEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         } else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response()

@@ -16,8 +16,8 @@ public class TagEntity {
     @JsonProperty("tagName")
     public String tagName;
 
-    @JsonProperty("isDeleted")
-    public boolean isDeleted;
+    @JsonProperty("deleted")
+    public boolean deleted;
 
     public static TagEntity fromEntity(Entity e) {
         TagEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), TagEntity.class);

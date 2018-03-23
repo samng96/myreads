@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
@@ -92,7 +93,7 @@ public class TestHelper {
 
                 context.assertEquals(response.statusCode(), expectedStatusCode);
 
-                if (expectedStatusCode != 404) {
+                if (expectedStatusCode != HttpResponseStatus.NOT_FOUND.code()) {
                     UserEntity entity = Json.decodeValue(response.body(), UserEntity.class);
                     fut.complete(entity);
                 }
@@ -192,7 +193,7 @@ public class TestHelper {
 
                 context.assertEquals(response.statusCode(), expectedStatusCode);
 
-                if (expectedStatusCode != 404) {
+                if (expectedStatusCode != HttpResponseStatus.NOT_FOUND.code()) {
                     ReadingListEntity entity = Json.decodeValue(response.body(), ReadingListEntity.class);
                     fut.complete(entity);
                 }
@@ -349,7 +350,7 @@ public class TestHelper {
 
                 context.assertEquals(response.statusCode(), expectedStatusCode);
 
-                if (expectedStatusCode != 404) {
+                if (expectedStatusCode != HttpResponseStatus.NOT_FOUND.code()) {
                     ReadingListElementEntity entity = Json.decodeValue(response.body(), ReadingListElementEntity.class);
                     fut.complete(entity);
                 }
@@ -454,7 +455,7 @@ public class TestHelper {
 
                 context.assertEquals(response.statusCode(), expectedStatusCode);
 
-                if (expectedStatusCode != 404) {
+                if (expectedStatusCode != HttpResponseStatus.NOT_FOUND.code()) {
                     CommentEntity entity = Json.decodeValue(response.body(), CommentEntity.class);
                     fut.complete(entity);
                 }
@@ -551,7 +552,7 @@ public class TestHelper {
 
                     context.assertEquals(response.statusCode(), expectedStatusCode);
 
-                    if (expectedStatusCode != 404) {
+                    if (expectedStatusCode != HttpResponseStatus.NOT_FOUND.code()) {
                         TagEntity entity = Json.decodeValue(response.body(), TagEntity.class);
                         fut.complete(entity);
                     }

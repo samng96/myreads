@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
@@ -43,12 +44,12 @@ public class ReadingListElementRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> getAllFut = postFut.compose(userId -> {
-                return TestHelper.getAllReadingListElements(context, client, userId, 200).map(userId);
+                return TestHelper.getAllReadingListElements(context, client, userId, HttpResponseStatus.OK.code()).map(userId);
             });
         getAllFut.compose(userId -> {
-            return TestHelper.deleteUser(context, client, userId, 204);
+            return TestHelper.deleteUser(context, client, userId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -64,7 +65,7 @@ public class ReadingListElementRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> postRLEFut = postFut.compose(userId -> {
             ReadingListElementEntity rle = new ReadingListElementEntity();
             rle.userId = userId;
@@ -74,9 +75,9 @@ public class ReadingListElementRouteTest {
 
             this.userId = userId;
 
-            return TestHelper.postReadingListElement(context, client, rle, userId, 201); });
+            return TestHelper.postReadingListElement(context, client, rle, userId, HttpResponseStatus.CREATED.code()); });
         Future<ReadingListElementEntity> getFut = postRLEFut.compose(rleId -> {
-            return TestHelper.getReadingListElement(context, client, this.userId, rleId, 200);
+            return TestHelper.getReadingListElement(context, client, this.userId, rleId, HttpResponseStatus.OK.code());
         });
         Future<Long> deleteListFut = getFut.compose(e -> {
             context.assertEquals("description", e.description);
@@ -84,13 +85,13 @@ public class ReadingListElementRouteTest {
             context.assertEquals("some amazon link", e.amazonLink);
             context.assertEquals(this.userId, e.userId);
 
-            return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, 204).map(e.id);
+            return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, HttpResponseStatus.NO_CONTENT.code()).map(e.id);
         });
         Future<ReadingListElementEntity> failGetFut = deleteListFut.compose(listId -> {
-            return TestHelper.getReadingListElement(context, client, this.userId, listId, 404);
+            return TestHelper.getReadingListElement(context, client, this.userId, listId, HttpResponseStatus.NOT_FOUND.code());
         });
         failGetFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.userId, 204);
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -106,7 +107,7 @@ public class ReadingListElementRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> postRLEFut = postFut.compose(userId -> {
             ReadingListElementEntity rleEntity = new ReadingListElementEntity();
             rleEntity.userId = userId;
@@ -116,7 +117,7 @@ public class ReadingListElementRouteTest {
 
             this.userId = userId;
 
-            return TestHelper.postReadingListElement(context, client, rleEntity, userId, 201); });
+            return TestHelper.postReadingListElement(context, client, rleEntity, userId, HttpResponseStatus.CREATED.code()); });
         Future<Long> putFut = postRLEFut.compose(rleId -> {
             ReadingListElementEntity putEntity = new ReadingListElementEntity();
             putEntity.id = rleId;
@@ -125,18 +126,18 @@ public class ReadingListElementRouteTest {
             putEntity.name = "newRLEName";
             putEntity.amazonLink = "amazon from Put";
 
-            return TestHelper.putReadingListElement(context, client, putEntity, this.userId,204).map(rleId);
+            return TestHelper.putReadingListElement(context, client, putEntity, this.userId,HttpResponseStatus.NO_CONTENT.code()).map(rleId);
         });
-        Future<ReadingListElementEntity> getFut = putFut.compose(listId -> { return TestHelper.getReadingListElement(context, client, userId, listId, 200); });
+        Future<ReadingListElementEntity> getFut = putFut.compose(listId -> { return TestHelper.getReadingListElement(context, client, userId, listId, HttpResponseStatus.OK.code()); });
         Future<Void> deleteFut = getFut.compose(e -> {
             context.assertEquals("newdescription", e.description);
             context.assertEquals("newRLEName", e.name);
             context.assertEquals("amazon from Put", e.amazonLink);
 
-            return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, 204);
+            return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.userId, 204);
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }
@@ -152,7 +153,7 @@ public class ReadingListElementRouteTest {
         entity.name = "testuser";
         entity.userId = "testId";
 
-        Future<Long> postFut = TestHelper.postUser(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> postListFut = postFut.compose(userId -> {
             ReadingListElementEntity rle = new ReadingListElementEntity();
             rle.userId = userId;
@@ -162,45 +163,45 @@ public class ReadingListElementRouteTest {
 
             this.userId = userId;
 
-            return TestHelper.postReadingListElement(context, client, rle, userId, 201); });
+            return TestHelper.postReadingListElement(context, client, rle, userId, HttpResponseStatus.CREATED.code()); });
         Future<Long> postTagFut = postListFut.compose(rleId -> {
             TagEntity tagEntity = new TagEntity();
             tagEntity.tagName = "testReadingListElementTag";
 
             this.rleId = rleId;
 
-            return TestHelper.postTag(context, client, tagEntity, 201);
+            return TestHelper.postTag(context, client, tagEntity, HttpResponseStatus.CREATED.code());
         });
         Future<Long> addTagToListFut = postTagFut.compose(tagId -> {
             long[] tagIds = { tagId };
 
             this.tagId = tagId;
 
-            return TestHelper.addTagToReadingListElement(context, client, this.userId, this.rleId, tagIds, 200).map(tagId);
+            return TestHelper.addTagToReadingListElement(context, client, this.userId, this.rleId, tagIds, HttpResponseStatus.OK.code()).map(tagId);
         });
         Future<TagEntity[]> getTagFut = addTagToListFut.compose(tagId -> {
-            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, 200);
+            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.OK.code());
         });
         Future<Void> removeTagFut = getTagFut.compose(tagEntities -> {
             context.assertEquals(tagEntities.length, 1);
             context.assertEquals(tagEntities[0].id, tagId);
             context.assertEquals(tagEntities[0].tagName, "testReadingListElementTag");
 
-            return TestHelper.removeTagFromReadingListElement(context, client, this.userId, this.rleId, this.tagId, 204);
+            return TestHelper.removeTagFromReadingListElement(context, client, this.userId, this.rleId, this.tagId, HttpResponseStatus.NO_CONTENT.code());
         });
         Future<TagEntity[]> checkTagFut = removeTagFut.compose(tagId -> {
-            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, 200);
+            return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.OK.code());
         });
         Future<Void> deleteTagFut = checkTagFut.compose(tagEntities -> {
             context.assertEquals(tagEntities.length, 0);
 
-            return TestHelper.deleteTag(context, client, this.tagId, 204);
+            return TestHelper.deleteTag(context, client, this.tagId, HttpResponseStatus.NO_CONTENT.code());
         });
         Future<Void> deleteListFut = deleteTagFut.compose(x -> {
-            return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, 204);
+            return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteListFut.compose(x -> {
-            return TestHelper.deleteUser(context, client, this.userId, 204);
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         })
             .setHandler(x -> { async.complete(); });
     }

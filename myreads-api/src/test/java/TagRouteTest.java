@@ -1,3 +1,4 @@
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.Async;
@@ -33,7 +34,7 @@ public class TagRouteTest {
 
         WebClient client = WebClient.create(vertx);
 
-        TestHelper.getAllTags(context, client, 200).setHandler(x -> { async.complete(); });
+        TestHelper.getAllTags(context, client, HttpResponseStatus.OK.code()).setHandler(x -> { async.complete(); });
     }
 
     @Test
@@ -45,14 +46,14 @@ public class TagRouteTest {
         TagEntity entity = new TagEntity();
         entity.tagName = "testTag";
 
-        Future<Long> postFut = TestHelper.postTag(context, client, entity, 201);
+        Future<Long> postFut = TestHelper.postTag(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<TagEntity> getTagFut = postFut.compose(tagId -> {
-            return TestHelper.getTag(context, client, tagId, 200);
+            return TestHelper.getTag(context, client, tagId, HttpResponseStatus.OK.code());
         });
         getTagFut.compose(tagEntity -> {
             context.assertEquals(tagEntity.tagName, "testTag");
 
-            return TestHelper.deleteTag(context, client, tagEntity.id, 204);
+            return TestHelper.deleteTag(context, client, tagEntity.id, HttpResponseStatus.NO_CONTENT.code());
         }).setHandler(x -> { async.complete(); });
     }
 }

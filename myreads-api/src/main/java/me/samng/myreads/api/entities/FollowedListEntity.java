@@ -22,8 +22,8 @@ public class FollowedListEntity {
     @JsonProperty("userId")
     public long userId;
 
-    @JsonProperty("isDeleted")
-    public boolean isDeleted;
+    @JsonProperty("deleted")
+    public boolean deleted;
 
     public static FollowedListEntity fromEntity(Entity e) {
         FollowedListEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), FollowedListEntity.class);

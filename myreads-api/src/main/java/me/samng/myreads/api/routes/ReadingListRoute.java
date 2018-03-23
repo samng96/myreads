@@ -2,6 +2,7 @@ package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.*;
 import com.google.common.collect.ImmutableList;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
@@ -39,7 +40,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -63,7 +64,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -84,7 +85,7 @@ public class ReadingListRoute {
         Entity addedEntity = datastore.add(insertEntity);
 
         routingContext.response()
-            .setStatusCode(201)
+            .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
             .end(Long.toString(addedEntity.getKey().getId()));
     }
@@ -99,7 +100,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -109,7 +110,7 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -131,7 +132,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -140,17 +141,17 @@ public class ReadingListRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getListIfUserOwnsIt(datastore, userId, readingListEntity.id) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
         }
 
         if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response().putHeader("content-type", "text/plain").end();
@@ -169,7 +170,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -178,7 +179,7 @@ public class ReadingListRoute {
         Datastore datastore = DatastoreHelpers.getDatastore();
         if (getListIfUserOwnsIt(datastore, userId, listId) == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -186,7 +187,7 @@ public class ReadingListRoute {
         EntityManager.DeleteReadingList(datastore, listId);
 
         routingContext.response()
-            .setStatusCode(204)
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
             .putHeader("content-type", "text/plain")
             .end();
     }
@@ -203,7 +204,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -215,7 +216,7 @@ public class ReadingListRoute {
             readingListEntity.readingListElementIds() == null ||
             !readingListEntity.readingListElementIds().contains(rleId)) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -231,10 +232,10 @@ public class ReadingListRoute {
 
         if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity) &&
             DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response()
@@ -255,7 +256,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -265,7 +266,7 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -274,7 +275,7 @@ public class ReadingListRoute {
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
         // regardless of whether or not we have errors on the overall operation.
         ArrayList<Long> addedIds = new ArrayList<Long>();
-        routingContext.response().setStatusCode(200);
+        routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
         for (long rleId : rleIds) {
             boolean valid = true;
 
@@ -305,7 +306,7 @@ public class ReadingListRoute {
             }
 
             if (!valid) {
-                routingContext.response().setStatusCode(404);
+                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
                 break;
             }
         }
@@ -327,7 +328,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -337,7 +338,7 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -346,7 +347,7 @@ public class ReadingListRoute {
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
         // regardless of whether or not we have errors on the overall operation.
         ArrayList<Long> addedIds = new ArrayList<Long>();
-        routingContext.response().setStatusCode(200);
+        routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
         for (long tagId : tagIds) {
             boolean valid = true;
 
@@ -367,8 +368,8 @@ public class ReadingListRoute {
 
             if (!valid) {
                 // TODO: What error should we give here when we fail to update an entity? Should it really be
-                // TODO: a 404? Or should this be some sort of 500? Or should we return some 202 type and retry?
-                routingContext.response().setStatusCode(404);
+                // TODO: a HttpResponseStatus.NOT_FOUND.code()? Or should this be some sort of 500? Or should we return some 202 type and retry?
+                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
                 break;
             }
         }
@@ -388,7 +389,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -398,7 +399,7 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -423,7 +424,7 @@ public class ReadingListRoute {
         }
         catch (Exception e) {
             routingContext.response()
-                .setStatusCode(400)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
             return;
@@ -433,7 +434,7 @@ public class ReadingListRoute {
         ReadingListEntity readingListEntity = getListIfUserOwnsIt(datastore, userId, listId);
         if (readingListEntity == null) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end();
             return;
@@ -441,7 +442,7 @@ public class ReadingListRoute {
 
         if (readingListEntity.tagIds() == null || !readingListEntity.tagIds().contains(tagId)) {
             routingContext.response()
-                .setStatusCode(404)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
                 .end("Tag not found");
             return;
@@ -449,9 +450,9 @@ public class ReadingListRoute {
 
         readingListEntity.tagIds().remove(tagId);
         if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
-            routingContext.response().setStatusCode(204);
+            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         } else {
-            routingContext.response().setStatusCode(404);
+            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 
         routingContext.response()
