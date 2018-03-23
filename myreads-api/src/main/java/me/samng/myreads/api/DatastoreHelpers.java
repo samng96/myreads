@@ -172,15 +172,10 @@ public class DatastoreHelpers {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey(readingListEntity.id))
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
-            .set("userId", readingListEntity.userId());
-        if (readingListEntity.tagIds != null)
-        {
-            builder.set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()));
-        }
-        if (readingListEntity.readingListElementIds != null)
-        {
-            builder.set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
-        }
+            .set("userId", readingListEntity.userId())
+            .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
+
         Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);
@@ -198,20 +193,10 @@ public class DatastoreHelpers {
                 .set("name", readingListElementEntity.name())
                 .set("description", readingListElementEntity.description())
                 .set("userId", readingListElementEntity.userId())
-                .set("amazonLink", readingListElementEntity.amazonLink());
-
-        if (readingListElementEntity.tagIds != null)
-        {
-            builder.set("tagIds", ImmutableList.copyOf(readingListElementEntity.tagIds().stream().map(LongValue::new).iterator()));
-        }
-        if (readingListElementEntity.listIds != null)
-        {
-            builder.set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()));
-        }
-        if (readingListElementEntity.commentIds != null)
-        {
-            builder.set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()));
-        }
+                .set("amazonLink", readingListElementEntity.amazonLink())
+                .set("tagIds", ImmutableList.copyOf(readingListElementEntity.tagIds().stream().map(LongValue::new).iterator()))
+                .set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()))
+                .set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()));
         Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);

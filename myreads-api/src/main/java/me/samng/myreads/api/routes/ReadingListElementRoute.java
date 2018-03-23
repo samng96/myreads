@@ -74,13 +74,10 @@ public class ReadingListElementRoute {
             .set("name", rleEntity.name())
             .set("description", rleEntity.description())
             .set("userId", userId)
-            .set("amazonLink", rleEntity.amazonLink());
-        if (rleEntity.tagIds != null) {
-            builder.set("tagIds", ImmutableList.copyOf(rleEntity.tagIds().stream().map(LongValue::new).iterator()));
-        }
-        if (rleEntity.listIds != null) {
-            builder.set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()));
-        }
+            .set("amazonLink", rleEntity.amazonLink())
+            .set("tagIds", ImmutableList.copyOf(rleEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()));
+
         FullEntity<IncompleteKey> insertEntity = builder.build();
         Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);

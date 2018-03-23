@@ -73,13 +73,10 @@ public class ReadingListRoute {
         FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
-            .set("userId", userId);
-        if (readingListEntity.tagIds != null) {
-            builder.set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()));
-        }
-        if (readingListEntity.readingListElementIds != null) {
-            builder.set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
-        }
+            .set("userId", userId)
+            .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
+
         FullEntity<IncompleteKey> insertEntity = builder.build();
         Datastore datastore = DatastoreHelpers.getDatastore();
         Entity addedEntity = datastore.add(insertEntity);

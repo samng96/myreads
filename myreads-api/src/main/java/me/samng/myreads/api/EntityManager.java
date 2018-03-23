@@ -51,23 +51,19 @@ public class EntityManager {
         ReadingListEntity list;
         Key key;
 
-        if (rle.listIds != null) {
-            for (long listId : rle.listIds) {
-                list = DatastoreHelpers.getReadingList(datastore, listId);
+        for (long listId : rle.listIds) {
+            list = DatastoreHelpers.getReadingList(datastore, listId);
 
-                assert list.readingListElementIds().contains(rle.id);
-                list.readingListElementIds().remove(rle.id);
-                if (!DatastoreHelpers.updateReadingListEntity(datastore, list)) {
-                    return false;
-                }
+            assert list.readingListElementIds().contains(rle.id);
+            list.readingListElementIds().remove(rle.id);
+            if (!DatastoreHelpers.updateReadingListEntity(datastore, list)) {
+                return false;
             }
         }
 
-        if (rle.commentIds != null) {
-            for (long commentId : rle.commentIds) {
-                key = DatastoreHelpers.newCommentKey(commentId);
-                datastore.delete(key);
-            }
+        for (long commentId : rle.commentIds) {
+            key = DatastoreHelpers.newCommentKey(commentId);
+            datastore.delete(key);
         }
 
         key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
@@ -81,18 +77,16 @@ public class EntityManager {
         ReadingListEntity list = DatastoreHelpers.getReadingList(datastore, readingListId);
         ReadingListElementEntity rle;
 
-        if (list.readingListElementIds != null) {
-            for (long rleId : list.readingListElementIds) {
-                rle = DatastoreHelpers.getReadingListElement(datastore, rleId);
+        for (long rleId : list.readingListElementIds) {
+            rle = DatastoreHelpers.getReadingListElement(datastore, rleId);
 
-                assert rle.listIds.contains(readingListId);
-                rle.listIds.remove(readingListId);
-                DatastoreHelpers.updateReadingListElementEntity(datastore, rle);
+            assert rle.listIds.contains(readingListId);
+            rle.listIds.remove(readingListId);
+            DatastoreHelpers.updateReadingListElementEntity(datastore, rle);
 
-                // If this RLE is going to be orphaned, delete it.
-                if (rle.listIds.size() == 0) {
-                    EntityManager.DeleteReadingListElement(datastore, rle.id);
-                }
+            // If this RLE is going to be orphaned, delete it.
+            if (rle.listIds.size() == 0) {
+                EntityManager.DeleteReadingListElement(datastore, rle.id);
             }
         }
 
