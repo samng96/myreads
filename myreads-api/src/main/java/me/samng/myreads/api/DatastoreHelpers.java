@@ -6,6 +6,7 @@ import com.google.cloud.datastore.*;
 import com.google.common.collect.ImmutableList;
 import me.samng.myreads.api.entities.*;
 
+import javax.xml.stream.events.Comment;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,64 +36,126 @@ public class DatastoreHelpers {
         return options.getService();
     }
 
-    public static IncompleteKey newUserKey() {
+    private static IncompleteKey newUserKey() {
         keyFactory.setKind(userKind);
         return keyFactory.newKey();
     }
 
-    public static Key newUserKey(Long keyId) {
+    private static Key newUserKey(Long keyId) {
         keyFactory.setKind(userKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newCommentKey() {
+    private static IncompleteKey newCommentKey() {
         keyFactory.setKind(commentKind);
         return keyFactory.newKey();
     }
 
-    public static Key newCommentKey(Long keyId) {
+    private static Key newCommentKey(Long keyId) {
         keyFactory.setKind(commentKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newTagKey() {
+    private static IncompleteKey newTagKey() {
         keyFactory.setKind(tagKind);
         return keyFactory.newKey();
     }
 
-    public static Key newTagKey(Long keyId) {
+    private static Key newTagKey(Long keyId) {
         keyFactory.setKind(tagKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newReadingListKey() {
+    private static IncompleteKey newReadingListKey() {
         keyFactory.setKind(readingListKind);
         return keyFactory.newKey();
     }
 
-    public static Key newReadingListKey(Long keyId) {
+    private static Key newReadingListKey(Long keyId) {
         keyFactory.setKind(readingListKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newReadingListElementKey() {
+    private static IncompleteKey newReadingListElementKey() {
         keyFactory.setKind(readingListElementKind);
         return keyFactory.newKey();
     }
 
-    public static Key newReadingListElementKey(Long keyId) {
+    private static Key newReadingListElementKey(Long keyId) {
         keyFactory.setKind(readingListElementKind);
         return keyFactory.newKey(keyId);
     }
 
-    public static IncompleteKey newFollowedListKey() {
+    private static IncompleteKey newFollowedListKey() {
         keyFactory.setKind(followedListKind);
         return keyFactory.newKey();
     }
 
-    public static Key newFollowedListKey(Long keyId) {
+    private static Key newFollowedListKey(Long keyId) {
         keyFactory.setKind(followedListKind);
         return keyFactory.newKey(keyId);
+    }
+
+    public static long createUser(Datastore datastore, UserEntity userEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUserKey())
+            .set("name", userEntity.name())
+            .set("email", userEntity.email())
+            .set("userId", userEntity.userId())
+            .build();
+        Entity entity = datastore.add(insertEntity);
+        return entity.getKey().getId();
+    }
+
+    public static long createReadingList(Datastore datastore, ReadingListEntity readingListEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
+            .set("name", readingListEntity.name())
+            .set("description", readingListEntity.description())
+            .set("userId", readingListEntity.userId)
+            .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()))
+            .build();
+        Entity entity = datastore.add(insertEntity);
+        return entity.getKey().getId();
+    }
+
+    public static long createFollowedList(Datastore datastore, FollowedListEntity followedListEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newFollowedListKey())
+            .set("userId", followedListEntity.userId())
+            .set("listId", followedListEntity.listId())
+            .set("ownerId", followedListEntity.ownerId())
+            .build();
+        Entity entity = datastore.add(insertEntity);
+        return entity.getKey().getId();
+    }
+
+    public static long createReadingListElement(Datastore datastore, ReadingListElementEntity rleEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey())
+            .set("name", rleEntity.name())
+            .set("description", rleEntity.description())
+            .set("userId", rleEntity.userId())
+            .set("amazonLink", rleEntity.amazonLink())
+            .set("tagIds", ImmutableList.copyOf(rleEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()))
+            .build();
+
+        Entity entity = datastore.add(insertEntity);
+        return entity.getKey().getId();
+    }
+
+    public static long createComment(Datastore datastore, CommentEntity commentEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newCommentKey())
+            .set("commentText", commentEntity.commentText())
+            .set("userId", commentEntity.userId)
+            .set("readingListElementId", commentEntity.readingListElementId).build();
+        Entity entity = datastore.add(insertEntity);
+        return entity.getKey().getId();
+    }
+
+    public static long createTag(Datastore datastore, TagEntity tagEntity) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagKey())
+            .set("tagName", tagEntity.tagName()).build();
+        Entity addedEntity = datastore.add(insertEntity);
+        return addedEntity.getKey().getId();
     }
 
     public static List<UserEntity> getAllUsers(Datastore datastore) {
@@ -156,17 +219,80 @@ public class DatastoreHelpers {
         return results;
     }
 
+    public static UserEntity getUser(Datastore datastore, long userId) {
+        Key key = DatastoreHelpers.newUserKey(userId);
+        Entity entity = datastore.get(key);
+        if (entity == null) {
+            return null;
+        }
+        return UserEntity.fromEntity(entity);
+    }
+
     public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
         Key key = DatastoreHelpers.newReadingListKey(readingListId);
-        return ReadingListEntity.fromEntity(datastore.get(key));
+        Entity entity = datastore.get(key);
+
+        if (entity == null) {
+            return null;
+        }
+        return ReadingListEntity.fromEntity(entity);
     }
 
     public static ReadingListElementEntity getReadingListElement(Datastore datastore, long readingListElementId) {
         Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
-        return ReadingListElementEntity.fromEntity(datastore.get(key));
+        Entity entity = datastore.get(key);
+        if (entity == null) {
+            return null;
+        }
+        return ReadingListElementEntity.fromEntity(entity);
     }
 
-    public static boolean updateReadingListEntity(
+    public static FollowedListEntity getFollowedList(Datastore datastore, long listId) {
+        Key key = DatastoreHelpers.newFollowedListKey(listId);
+        Entity entity = datastore.get(key);
+        if (entity == null) {
+            return null;
+        }
+        return FollowedListEntity.fromEntity(entity);
+    }
+
+    public static CommentEntity getComment(Datastore datastore, long commentId) {
+        Key key = DatastoreHelpers.newCommentKey(commentId);
+        Entity entity = datastore.get(key);
+        if (entity == null) {
+            return null;
+        }
+        return CommentEntity.fromEntity(entity);
+    }
+
+    public static TagEntity getTag(Datastore datastore, long tagId) {
+        Key key = DatastoreHelpers.newTagKey(tagId);
+        Entity entity = datastore.get(key);
+        if (entity == null) {
+            return null;
+        }
+        TagEntity tagEntity = TagEntity.fromEntity(entity);
+        return tagEntity;
+    }
+
+    public static boolean updateUser(Datastore datastore, UserEntity userEntity) {
+        Key key = DatastoreHelpers.newUserKey(userEntity.id());
+        Entity newEntity = Entity.newBuilder(key)
+            .set("name", userEntity.name())
+            .set("email", userEntity.email())
+            .set("userId", userEntity.userId())
+            .build();
+
+        try {
+            datastore.update(newEntity);
+            return true;
+        }
+        catch (DatastoreException e) {
+            return false;
+        }
+    }
+
+    public static boolean updateReadingList(
         Datastore datastore,
         ReadingListEntity readingListEntity) {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey(readingListEntity.id))
@@ -186,7 +312,7 @@ public class DatastoreHelpers {
         }
     }
 
-    public static boolean updateReadingListElementEntity(
+    public static boolean updateReadingListElement(
         Datastore datastore,
         ReadingListElementEntity readingListElementEntity) {
             Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(readingListElementEntity.id))
@@ -207,7 +333,7 @@ public class DatastoreHelpers {
         }
     }
 
-    public static boolean updateCommentEntity(Datastore datastore, CommentEntity commentEntity) {
+    public static boolean updateComment(Datastore datastore, CommentEntity commentEntity) {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newCommentKey(commentEntity.id))
             .set("commentText", commentEntity.commentText())
             .set("userId", commentEntity.userId())
@@ -221,5 +347,35 @@ public class DatastoreHelpers {
         catch (DatastoreException e) {
             return false;
         }
+    }
+
+    public static void deleteFollowedList(Datastore datastore, long id) {
+        Key key = DatastoreHelpers.newFollowedListKey(id);
+        datastore.delete(key);
+    }
+
+    public static void deleteUser(Datastore datastore, long userId) {
+        Key key = DatastoreHelpers.newUserKey(userId);
+        datastore.delete(key);
+    }
+
+    public static void deleteComment(Datastore datastore, long commentId) {
+        Key key = DatastoreHelpers.newCommentKey(commentId);
+        datastore.delete(key);
+    }
+
+    public static void deleteReadingListElement(Datastore datastore, long readingListElementId) {
+        Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
+        datastore.delete(key);
+    }
+
+    public static void deleteReadingList(Datastore datastore, long readingListId) {
+        Key key = DatastoreHelpers.newReadingListKey(readingListId);
+        datastore.delete(key);
+    }
+
+    public static void deleteTag(Datastore datastore, long tagId) {
+        Key key = DatastoreHelpers.newTagKey(tagId);
+        datastore.delete(key);
     }
 }

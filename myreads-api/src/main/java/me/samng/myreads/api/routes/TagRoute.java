@@ -11,18 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagRoute {
-    private static TagEntity getTagEntity(
-        Datastore datastore,
-        long tagId) {
-
-        Key key = DatastoreHelpers.newTagKey(tagId);
-        Entity entity = datastore.get(key);
-        if (entity == null) {
-            return null;
-        }
-        TagEntity tagEntity = TagEntity.fromEntity(entity);
-        return tagEntity;
-    }
 
     public static List<TagEntity> getTagEntities(
         Datastore datastore,
@@ -30,7 +18,10 @@ public class TagRoute {
         ArrayList<TagEntity> results = new ArrayList<>();
 
         for (long tagId : tagIds) {
-            results.add(getTagEntity(datastore, tagId));
+            TagEntity tagEntity = DatastoreHelpers.getTag(datastore, tagId);
+            if (tagEntity != null) {
+                results.add(tagEntity);
+            }
         }
         return results;
     }
@@ -67,15 +58,13 @@ public class TagRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagKey())
-            .set("tagName", tagEntity.tagName()).build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Entity addedEntity = datastore.add(insertEntity);
+        long addedId = DatastoreHelpers.createTag(datastore, tagEntity);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
-            .end(Long.toString(addedEntity.getKey().getId()));
+            .end(Long.toString(addedId));
     }
 
     // GET /tags/{tagId}
@@ -92,7 +81,7 @@ public class TagRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        TagEntity tagEntity = getTagEntity(datastore, tagId);
+        TagEntity tagEntity = DatastoreHelpers.getTag(datastore, tagId);
         if (tagEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
@@ -108,9 +97,9 @@ public class TagRoute {
 
     // DELETE /tags/{tagId}
     public void deleteTag(RoutingContext routingContext) {
-        Key key;
+        long tagId;
         try {
-            key = DatastoreHelpers.newTagKey(Long.decode(routingContext.request().getParam("tagId")));
+            tagId = Long.decode(routingContext.request().getParam("tagId"));
         }
         catch (Exception e) {
             routingContext.response()
@@ -120,7 +109,7 @@ public class TagRoute {
             return;
         }
         Datastore datastore = DatastoreHelpers.getDatastore();
-        datastore.delete(key);
+        DatastoreHelpers.deleteTag(datastore, tagId);
         // TODO: Not enough to just delete the tag, gotta clean up the system when it gets deleted.
 
         routingContext.response()

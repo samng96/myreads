@@ -35,26 +35,21 @@ public class UserRoute {
                 .end("Invalid request body");
             return;
         }
-
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUserKey())
-            .set("name", userEntity.name())
-            .set("email", userEntity.email())
-            .set("userId", userEntity.userId())
-            .build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Entity addedEntity = datastore.add(insertEntity);
+        long addedId = DatastoreHelpers.createUser(datastore, userEntity);
 
         routingContext.response()
                 .setStatusCode(HttpResponseStatus.CREATED.code())
                 .putHeader("content-type", "text/plain")
-                .end(Long.toString(addedEntity.getKey().getId()));
+                .end(Long.toString(addedId));
     }
 
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
         Key key;
+        long userId = -1;
         try {
-            key = DatastoreHelpers.newUserKey(Long.decode(routingContext.request().getParam("userId")));
+            userId = Long.decode(routingContext.request().getParam("userId"));
         }
         catch (Exception e) {
             routingContext.response()
@@ -64,7 +59,7 @@ public class UserRoute {
             return;
         }
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Entity entity = datastore.get(key);
+        UserEntity entity = DatastoreHelpers.getUser(datastore, userId);
 
         if (entity == null) {
             routingContext.response()
@@ -76,7 +71,7 @@ public class UserRoute {
 
         routingContext.response()
                 .putHeader("content-type", "text/plain")
-                .end(Json.encode(UserEntity.fromEntity(entity)));
+                .end(Json.encode(entity));
     }
 
     // Update a user, /users/{userId}
@@ -94,19 +89,11 @@ public class UserRoute {
             return;
         }
 
-        // First get the entity
-        Key key = DatastoreHelpers.newUserKey(userEntity.id());
-        Entity newEntity = Entity.newBuilder(key)
-            .set("name", userEntity.name())
-            .set("email", userEntity.email())
-            .set("userId", userEntity.userId())
-            .build();
-        try {
-            Datastore datastore = DatastoreHelpers.getDatastore();
-            datastore.update(newEntity);
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        if (DatastoreHelpers.updateUser(datastore, userEntity)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
-        catch (DatastoreException e) {
+        else {
             routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
         }
 

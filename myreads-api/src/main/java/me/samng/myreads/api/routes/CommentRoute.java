@@ -17,12 +17,7 @@ public class CommentRoute {
         long rleId,
         long commentId) {
 
-        Key key = DatastoreHelpers.newCommentKey(commentId);
-        Entity entity = datastore.get(key);
-        if (entity == null) {
-            return null;
-        }
-        CommentEntity commentEntity = CommentEntity.fromEntity(entity);
+        CommentEntity commentEntity = DatastoreHelpers.getComment(datastore, commentId);
         if (commentEntity.readingListElementId != rleId || commentEntity.userId != userId) {
             return null;
         }
@@ -94,19 +89,16 @@ public class CommentRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newCommentKey())
-            .set("commentText", commentEntity.commentText())
-            .set("userId", userId)
-            .set("readingListElementId", readingListElementId).build();
-        Entity addedEntity = datastore.add(insertEntity);
-
-        rleEntity.commentIds.add(addedEntity.getKey().getId());
-        DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity);
+        commentEntity.userId = userId;
+        commentEntity.readingListElementId = readingListElementId;
+        long addedId = DatastoreHelpers.createComment(datastore, commentEntity);
+        rleEntity.commentIds.add(addedId);
+        DatastoreHelpers.updateReadingListElement(datastore, rleEntity);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
-            .end(Long.toString(addedEntity.getKey().getId()));
+            .end(Long.toString(addedId));
     }
 
     // PUT /users/{userId}/readingListElements/{readingListElementId}/comments/{commentId}
@@ -137,7 +129,7 @@ public class CommentRoute {
             return;
         }
 
-        if (DatastoreHelpers.updateCommentEntity(datastore, commentEntity)) {
+        if (DatastoreHelpers.updateComment(datastore, commentEntity)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -206,7 +198,7 @@ public class CommentRoute {
                 .end();
             return;
         }
-        datastore.delete(DatastoreHelpers.newCommentKey(commentId));
+        DatastoreHelpers.deleteComment(datastore, commentId);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.NO_CONTENT.code())

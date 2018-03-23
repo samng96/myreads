@@ -6,6 +6,7 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.entities.FollowedListEntity;
+import me.samng.myreads.api.entities.UserEntity;
 
 import java.util.List;
 
@@ -15,13 +16,8 @@ public class FollowedListRoute {
         long userId,
         long listId) {
 
-        Key key = DatastoreHelpers.newFollowedListKey(listId);
-        Entity entity = datastore.get(key);
-        if (entity == null) {
-            return null;
-        }
-        FollowedListEntity followedListEntity = FollowedListEntity.fromEntity(entity);
-        if (followedListEntity.userId != userId) {
+        FollowedListEntity followedListEntity = DatastoreHelpers.getFollowedList(datastore, listId);
+        if (followedListEntity == null || followedListEntity.userId != userId) {
             return null;
         }
         return followedListEntity;
@@ -73,18 +69,23 @@ public class FollowedListRoute {
             return;
         }
 
-        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newFollowedListKey())
-            .set("userId", userId)
-            .set("listId", followedListEntity.listId())
-            .set("ownerId", followedListEntity.ownerId())
-            .build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Entity addedEntity = datastore.add(insertEntity);
+        UserEntity userEntity = DatastoreHelpers.getUser(datastore, userId);
+        if (userEntity == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        followedListEntity.userId = userId;
+        long addedId = DatastoreHelpers.createFollowedList(datastore, followedListEntity);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
-            .end(Long.toString(addedEntity.getKey().getId()));
+            .end(Long.toString(addedId));
     }
 
     // Delete a user, /users/{userId}/readingLists/{readingListId}
@@ -111,7 +112,7 @@ public class FollowedListRoute {
                 .end();
             return;
         }
-        datastore.delete(DatastoreHelpers.newFollowedListKey(listId));
+        DatastoreHelpers.deleteFollowedList(datastore, listId);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.NO_CONTENT.code())

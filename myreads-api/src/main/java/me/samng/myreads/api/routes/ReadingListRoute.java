@@ -10,6 +10,7 @@ import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
 import me.samng.myreads.api.entities.TagEntity;
+import me.samng.myreads.api.entities.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +20,8 @@ public class ReadingListRoute {
         Datastore datastore,
         long userId,
         long listId) {
-
-        Key key = DatastoreHelpers.newReadingListKey(listId);
-        Entity entity = datastore.get(key);
-        if (entity == null) {
-            return null;
-        }
-        ReadingListEntity readingListEntity = ReadingListEntity.fromEntity(entity);
-        if (readingListEntity.userId != userId) {
+        ReadingListEntity readingListEntity = DatastoreHelpers.getReadingList(datastore, listId);
+        if (readingListEntity == null || readingListEntity.userId != userId) {
             return null;
         }
         return readingListEntity;
@@ -70,21 +65,23 @@ public class ReadingListRoute {
             return;
         }
 
-        FullEntity.Builder<IncompleteKey> builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
-            .set("name", readingListEntity.name())
-            .set("description", readingListEntity.description())
-            .set("userId", userId)
-            .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
-            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
-
-        FullEntity<IncompleteKey> insertEntity = builder.build();
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Entity addedEntity = datastore.add(insertEntity);
+        UserEntity userEntity = DatastoreHelpers.getUser(datastore, userId);
+        if (userEntity == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        readingListEntity.userId = userId;
+        long addedId = DatastoreHelpers.createReadingList(datastore, readingListEntity);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())
             .putHeader("content-type", "text/plain")
-            .end(Long.toString(addedEntity.getKey().getId()));
+            .end(Long.toString(addedId));
     }
 
     // Get a specific reading list, /users/{userId}/readingLists/{readingListId}
@@ -144,7 +141,7 @@ public class ReadingListRoute {
             return;
         }
 
-        if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -227,8 +224,8 @@ public class ReadingListRoute {
         readingListEntity.readingListElementIds.remove(rleId);
         rleEntity.listIds.remove(listId);
 
-        if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity) &&
-            DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity) &&
+            DatastoreHelpers.updateReadingListElement(datastore, rleEntity)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -295,8 +292,8 @@ public class ReadingListRoute {
             }
             rleEntity.listIds.add(listId);
 
-            if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity) &&
-                DatastoreHelpers.updateReadingListElementEntity(datastore, rleEntity)) {
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity) &&
+                DatastoreHelpers.updateReadingListElement(datastore, rleEntity)) {
                 addedIds.add(rleId);
             } else {
                 valid = false;
@@ -357,7 +354,7 @@ public class ReadingListRoute {
             }
             readingListEntity.tagIds.add(tagId);
 
-            if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
                 addedIds.add(tagId);
             } else {
                 valid = false;
@@ -446,7 +443,7 @@ public class ReadingListRoute {
         }
 
         readingListEntity.tagIds().remove(tagId);
-        if (DatastoreHelpers.updateReadingListEntity(datastore, readingListEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         } else {
             routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
