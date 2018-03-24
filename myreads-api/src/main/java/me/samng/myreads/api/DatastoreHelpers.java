@@ -20,6 +20,7 @@ public class DatastoreHelpers {
     public static String commentKind = "comment";
     public static String tagKind = "tag";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
+    private static String deletedMoniker = "deleted";
 
     public static Datastore getDatastore() {
         DatastoreOptions options = null;
@@ -160,6 +161,7 @@ public class DatastoreHelpers {
 
     public static List<UserEntity> getAllUsers(Datastore datastore) {
         Query<Entity> query = Query.newEntityQueryBuilder()
+            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
             .setKind(DatastoreHelpers.userKind)
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
@@ -171,12 +173,11 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListEntity> getAllReadingListsForUser(
-        Datastore datastore,
-        long userId) {
+    public static List<ReadingListEntity> getAllReadingListsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
+            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -187,12 +188,11 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(
-        Datastore datastore,
-        long userId) {
+    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListElementKind)
             .setFilter(PropertyFilter.eq("userId", userId))
+            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -203,12 +203,11 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<FollowedListEntity> getAllFollowedListsForUser(
-        Datastore datastore,
-        long userId) {
+    public static List<FollowedListEntity> getAllFollowedListsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.followedListKind)
             .setFilter(PropertyFilter.eq("userId", userId))
+            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -225,7 +224,11 @@ public class DatastoreHelpers {
         if (entity == null) {
             return null;
         }
-        return UserEntity.fromEntity(entity);
+        UserEntity userEntity = UserEntity.fromEntity(entity);
+        if (userEntity.deleted) {
+            return null;
+        }
+        return userEntity;
     }
 
     public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
@@ -235,7 +238,11 @@ public class DatastoreHelpers {
         if (entity == null) {
             return null;
         }
-        return ReadingListEntity.fromEntity(entity);
+        ReadingListEntity readingListEntity = ReadingListEntity.fromEntity(entity);
+        if (readingListEntity.deleted) {
+            return null;
+        }
+        return readingListEntity;
     }
 
     public static ReadingListElementEntity getReadingListElement(Datastore datastore, long readingListElementId) {
@@ -244,7 +251,11 @@ public class DatastoreHelpers {
         if (entity == null) {
             return null;
         }
-        return ReadingListElementEntity.fromEntity(entity);
+        ReadingListElementEntity readingListElementEntity = ReadingListElementEntity.fromEntity(entity);
+        if (readingListElementEntity.deleted) {
+            return null;
+        }
+        return readingListElementEntity;
     }
 
     public static FollowedListEntity getFollowedList(Datastore datastore, long listId) {
@@ -253,7 +264,11 @@ public class DatastoreHelpers {
         if (entity == null) {
             return null;
         }
-        return FollowedListEntity.fromEntity(entity);
+        FollowedListEntity followedListEntity = FollowedListEntity.fromEntity(entity);
+        if (followedListEntity.deleted) {
+            return null;
+        }
+        return followedListEntity;
     }
 
     public static CommentEntity getComment(Datastore datastore, long commentId) {
@@ -262,7 +277,11 @@ public class DatastoreHelpers {
         if (entity == null) {
             return null;
         }
-        return CommentEntity.fromEntity(entity);
+        CommentEntity commentEntity = CommentEntity.fromEntity(entity);
+        if (commentEntity.deleted) {
+            return null;
+        }
+        return commentEntity;
     }
 
     public static TagEntity getTag(Datastore datastore, long tagId) {
@@ -272,15 +291,19 @@ public class DatastoreHelpers {
             return null;
         }
         TagEntity tagEntity = TagEntity.fromEntity(entity);
+        if (tagEntity.deleted) {
+            return null;
+        }
         return tagEntity;
     }
 
-    public static boolean updateUser(Datastore datastore, UserEntity userEntity) {
+    public static boolean updateUser(Datastore datastore, UserEntity userEntity, boolean updateForDelete) {
         Key key = DatastoreHelpers.newUserKey(userEntity.id());
         Entity newEntity = Entity.newBuilder(key)
             .set("name", userEntity.name())
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
+            .set("deleted", updateForDelete)
             .build();
 
         try {
@@ -292,15 +315,14 @@ public class DatastoreHelpers {
         }
     }
 
-    public static boolean updateReadingList(
-        Datastore datastore,
-        ReadingListEntity readingListEntity) {
+    public static boolean updateReadingList(Datastore datastore, ReadingListEntity readingListEntity, boolean updateForDelete) {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListKey(readingListEntity.id))
             .set("name", readingListEntity.name())
             .set("description", readingListEntity.description())
             .set("userId", readingListEntity.userId())
             .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
-            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()));
+            .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()))
+            .set("deleted", updateForDelete);
 
         Entity newEntity = builder.build();
         try {
@@ -312,17 +334,16 @@ public class DatastoreHelpers {
         }
     }
 
-    public static boolean updateReadingListElement(
-        Datastore datastore,
-        ReadingListElementEntity readingListElementEntity) {
-            Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(readingListElementEntity.id))
-                .set("name", readingListElementEntity.name())
-                .set("description", readingListElementEntity.description())
-                .set("userId", readingListElementEntity.userId())
-                .set("amazonLink", readingListElementEntity.amazonLink())
-                .set("tagIds", ImmutableList.copyOf(readingListElementEntity.tagIds().stream().map(LongValue::new).iterator()))
-                .set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()))
-                .set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()));
+    public static boolean updateReadingListElement(Datastore datastore, ReadingListElementEntity readingListElementEntity, boolean updateForDelete) {
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey(readingListElementEntity.id))
+            .set("name", readingListElementEntity.name())
+            .set("description", readingListElementEntity.description())
+            .set("userId", readingListElementEntity.userId())
+            .set("amazonLink", readingListElementEntity.amazonLink())
+            .set("tagIds", ImmutableList.copyOf(readingListElementEntity.tagIds().stream().map(LongValue::new).iterator()))
+            .set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()))
+            .set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()))
+            .set("deleted", updateForDelete);
         Entity newEntity = builder.build();
         try {
             datastore.update(newEntity);
@@ -333,11 +354,12 @@ public class DatastoreHelpers {
         }
     }
 
-    public static boolean updateComment(Datastore datastore, CommentEntity commentEntity) {
+    public static boolean updateComment(Datastore datastore, CommentEntity commentEntity, boolean updateForDelete) {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newCommentKey(commentEntity.id))
             .set("commentText", commentEntity.commentText())
             .set("userId", commentEntity.userId())
-            .set("readingListElementId", commentEntity.readingListElementId());
+            .set("readingListElementId", commentEntity.readingListElementId())
+            .set("deleted", updateForDelete);
 
         Entity newEntity = builder.build();
         try {
@@ -349,33 +371,59 @@ public class DatastoreHelpers {
         }
     }
 
-    public static void deleteFollowedList(Datastore datastore, long id) {
-        Key key = DatastoreHelpers.newFollowedListKey(id);
-        datastore.delete(key);
+    private static boolean updateFollowedList(Datastore datastore, FollowedListEntity followedList, boolean updateForDelete) {
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newFollowedListKey(followedList.id))
+            .set("userId", followedList.userId())
+            .set("listId", followedList.listId())
+            .set("ownerId", followedList.ownerId())
+            .set("deleted", updateForDelete);
+
+        Entity newEntity = builder.build();
+        try {
+            datastore.update(newEntity);
+            return true;
+        }
+        catch (DatastoreException e) {
+            return false;
+        }
+    }
+
+    private static boolean updateTag(Datastore datastore, TagEntity tag, boolean updateForDelete) {
+        Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newTagKey(tag.id))
+            .set("tagName", tag.tagName())
+            .set("deleted", updateForDelete);
+
+        Entity newEntity = builder.build();
+        try {
+            datastore.update(newEntity);
+            return true;
+        }
+        catch (DatastoreException e) {
+            return false;
+        }
+    }
+
+    public static void deleteFollowedList(Datastore datastore, long listId) {
+        updateFollowedList(datastore, getFollowedList(datastore, listId), true);
     }
 
     public static void deleteUser(Datastore datastore, long userId) {
-        Key key = DatastoreHelpers.newUserKey(userId);
-        datastore.delete(key);
+        updateUser(datastore, getUser(datastore, userId), true);
     }
 
     public static void deleteComment(Datastore datastore, long commentId) {
-        Key key = DatastoreHelpers.newCommentKey(commentId);
-        datastore.delete(key);
+        updateComment(datastore, getComment(datastore,  commentId), true);
     }
 
     public static void deleteReadingListElement(Datastore datastore, long readingListElementId) {
-        Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
-        datastore.delete(key);
+        updateReadingListElement(datastore, getReadingListElement(datastore, readingListElementId), true);
     }
 
     public static void deleteReadingList(Datastore datastore, long readingListId) {
-        Key key = DatastoreHelpers.newReadingListKey(readingListId);
-        datastore.delete(key);
+        updateReadingList(datastore,  getReadingList(datastore,  readingListId), true);
     }
 
     public static void deleteTag(Datastore datastore, long tagId) {
-        Key key = DatastoreHelpers.newTagKey(tagId);
-        datastore.delete(key);
+        updateTag(datastore,  getTag(datastore,  tagId), true);
     }
 }

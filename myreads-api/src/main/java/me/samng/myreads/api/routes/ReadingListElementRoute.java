@@ -142,7 +142,7 @@ public class ReadingListElementRoute {
             return;
         }
 
-        if (DatastoreHelpers.updateReadingListElement(datastore, rleEntity)) {
+        if (DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -228,7 +228,7 @@ public class ReadingListElementRoute {
             }
             readingListElementEntity.tagIds.add(tagId);
 
-            if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity)) {
+            if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity, false)) {
                 addedIds.add(tagId);
             } else {
                 valid = false;
@@ -315,7 +315,7 @@ public class ReadingListElementRoute {
         }
 
         readingListElementEntity.tagIds().remove(tagId);
-        if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity)) {
+        if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         } else {
             routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());

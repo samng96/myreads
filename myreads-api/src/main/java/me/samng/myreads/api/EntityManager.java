@@ -53,7 +53,7 @@ public class EntityManager {
 
             assert list.readingListElementIds().contains(rle.id);
             list.readingListElementIds().remove(rle.id);
-            if (!DatastoreHelpers.updateReadingList(datastore, list)) {
+            if (!DatastoreHelpers.updateReadingList(datastore, list, false)) {
                 return false;
             }
         }
@@ -77,7 +77,7 @@ public class EntityManager {
 
             assert rle.listIds.contains(readingListId);
             rle.listIds.remove(readingListId);
-            DatastoreHelpers.updateReadingListElement(datastore, rle);
+            DatastoreHelpers.updateReadingListElement(datastore, rle, false);
 
             // If this RLE is going to be orphaned, delete it.
             if (rle.listIds.size() == 0) {

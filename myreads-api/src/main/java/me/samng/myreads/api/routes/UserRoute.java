@@ -90,7 +90,7 @@ public class UserRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        if (DatastoreHelpers.updateUser(datastore, userEntity)) {
+        if (DatastoreHelpers.updateUser(datastore, userEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -102,7 +102,7 @@ public class UserRoute {
 
     // Delete a user, /users/{userId}
     public void deleteUser(RoutingContext routingContext) {
-        long userId = -1;
+        long userId;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
         }

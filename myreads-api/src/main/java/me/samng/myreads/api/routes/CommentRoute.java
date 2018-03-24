@@ -93,7 +93,7 @@ public class CommentRoute {
         commentEntity.readingListElementId = readingListElementId;
         long addedId = DatastoreHelpers.createComment(datastore, commentEntity);
         rleEntity.commentIds.add(addedId);
-        DatastoreHelpers.updateReadingListElement(datastore, rleEntity);
+        DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false);
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())
@@ -129,7 +129,7 @@ public class CommentRoute {
             return;
         }
 
-        if (DatastoreHelpers.updateComment(datastore, commentEntity)) {
+        if (DatastoreHelpers.updateComment(datastore, commentEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -198,6 +198,17 @@ public class CommentRoute {
                 .end();
             return;
         }
+
+        ReadingListElementEntity rleEntity = DatastoreHelpers.getReadingListElement(datastore, readingListElementId);
+        if (rleEntity == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+        rleEntity.commentIds.remove(commentId);
+        DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false);
         DatastoreHelpers.deleteComment(datastore, commentId);
 
         routingContext.response()

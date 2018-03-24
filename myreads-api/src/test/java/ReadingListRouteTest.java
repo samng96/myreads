@@ -185,10 +185,13 @@ public class ReadingListRouteTest {
             return TestHelper.removeRLEFromReadingList(context, client, this.userId, this.listId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
         });
         Future<ReadingListEntity> getAgainFut = removeFromListFut.compose(x -> { return TestHelper.getReadingList(context, client, this.userId, this.listId, HttpResponseStatus.OK.code()); });
-        Future<Void> deleteFut = getAgainFut.compose(e -> {
+        Future<Void> deleteRleFut = getAgainFut.compose(e -> {
             context.assertEquals(e.readingListElementIds.size(), 0);
 
-            return TestHelper.deleteReadingList(context, client, this.userId, e.id, HttpResponseStatus.NO_CONTENT.code());
+            return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
+        });
+        Future<Void> deleteFut = deleteRleFut.compose(e -> {
+            return TestHelper.deleteReadingList(context, client, this.userId, this.listId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteFut.compose(x -> {
             return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());

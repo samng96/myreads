@@ -141,7 +141,7 @@ public class ReadingListRoute {
             return;
         }
 
-        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -224,8 +224,8 @@ public class ReadingListRoute {
         readingListEntity.readingListElementIds.remove(rleId);
         rleEntity.listIds.remove(listId);
 
-        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity) &&
-            DatastoreHelpers.updateReadingListElement(datastore, rleEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
+            DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }
         else {
@@ -292,8 +292,8 @@ public class ReadingListRoute {
             }
             rleEntity.listIds.add(listId);
 
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity) &&
-                DatastoreHelpers.updateReadingListElement(datastore, rleEntity)) {
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
+                DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
                 addedIds.add(rleId);
             } else {
                 valid = false;
@@ -354,7 +354,7 @@ public class ReadingListRoute {
             }
             readingListEntity.tagIds.add(tagId);
 
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
                 addedIds.add(tagId);
             } else {
                 valid = false;
@@ -443,7 +443,7 @@ public class ReadingListRoute {
         }
 
         readingListEntity.tagIds().remove(tagId);
-        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity)) {
+        if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         } else {
             routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
