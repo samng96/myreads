@@ -396,7 +396,7 @@ public class ReadingListRoute {
         long tagId;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
-            tagId = Json.decodeValue(routingContext.getBody(), long.class);
+            tagId = Long.decode(routingContext.getBodyAsString());
         }
         catch (Exception e) {
             routingContext.response()

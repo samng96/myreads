@@ -684,4 +684,46 @@ public class TestHelper {
 
         return fut;
     }
+
+    public static Future<ReadingListEntity[]> getReadingListsByTag(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long tagId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListsByTag")
+            .sendJson(tagId,
+                ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+                    ReadingListEntity[] rls = Json.decodeValue(r.body(), ReadingListEntity[].class);
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete(rls);
+                });
+
+        return fut;
+    }
+
+    public static Future<ReadingListElementEntity[]> getReadingListElementsByTag(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long tagId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListElementsByTag")
+            .sendJson(tagId,
+                ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+                    ReadingListElementEntity[] rles = Json.decodeValue(r.body(), ReadingListElementEntity[].class);
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete(rles);
+                });
+
+        return fut;
+    }
 }
