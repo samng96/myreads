@@ -22,10 +22,14 @@ public class FollowedListEntity {
     @JsonProperty("userId")
     public long userId;
 
+    @JsonProperty("orphaned")
+    public boolean orphaned;
+
     @JsonProperty("deleted")
     public boolean deleted;
 
     public FollowedListEntity() {
+        orphaned = false;
         deleted = false;
     }
 

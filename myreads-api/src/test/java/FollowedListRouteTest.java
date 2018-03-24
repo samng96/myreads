@@ -90,21 +90,26 @@ public class FollowedListRouteTest {
             this.listId = listId;
 
             return TestHelper.postFollowedList(context, client, followedListEntity,  userId, HttpResponseStatus.CREATED.code());
-            });
+        });
         Future<FollowedListEntity[]> getFollowedListFut = postFollowedListFut.compose(listId -> {
             return TestHelper.getFollowedLists(context, client, this.userId, HttpResponseStatus.OK.code());
-            });
-        Future<Long> deleteFollowedListFut = getFollowedListFut.compose(e -> {
+        });
+        Future<Void> deleteListFut = getFollowedListFut.compose(e -> {
             context.assertEquals(e[0].listId, this.listId);
             context.assertEquals(e[0].ownerId, this.ownerId);
             context.assertEquals(e[0].userId, this.userId);
 
-            return TestHelper.deleteFollowedList(context, client, this.userId, e[0].id(), HttpResponseStatus.NO_CONTENT.code()).map(e[0].id);
-        });
-        Future<Void> deleteListFut = deleteFollowedListFut.compose(e -> {
             return TestHelper.deleteReadingList(context, client, this.ownerId, this.listId, HttpResponseStatus.NO_CONTENT.code());
         });
-        Future<Void> deleteUserFut = deleteListFut.compose(x -> {
+        Future<FollowedListEntity[]> getFollowedListAgainFut = deleteListFut.compose(x -> {
+            return TestHelper.getFollowedLists(context, client, this.userId, HttpResponseStatus.OK.code());
+        });
+        Future<Void> deleteListFollowedFut = getFollowedListAgainFut.compose(e -> {
+            context.assertEquals(e[0].orphaned, true);
+
+            return TestHelper.deleteFollowedList(context, client, this.userId, e[0].id(), HttpResponseStatus.NO_CONTENT.code());
+        });
+        Future<Void> deleteUserFut = deleteListFollowedFut.compose(x -> {
             return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteUserFut.compose(x -> {

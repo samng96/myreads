@@ -8,6 +8,7 @@ import me.samng.myreads.api.entities.ReadingListEntity;
 import java.util.List;
 
 public class EntityManager {
+    public static long singletonDeletedListId = -96;
 
     public static boolean DeleteUser(Datastore datastore, long userId) {
         // When we delete a user, we need to clean up all their lists, followed lists, and reading list elements.
@@ -86,6 +87,15 @@ public class EntityManager {
         }
 
         DatastoreHelpers.deleteReadingList(datastore, readingListId);
+
+        // Lastly, for each other user that was following this list, we'll need to move those
+        // followed lists to point at the singleton deleted list moniker.
+        List<FollowedListEntity> followedLists = DatastoreHelpers.getAllFollowedListsForList(datastore, readingListId);
+        for (FollowedListEntity f : followedLists) {
+            f.listId = EntityManager.singletonDeletedListId;
+            f.orphaned = true;
+            DatastoreHelpers.updateFollowedList(datastore, f, false);
+        }
         return true;
     }
 }

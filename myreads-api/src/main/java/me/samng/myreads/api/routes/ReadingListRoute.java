@@ -1,7 +1,6 @@
 package me.samng.myreads.api.routes;
 
-import com.google.cloud.datastore.*;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.datastore.Datastore;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -152,9 +151,6 @@ public class ReadingListRoute {
     }
 
     // Delete a reading list, /users/{userId}/readingLists/{readingListId}
-    // TODO: when we delete a list, we need to do something about the followed lists - do we soft delete here
-    // TODO: and allow the user to see that it's a list that's no longer around? Or do we have a singleton
-    // TODO: that is a deleted list that the follow then points to? Likely the latter.
     public void deleteReadingList(RoutingContext routingContext) {
         long listId;
         long userId;

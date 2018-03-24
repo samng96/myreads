@@ -33,6 +33,7 @@ public class MainVerticle extends AbstractVerticle {
     public void start(Future<Void> fut) throws Exception {
         Router router = Router.router(vertx);
 
+        // Set up all the routes.
         router.route("/").handler(routingContext -> {
                     HttpServerResponse response = routingContext.response();
                     response
@@ -45,7 +46,6 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
-
         router.mountSubRouter("/tags", setupTags());
 
         vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {

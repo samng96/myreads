@@ -229,6 +229,22 @@ public class DatastoreHelpers {
         return results;
     }
 
+    public static List<FollowedListEntity> getAllFollowedListsForList(Datastore datastore, long readingListId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.followedListKind)
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("listId", readingListId),
+                PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false)))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<FollowedListEntity> results = new ArrayList<>();
+        queryresult.forEachRemaining(followedList -> results.add(FollowedListEntity.fromEntity(followedList)));
+
+        return results;
+    }
+
     public static UserEntity getUser(Datastore datastore, long userId) {
         Key key = DatastoreHelpers.newUserKey(userId);
         Entity entity = datastore.get(key);
@@ -382,11 +398,12 @@ public class DatastoreHelpers {
         }
     }
 
-    private static boolean updateFollowedList(Datastore datastore, FollowedListEntity followedList, boolean updateForDelete) {
+    public static boolean updateFollowedList(Datastore datastore, FollowedListEntity followedList, boolean updateForDelete) {
         Entity.Builder builder = Entity.newBuilder(DatastoreHelpers.newFollowedListKey(followedList.id))
             .set("userId", followedList.userId())
             .set("listId", followedList.listId())
             .set("ownerId", followedList.ownerId())
+            .set("orphaned", followedList.orphaned())
             .set("deleted", updateForDelete);
 
         Entity newEntity = builder.build();
