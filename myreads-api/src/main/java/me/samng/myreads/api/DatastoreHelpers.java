@@ -2,10 +2,12 @@ package me.samng.myreads.api;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.datastore.*;
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.common.collect.ImmutableList;
 import me.samng.myreads.api.entities.*;
+import me.samng.myreads.api.entities.indexes.TagToReadingListElementEntity;
+import me.samng.myreads.api.entities.indexes.TagToReadingListEntity;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class DatastoreHelpers {
     public static String readingListElementKind = "readingListElement";
     public static String commentKind = "comment";
     public static String tagKind = "tag";
+    public static String tagToReadingListElementKind = "tagToReadingListElement";
+    public static String tagToReadingListKind = "tagToReadingList";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
     private static String deletedMoniker = "deleted";
 
@@ -197,6 +201,25 @@ public class DatastoreHelpers {
         return results;
     }
 
+    public static List<ReadingListEntity> getAllReadingListsWithTag(Datastore datastore, long tagId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagToReadingListKind)
+            .setFilter(PropertyFilter.eq("tagId", tagId))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<TagToReadingListEntity> map = new ArrayList<>();
+        queryresult.forEachRemaining(list -> map.add(TagToReadingListEntity.fromEntity(list)));
+
+        ArrayList<ReadingListEntity> results = new ArrayList<>();
+        for (TagToReadingListEntity e : map) {
+            results.add(DatastoreHelpers.getReadingList(datastore, e.readingListId));
+        }
+
+        return results;
+    }
+
     public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListElementKind)
@@ -209,6 +232,25 @@ public class DatastoreHelpers {
         // Iterate through the results to actually fetch them, then serialize them and return.
         ArrayList<ReadingListElementEntity> results = new ArrayList<>();
         queryresult.forEachRemaining(list -> results.add(ReadingListElementEntity.fromEntity(list)));
+
+        return results;
+    }
+
+    public static List<ReadingListElementEntity> getAllReadingListElementsWithTag(Datastore datastore, long tagId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagToReadingListElementKind)
+            .setFilter(PropertyFilter.eq("tagId", tagId))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<TagToReadingListElementEntity> map = new ArrayList<>();
+        queryresult.forEachRemaining(list -> map.add(TagToReadingListElementEntity.fromEntity(list)));
+
+        ArrayList<ReadingListElementEntity> results = new ArrayList<>();
+        for (TagToReadingListElementEntity e : map) {
+            results.add(DatastoreHelpers.getReadingListElement(datastore, e.readingListElementId));
+        }
 
         return results;
     }

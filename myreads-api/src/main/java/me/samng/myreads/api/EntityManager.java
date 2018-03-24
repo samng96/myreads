@@ -103,6 +103,7 @@ public class EntityManager {
 
     public static List<Long> AddReadingListElementsToReadingList(
         Datastore datastore,
+        long userId,
         ReadingListEntity readingListEntity,
         Long[] readingListElementIds) {
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,

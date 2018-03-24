@@ -263,7 +263,7 @@ public class ReadingListRoute {
         }
 
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        List<Long> addedIds = EntityManager.AddReadingListElementsToReadingList(datastore, readingListEntity, rleIds);
+        List<Long> addedIds = EntityManager.AddReadingListElementsToReadingList(datastore, userId, readingListEntity, rleIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")

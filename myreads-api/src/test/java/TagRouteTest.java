@@ -49,11 +49,6 @@ public class TagRouteTest {
         Future<Long> postFut = TestHelper.postTag(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<TagEntity> getTagFut = postFut.compose(tagId -> {
             return TestHelper.getTag(context, client, tagId, HttpResponseStatus.OK.code());
-        });
-        getTagFut.compose(tagEntity -> {
-            context.assertEquals(tagEntity.tagName, "testTag");
-
-            return TestHelper.deleteTag(context, client, tagEntity.id, HttpResponseStatus.NO_CONTENT.code());
         }).setHandler(x -> { async.complete(); });
     }
 }

@@ -563,24 +563,6 @@ public class TestHelper {
             return fut;
     }
 
-    public static Future<Void> deleteTag(
-        TestContext context,
-        WebClient client,
-        long tagId,
-        int expectedStatusCode) {
-            Future fut = Future.future();
-
-            client.delete(port, "localhost", "/tags/" + tagId)
-                .send(ar -> {
-                    HttpResponse<Buffer> r = ar.result();
-
-                    context.assertEquals(r.statusCode(), expectedStatusCode);
-                    fut.complete();
-                });
-
-            return fut;
-    }
-
     public static Future<Void> addTagToReadingList(
         TestContext context,
         WebClient client,

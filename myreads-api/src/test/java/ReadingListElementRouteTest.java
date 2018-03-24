@@ -192,12 +192,9 @@ public class ReadingListElementRouteTest {
         Future<TagEntity[]> checkTagFut = removeTagFut.compose(tagId -> {
             return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.OK.code());
         });
-        Future<Void> deleteTagFut = checkTagFut.compose(tagEntities -> {
+        Future<Void> deleteListFut = checkTagFut.compose(tagEntities -> {
             context.assertEquals(tagEntities.length, 0);
 
-            return TestHelper.deleteTag(context, client, this.tagId, HttpResponseStatus.NO_CONTENT.code());
-        });
-        Future<Void> deleteListFut = deleteTagFut.compose(x -> {
             return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteListFut.compose(x -> {

@@ -44,7 +44,7 @@ public class UserRoute {
                 .end(Long.toString(addedId));
     }
 
-    // TODO: Need to add auth to make sure the current user has the right privileges to access this user.
+    // TODO: We need to figure out how to auth everything that isn't just a GET.
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
         Key key;
