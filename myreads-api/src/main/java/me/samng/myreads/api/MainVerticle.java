@@ -118,6 +118,8 @@ public class MainVerticle extends AbstractVerticle {
         router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
+        router.post("/:userId/readingListsByTag").handler(routingContext -> { readingListRoute.getAllReadingListsByTag(routingContext); });
+
         return router;
     }
 
@@ -148,6 +150,8 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
         router.post("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.postReadingListElement(routingContext); });
+
+        router.post("/:userId/readingListElementsByTag").handler(routingContext -> { readingListElementRoute.getAllReadingListElementsByTag(routingContext); });
 
         return router;
     }

@@ -101,6 +101,26 @@ public class DatastoreHelpers {
         return keyFactory.newKey(keyId);
     }
 
+    private static IncompleteKey newTagToReadingListKey() {
+        keyFactory.setKind(tagToReadingListKind);
+        return keyFactory.newKey();
+    }
+
+    private static Key newTagToReadingListKey(Long keyId) {
+        keyFactory.setKind(tagToReadingListKind);
+        return keyFactory.newKey(keyId);
+    }
+
+    private static IncompleteKey newTagToReadingListElementKey() {
+        keyFactory.setKind(tagToReadingListElementKind);
+        return keyFactory.newKey();
+    }
+
+    private static Key newTagToReadingListElementKey(Long keyId) {
+        keyFactory.setKind(tagToReadingListElementKind);
+        return keyFactory.newKey(keyId);
+    }
+
     public static long createUser(Datastore datastore, UserEntity userEntity) {
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newUserKey())
             .set("name", userEntity.name())
@@ -201,10 +221,12 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListEntity> getAllReadingListsWithTag(Datastore datastore, long tagId) {
+    public static List<ReadingListEntity> getAllReadingListsForUserWithTag(Datastore datastore, long userId, long tagId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.tagToReadingListKind)
-            .setFilter(PropertyFilter.eq("tagId", tagId))
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("tagId", tagId),
+                PropertyFilter.eq("userId", userId)))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -236,10 +258,12 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListElementEntity> getAllReadingListElementsWithTag(Datastore datastore, long tagId) {
+    public static List<ReadingListElementEntity> getAllReadingListElementsForUserWithTag(Datastore datastore, long userId, long tagId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.tagToReadingListElementKind)
-            .setFilter(PropertyFilter.eq("tagId", tagId))
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("tagId", tagId),
+                PropertyFilter.eq("userId", userId)))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -493,7 +517,64 @@ public class DatastoreHelpers {
         updateReadingList(datastore,  getReadingList(datastore,  readingListId), true);
     }
 
-    public static void deleteTag(Datastore datastore, long tagId) {
-        updateTag(datastore,  getTag(datastore,  tagId), true);
+    // Tag management methods.
+    public static long addTagToReadingListElementMapping(Datastore datastore, long userId, long tagId, long readingListElementId) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagToReadingListElementKey())
+            .set("tagId", tagId)
+            .set("userId", userId)
+            .set("readingListElementId", readingListElementId)
+            .build();
+        Entity addedEntity = datastore.add(insertEntity);
+        return addedEntity.getKey().getId();
+    }
+
+    public static void deleteTagToReadingListElementMapping(Datastore datastore, long userId, long tagId, long readingListElementId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagToReadingListElementKind)
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("tagId", tagId),
+                PropertyFilter.eq("userId", userId),
+                PropertyFilter.eq("readingListElementId", readingListElementId)))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<TagToReadingListElementEntity> map = new ArrayList<>();
+        queryresult.forEachRemaining(list -> map.add(TagToReadingListElementEntity.fromEntity(list)));
+
+        for (TagToReadingListElementEntity e : map) {
+            Key key = DatastoreHelpers.newTagToReadingListElementKey(e.id);
+            datastore.delete(key);
+        }
+    }
+
+    public static long addTagToReadingListMapping(Datastore datastore, long userId, long tagId, long readingListId) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagToReadingListKey())
+            .set("tagId", tagId)
+            .set("userId", userId)
+            .set("readingListId", readingListId)
+            .build();
+        Entity addedEntity = datastore.add(insertEntity);
+        return addedEntity.getKey().getId();
+    }
+
+    public static void deleteTagToReadingListMapping(Datastore datastore, long userId, long tagId, long readingListId) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagToReadingListKind)
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("tagId", tagId),
+                PropertyFilter.eq("userId", userId),
+                PropertyFilter.eq("readingListId", readingListId)))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<TagToReadingListEntity> map = new ArrayList<>();
+        queryresult.forEachRemaining(list -> map.add(TagToReadingListEntity.fromEntity(list)));
+
+        for (TagToReadingListEntity e : map) {
+            Key key = DatastoreHelpers.newTagToReadingListKey(e.id);
+            datastore.delete(key);
+        }
     }
 }

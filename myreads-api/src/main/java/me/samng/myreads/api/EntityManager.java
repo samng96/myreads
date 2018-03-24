@@ -65,6 +65,10 @@ public class EntityManager {
             DatastoreHelpers.deleteComment(datastore, commentId);
         }
 
+        for (long tagId : rle.tagIds) {
+            DatastoreHelpers.deleteTagToReadingListElementMapping(datastore, rle.userId, tagId, rle.id);
+        }
+
         DatastoreHelpers.deleteReadingListElement(datastore, readingListElementId);
         return true;
     }
@@ -86,6 +90,10 @@ public class EntityManager {
             if (rle.listIds.size() == 0) {
                 EntityManager.DeleteReadingListElement(datastore, rle.id);
             }
+        }
+
+        for (long tagId : list.tagIds) {
+            DatastoreHelpers.deleteTagToReadingListMapping(datastore, list.userId, tagId, list.id);
         }
 
         DatastoreHelpers.deleteReadingList(datastore, readingListId);
@@ -140,6 +148,62 @@ public class EntityManager {
                 break;
             }
         }
+        return addedIds;
+    }
+
+    public static List<Long> AddTagsToReadingList(Datastore datastore, ReadingListEntity readingListEntity, Long[] tagIds) {
+        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
+        // regardless of whether or not we have errors on the overall operation.
+        ArrayList<Long> addedIds = new ArrayList<>();
+        for (long tagId : tagIds) {
+            boolean valid = true;
+
+            if (readingListEntity.tagIds() != null && readingListEntity.tagIds().contains(tagId)) {
+                continue;
+            }
+
+            if (readingListEntity.tagIds() == null) {
+                readingListEntity.tagIds = new ArrayList<>();
+            }
+            readingListEntity.tagIds.add(tagId);
+
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
+                addedIds.add(tagId);
+            } else {
+                break;
+            }
+
+            DatastoreHelpers.addTagToReadingListMapping(datastore, readingListEntity.userId, tagId, readingListEntity.id);
+        }
+
+        return addedIds;
+    }
+
+    public static List<Long> AddTagsToReadingListElement(Datastore datastore, ReadingListElementEntity readingListElementEntity, Long[] tagIds) {
+        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
+        // regardless of whether or not we have errors on the overall operation.
+        ArrayList<Long> addedIds = new ArrayList<Long>();
+        for (long tagId : tagIds) {
+        boolean valid = true;
+
+            if (readingListElementEntity.tagIds() != null && readingListElementEntity.tagIds().contains(tagId)) {
+                continue;
+            }
+
+            if (readingListElementEntity.tagIds() == null) {
+                readingListElementEntity.tagIds = new ArrayList<>();
+            }
+            readingListElementEntity.tagIds.add(tagId);
+
+            if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity, false)) {
+                addedIds.add(tagId);
+            } else {
+                break;
+            }
+
+            DatastoreHelpers.addTagToReadingListElementMapping(datastore, readingListElementEntity.userId, tagId, readingListElementEntity.id);
+        }
+
         return addedIds;
     }
 }

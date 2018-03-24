@@ -1,18 +1,15 @@
 package me.samng.myreads.api.routes;
 
-import com.google.cloud.datastore.*;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.datastore.Datastore;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.client.HttpResponse;
 import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.TagEntity;
 import me.samng.myreads.api.entities.UserEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReadingListElementRoute {
@@ -212,33 +209,8 @@ public class ReadingListElementRoute {
             return;
         }
 
-        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
-        // regardless of whether or not we have errors on the overall operation.
-        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        for (long tagId : tagIds) {
-            boolean valid = true;
-
-            if (readingListElementEntity.tagIds() != null && readingListElementEntity.tagIds().contains(tagId)) {
-                continue;
-            }
-
-            if (readingListElementEntity.tagIds() == null) {
-                readingListElementEntity.tagIds = new ArrayList<>();
-            }
-            readingListElementEntity.tagIds.add(tagId);
-
-            if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity, false)) {
-                addedIds.add(tagId);
-            } else {
-                valid = false;
-            }
-
-            if (!valid) {
-                routingContext.response().setStatusCode(HttpResponseStatus.SERVICE_UNAVAILABLE.code());
-                break;
-            }
-        }
+        List<Long> addedIds = EntityManager.AddTagsToReadingListElement(datastore, readingListElementEntity, tagIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -314,6 +286,8 @@ public class ReadingListElementRoute {
             return;
         }
 
+        DatastoreHelpers.deleteTagToReadingListElementMapping(datastore, userId, tagId, rleId);
+
         readingListElementEntity.tagIds().remove(tagId);
         if (DatastoreHelpers.updateReadingListElement(datastore, readingListElementEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
@@ -324,5 +298,31 @@ public class ReadingListElementRoute {
         routingContext.response()
             .putHeader("content-type", "text/plain")
             .end();
+    }
+
+    // POST /users/{userId}/readingListElementsByTag
+    public void getAllReadingListElementsByTag(RoutingContext routingContext) {
+        // For now, we assume the body contains a single tag, but we can add
+        // more extensibility to this later.
+        long userId;
+        long tagId;
+        try {
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            tagId = Json.decodeValue(routingContext.getBody(), long.class);
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUserWithTag(datastore, userId, tagId);
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(rles.toArray()));
     }
 }

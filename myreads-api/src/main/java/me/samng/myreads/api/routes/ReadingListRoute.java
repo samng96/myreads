@@ -11,7 +11,6 @@ import me.samng.myreads.api.entities.ReadingListEntity;
 import me.samng.myreads.api.entities.TagEntity;
 import me.samng.myreads.api.entities.UserEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReadingListRoute {
@@ -298,34 +297,8 @@ public class ReadingListRoute {
             return;
         }
 
-        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
-        // regardless of whether or not we have errors on the overall operation.
-        // TODO: We could move this to EntityManager
-        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        for (long tagId : tagIds) {
-            boolean valid = true;
-
-            if (readingListEntity.tagIds() != null && readingListEntity.tagIds().contains(tagId)) {
-                continue;
-            }
-
-            if (readingListEntity.tagIds() == null) {
-                readingListEntity.tagIds = new ArrayList<Long>();
-            }
-            readingListEntity.tagIds.add(tagId);
-
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
-                addedIds.add(tagId);
-            } else {
-                valid = false;
-            }
-
-            if (!valid) {
-                routingContext.response().setStatusCode(HttpResponseStatus.SERVICE_UNAVAILABLE.code());
-                break;
-            }
-        }
+        List<Long> addedIds = EntityManager.AddTagsToReadingList(datastore, readingListEntity, tagIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -401,6 +374,8 @@ public class ReadingListRoute {
             return;
         }
 
+        DatastoreHelpers.deleteTagToReadingListMapping(datastore, userId, tagId, listId);
+
         readingListEntity.tagIds().remove(tagId);
         if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
@@ -411,5 +386,31 @@ public class ReadingListRoute {
         routingContext.response()
             .putHeader("content-type", "text/plain")
             .end();
+    }
+
+    // POST /users/{userId}/readingListsByTag
+    public void getAllReadingListsByTag(RoutingContext routingContext) {
+        // For now, we assume the body contains a single tag, but we can add
+        // more extensibility to this later.
+        long userId;
+        long tagId;
+        try {
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            tagId = Json.decodeValue(routingContext.getBody(), long.class);
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        List<ReadingListEntity> rls = DatastoreHelpers.getAllReadingListsForUserWithTag(datastore, userId, tagId);
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(rls.toArray()));
     }
 }

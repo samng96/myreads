@@ -13,6 +13,9 @@ public class TagToReadingListEntity {
     @JsonProperty("id")
     public long id;
 
+    @JsonProperty("userId")
+    public long userId;
+
     @JsonProperty("tagId")
     public long tagId;
 
