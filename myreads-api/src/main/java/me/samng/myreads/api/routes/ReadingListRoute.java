@@ -262,44 +262,8 @@ public class ReadingListRoute {
             return;
         }
 
-        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
-        // regardless of whether or not we have errors on the overall operation.
-        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        for (long rleId : rleIds) {
-            boolean valid = true;
-
-            if (readingListEntity.readingListElementIds() != null && readingListEntity.readingListElementIds().contains(rleId)) {
-                continue;
-            }
-
-            // We need to add it to our reading list, but we also need to add it to the RLE.
-            ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
-            assert rleEntity != null;
-            assert rleEntity.listIds == null || !rleEntity.listIds.contains(listId);
-
-            if (readingListEntity.readingListElementIds() == null) {
-                readingListEntity.readingListElementIds = new ArrayList<Long>();
-            }
-            readingListEntity.readingListElementIds.add(rleId);
-
-            if (rleEntity.listIds() == null) {
-                rleEntity.listIds = new ArrayList<Long>();
-            }
-            rleEntity.listIds.add(listId);
-
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
-                DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
-                addedIds.add(rleId);
-            } else {
-                valid = false;
-            }
-
-            if (!valid) {
-                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
-                break;
-            }
-        }
+        List<Long> addedIds = EntityManager.AddReadingListElementsToReadingList(datastore, readingListEntity, rleIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -336,6 +300,7 @@ public class ReadingListRoute {
 
         // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
         // regardless of whether or not we have errors on the overall operation.
+        // TODO: We could move this to EntityManager
         ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
         for (long tagId : tagIds) {

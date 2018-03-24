@@ -1,10 +1,12 @@
 package me.samng.myreads.api;
 
-import com.google.cloud.datastore.*;
+import com.google.cloud.datastore.Datastore;
 import me.samng.myreads.api.entities.FollowedListEntity;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
+import me.samng.myreads.api.routes.ReadingListElementRoute;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EntityManager {
@@ -97,5 +99,46 @@ public class EntityManager {
             DatastoreHelpers.updateFollowedList(datastore, f, false);
         }
         return true;
+    }
+
+    public static List<Long> AddReadingListElementsToReadingList(
+        Datastore datastore,
+        ReadingListEntity readingListEntity,
+        Long[] readingListElementIds) {
+        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
+        // regardless of whether or not we have errors on the overall operation.
+
+        ArrayList<Long> addedIds = new ArrayList<>();
+        for (long rleId : readingListElementIds) {
+            if (readingListEntity.readingListElementIds() != null && readingListEntity.readingListElementIds().contains(rleId)) {
+                continue;
+            }
+
+            // We need to add it to our reading list, but we also need to add it to the RLE.
+            // TODO: We could move all of the "IfUserOwnsIt" type methods into EntityManager.
+            ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+            assert rleEntity != null;
+            assert rleEntity.listIds == null || !rleEntity.listIds.contains(readingListEntity.id);
+
+            if (readingListEntity.readingListElementIds() == null) {
+                readingListEntity.readingListElementIds = new ArrayList<Long>();
+            }
+            readingListEntity.readingListElementIds.add(rleId);
+
+            if (rleEntity.listIds() == null) {
+                rleEntity.listIds = new ArrayList<Long>();
+            }
+            rleEntity.listIds.add(readingListEntity.id);
+
+            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
+                DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
+                addedIds.add(rleId);
+            } else {
+                // Note that we're swallowing an error here, but the user will have to retry the action anyway,
+                // so there's no harm done.
+                break;
+            }
+        }
+        return addedIds;
     }
 }
