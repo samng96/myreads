@@ -1,12 +1,12 @@
 package me.samng.myreads.api;
 
-import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.datastore.*;
+import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
+import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.common.collect.ImmutableList;
 import me.samng.myreads.api.entities.*;
 
-import javax.xml.stream.events.Comment;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,8 +176,9 @@ public class DatastoreHelpers {
     public static List<ReadingListEntity> getAllReadingListsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListKind)
-            .setFilter(PropertyFilter.eq("userId", userId))
-            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("userId", userId),
+                PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false)))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -191,8 +192,9 @@ public class DatastoreHelpers {
     public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListElementKind)
-            .setFilter(PropertyFilter.eq("userId", userId))
-            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("userId", userId),
+                PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false)))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
@@ -206,8 +208,9 @@ public class DatastoreHelpers {
     public static List<FollowedListEntity> getAllFollowedListsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.followedListKind)
-            .setFilter(PropertyFilter.eq("userId", userId))
-            .setFilter(PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false))
+            .setFilter(CompositeFilter.and(
+                PropertyFilter.eq("userId", userId),
+                PropertyFilter.eq(DatastoreHelpers.deletedMoniker, false)))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
 
