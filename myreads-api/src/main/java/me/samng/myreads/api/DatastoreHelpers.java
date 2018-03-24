@@ -102,6 +102,7 @@ public class DatastoreHelpers {
             .set("name", userEntity.name())
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
+            .set("deleted", false)
             .build();
         Entity entity = datastore.add(insertEntity);
         return entity.getKey().getId();
@@ -114,6 +115,7 @@ public class DatastoreHelpers {
             .set("userId", readingListEntity.userId)
             .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()))
+            .set("deleted", false)
             .build();
         Entity entity = datastore.add(insertEntity);
         return entity.getKey().getId();
@@ -124,6 +126,7 @@ public class DatastoreHelpers {
             .set("userId", followedListEntity.userId())
             .set("listId", followedListEntity.listId())
             .set("ownerId", followedListEntity.ownerId())
+            .set("deleted", false)
             .build();
         Entity entity = datastore.add(insertEntity);
         return entity.getKey().getId();
@@ -137,6 +140,7 @@ public class DatastoreHelpers {
             .set("amazonLink", rleEntity.amazonLink())
             .set("tagIds", ImmutableList.copyOf(rleEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()))
+            .set("deleted", false)
             .build();
 
         Entity entity = datastore.add(insertEntity);
@@ -147,14 +151,18 @@ public class DatastoreHelpers {
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newCommentKey())
             .set("commentText", commentEntity.commentText())
             .set("userId", commentEntity.userId)
-            .set("readingListElementId", commentEntity.readingListElementId).build();
+            .set("readingListElementId", commentEntity.readingListElementId)
+            .set("deleted", false)
+            .build();
         Entity entity = datastore.add(insertEntity);
         return entity.getKey().getId();
     }
 
     public static long createTag(Datastore datastore, TagEntity tagEntity) {
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newTagKey())
-            .set("tagName", tagEntity.tagName()).build();
+            .set("tagName", tagEntity.tagName())
+            .set("deleted", false)
+            .build();
         Entity addedEntity = datastore.add(insertEntity);
         return addedEntity.getKey().getId();
     }

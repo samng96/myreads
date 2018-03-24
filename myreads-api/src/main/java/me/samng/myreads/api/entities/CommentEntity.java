@@ -25,6 +25,10 @@ public class CommentEntity {
     @JsonProperty("deleted")
     public boolean deleted;
 
+    public CommentEntity() {
+        deleted = false;
+    }
+
     public static CommentEntity fromEntity(Entity e) {
         CommentEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), CommentEntity.class);
         entity.id = e.getKey().getId();
