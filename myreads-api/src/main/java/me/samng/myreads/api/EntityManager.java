@@ -4,7 +4,6 @@ import com.google.cloud.datastore.Datastore;
 import me.samng.myreads.api.entities.FollowedListEntity;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
-import me.samng.myreads.api.routes.ReadingListElementRoute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +108,18 @@ public class EntityManager {
         return true;
     }
 
+    public static ReadingListElementEntity GetReadingListElementIfUserOwnsIt(
+        Datastore datastore,
+        long userId,
+        long readingListElementId) {
+
+        ReadingListElementEntity rleEntity = DatastoreHelpers.getReadingListElement(datastore, readingListElementId);
+        if (rleEntity == null || rleEntity.userId != userId) {
+            return null;
+        }
+        return rleEntity;
+    }
+
     public static List<Long> AddReadingListElementsToReadingList(
         Datastore datastore,
         long userId,
@@ -124,8 +135,7 @@ public class EntityManager {
             }
 
             // We need to add it to our reading list, but we also need to add it to the RLE.
-            // TODO: We could move all of the "IfUserOwnsIt" type methods into EntityManager.
-            ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+            ReadingListElementEntity rleEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
             assert rleEntity != null;
             assert rleEntity.listIds == null || !rleEntity.listIds.contains(readingListEntity.id);
 

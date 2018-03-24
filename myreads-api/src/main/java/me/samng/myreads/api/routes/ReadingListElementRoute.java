@@ -13,18 +13,6 @@ import me.samng.myreads.api.entities.UserEntity;
 import java.util.List;
 
 public class ReadingListElementRoute {
-    public static ReadingListElementEntity getReadingListElementIfUserOwnsIt(
-        Datastore datastore,
-        long userId,
-        long readingListElementId) {
-
-        ReadingListElementEntity rleEntity = DatastoreHelpers.getReadingListElement(datastore, readingListElementId);
-        if (rleEntity == null || rleEntity.userId != userId) {
-            return null;
-        }
-        return rleEntity;
-    }
-
     // GET /users/{userId}/readingListElements
     public void getAllReadingListElements(RoutingContext routingContext) {
         long userId;
@@ -99,7 +87,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListElementEntity rleEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity rleEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (rleEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
@@ -131,7 +119,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        if (getReadingListElementIfUserOwnsIt(datastore, userId, rleEntity.id) == null) {
+        if (EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleEntity.id) == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
@@ -166,7 +154,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        if (getReadingListElementIfUserOwnsIt(datastore, userId, rleId) == null) {
+        if (EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId) == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                 .putHeader("content-type", "text/plain")
@@ -200,7 +188,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity readingListElementEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
@@ -234,7 +222,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity readingListElementEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
@@ -269,7 +257,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        ReadingListElementEntity readingListElementEntity = getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity readingListElementEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         if (readingListElementEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())

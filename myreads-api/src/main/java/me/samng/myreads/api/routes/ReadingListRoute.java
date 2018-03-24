@@ -212,7 +212,7 @@ public class ReadingListRoute {
         }
 
         // We need to remove it from our reading list, but we also need to remove it from the RLE.
-        ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity rleEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         assert rleEntity != null;
         assert rleEntity.listIds.contains(listId);
 
