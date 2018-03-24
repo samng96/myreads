@@ -357,9 +357,7 @@ public class ReadingListRoute {
             }
 
             if (!valid) {
-                // TODO: What error should we give here when we fail to update an entity? Should it really be
-                // TODO: a HttpResponseStatus.NOT_FOUND.code()? Or should this be some sort of 500? Or should we return some 202 type and retry?
-                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
+                routingContext.response().setStatusCode(HttpResponseStatus.SERVICE_UNAVAILABLE.code());
                 break;
             }
         }
