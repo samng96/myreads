@@ -12,6 +12,7 @@ import me.samng.myreads.api.routes.*;
 
 public class MainVerticle extends AbstractVerticle {
 
+    public static int port = 8080;
     private UserRoute userRoute;
     private ReadingListRoute readingListRoute;
     private FollowedListRoute followedListRoute;
@@ -48,13 +49,13 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupUsers());
         router.mountSubRouter("/tags", setupTags());
 
-        vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {
+        vertx.createHttpServer().requestHandler(router::accept).listen(MainVerticle.port, result -> {
             if (result.succeeded()) {
                 fut.complete();
             } else {
                 fut.fail(result.cause());
             }});
-        System.out.println("HTTP server started on port 8080");
+        System.out.println("HTTP server started on port " + MainVerticle.port);
     }
 
     private Router setupTags() {

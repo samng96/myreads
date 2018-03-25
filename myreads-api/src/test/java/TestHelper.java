@@ -5,10 +5,11 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import me.samng.myreads.api.MainVerticle;
 import me.samng.myreads.api.entities.*;
 
 public class TestHelper {
-    private static int port = 8080;
+    private static int port = MainVerticle.port;
 
     public static Future<Void> getAllUsers(
         TestContext context,
