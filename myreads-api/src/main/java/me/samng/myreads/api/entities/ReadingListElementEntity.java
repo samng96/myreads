@@ -49,6 +49,7 @@ public class ReadingListElementEntity {
         tagIds = new ArrayList<>();
         commentIds = new ArrayList<>();
         listIds = new ArrayList<>();
+        deleted = false;
     }
 
     public static ReadingListElementEntity fromEntity(Entity e) {

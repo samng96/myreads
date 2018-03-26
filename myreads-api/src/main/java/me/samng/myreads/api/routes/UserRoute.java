@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
-import com.google.cloud.datastore.*;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.Key;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -8,7 +9,6 @@ import me.samng.myreads.api.DatastoreHelpers;
 import me.samng.myreads.api.EntityManager;
 import me.samng.myreads.api.entities.UserEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserRoute {
@@ -44,6 +44,7 @@ public class UserRoute {
                 .end(Long.toString(addedId));
     }
 
+    // TODO: We need to figure out how to auth everything that isn't just a GET.
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
         Key key;

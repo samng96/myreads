@@ -1,4 +1,4 @@
-package me.samng.myreads.api.entities;
+package me.samng.myreads.api.entities.indexes;
 
 import com.google.cloud.datastore.Entity;
 import com.google.common.collect.Maps;
@@ -9,29 +9,23 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 @Data
 @Accessors(fluent = true)
-public class CommentEntity {
+public class TagToReadingListElementEntity {
     @JsonProperty("id")
     public long id;
 
     @JsonProperty("userId")
     public long userId;
 
+    @JsonProperty("tagId")
+    public long tagId;
+
     @JsonProperty("readingListElementId")
     public long readingListElementId;
 
-    @JsonProperty("commentText")
-    public String commentText;
-
-    @JsonProperty("deleted")
-    public boolean deleted;
-
-    public CommentEntity() {
-        deleted = false;
-    }
-
-    public static CommentEntity fromEntity(Entity e) {
-        CommentEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), CommentEntity.class);
+    public static TagToReadingListElementEntity fromEntity(Entity e) {
+        TagToReadingListElementEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), TagToReadingListElementEntity.class);
         entity.id = e.getKey().getId();
         return entity;
     }
 }
+

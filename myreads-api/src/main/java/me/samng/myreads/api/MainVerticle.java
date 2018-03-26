@@ -12,6 +12,7 @@ import me.samng.myreads.api.routes.*;
 
 public class MainVerticle extends AbstractVerticle {
 
+    public static int port = 8080;
     private UserRoute userRoute;
     private ReadingListRoute readingListRoute;
     private FollowedListRoute followedListRoute;
@@ -33,6 +34,7 @@ public class MainVerticle extends AbstractVerticle {
     public void start(Future<Void> fut) throws Exception {
         Router router = Router.router(vertx);
 
+        // Set up all the routes.
         router.route("/").handler(routingContext -> {
                     HttpServerResponse response = routingContext.response();
                     response
@@ -45,16 +47,15 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
-
         router.mountSubRouter("/tags", setupTags());
 
-        vertx.createHttpServer().requestHandler(router::accept).listen(8080, result -> {
+        vertx.createHttpServer().requestHandler(router::accept).listen(MainVerticle.port, result -> {
             if (result.succeeded()) {
                 fut.complete();
             } else {
                 fut.fail(result.cause());
             }});
-        System.out.println("HTTP server started on port 8080");
+        System.out.println("HTTP server started on port " + MainVerticle.port);
     }
 
     private Router setupTags() {
@@ -63,7 +64,6 @@ public class MainVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
 
         router.get("/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
-        router.delete("/:tagId").handler(routingContext -> { tagRoute.deleteTag(routingContext); });
 
         router.get().handler(routingContext -> { tagRoute.getAllTags(routingContext); });
         router.post().handler(routingContext -> { tagRoute.postTag(routingContext); });
@@ -119,6 +119,8 @@ public class MainVerticle extends AbstractVerticle {
         router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
+        router.post("/:userId/readingListsByTag").handler(routingContext -> { readingListRoute.getAllReadingListsByTag(routingContext); });
+
         return router;
     }
 
@@ -149,6 +151,8 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
         router.post("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.postReadingListElement(routingContext); });
+
+        router.post("/:userId/readingListElementsByTag").handler(routingContext -> { readingListElementRoute.getAllReadingListElementsByTag(routingContext); });
 
         return router;
     }

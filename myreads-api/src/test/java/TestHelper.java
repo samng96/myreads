@@ -5,10 +5,11 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import me.samng.myreads.api.MainVerticle;
 import me.samng.myreads.api.entities.*;
 
 public class TestHelper {
-    private static int port = 8080;
+    private static int port = MainVerticle.port;
 
     public static Future<Void> getAllUsers(
         TestContext context,
@@ -563,24 +564,6 @@ public class TestHelper {
             return fut;
     }
 
-    public static Future<Void> deleteTag(
-        TestContext context,
-        WebClient client,
-        long tagId,
-        int expectedStatusCode) {
-            Future fut = Future.future();
-
-            client.delete(port, "localhost", "/tags/" + tagId)
-                .send(ar -> {
-                    HttpResponse<Buffer> r = ar.result();
-
-                    context.assertEquals(r.statusCode(), expectedStatusCode);
-                    fut.complete();
-                });
-
-            return fut;
-    }
-
     public static Future<Void> addTagToReadingList(
         TestContext context,
         WebClient client,
@@ -699,6 +682,48 @@ public class TestHelper {
                 context.assertEquals(r.statusCode(), expectedStatusCode);
                 fut.complete(tags);
             });
+
+        return fut;
+    }
+
+    public static Future<ReadingListEntity[]> getReadingListsByTag(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long tagId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListsByTag")
+            .sendJson(tagId,
+                ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+                    ReadingListEntity[] rls = Json.decodeValue(r.body(), ReadingListEntity[].class);
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete(rls);
+                });
+
+        return fut;
+    }
+
+    public static Future<ReadingListElementEntity[]> getReadingListElementsByTag(
+        TestContext context,
+        WebClient client,
+        long userId,
+        long tagId,
+        int expectedStatusCode) {
+        Future fut = Future.future();
+
+        client.post(port, "localhost", "/users/" + userId + "/readingListElementsByTag")
+            .sendJson(tagId,
+                ar -> {
+                    HttpResponse<Buffer> r = ar.result();
+                    ReadingListElementEntity[] rles = Json.decodeValue(r.body(), ReadingListElementEntity[].class);
+
+                    context.assertEquals(r.statusCode(), expectedStatusCode);
+                    fut.complete(rles);
+                });
 
         return fut;
     }

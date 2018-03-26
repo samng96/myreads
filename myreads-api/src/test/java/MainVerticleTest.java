@@ -1,26 +1,20 @@
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
-import io.vertx.core.json.Json;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import me.samng.myreads.api.MainVerticle;
-import me.samng.myreads.api.entities.UserEntity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.time.chrono.ThaiBuddhistEra;
-
 @RunWith(VertxUnitRunner.class)
 public class MainVerticleTest {
     private Vertx vertx;
-    private int port = 8080;
 
     @Before
     public void setUp(TestContext context) {
@@ -40,7 +34,7 @@ public class MainVerticleTest {
 
         WebClient client = WebClient.create(vertx);
 
-        client.get(port, "localhost", "/")
+        client.get(MainVerticle.port, "localhost", "/")
                 .send(ar -> {
                     HttpResponse<Buffer> response = ar.result();
 

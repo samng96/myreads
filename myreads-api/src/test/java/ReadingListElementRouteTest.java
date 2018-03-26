@@ -192,12 +192,61 @@ public class ReadingListElementRouteTest {
         Future<TagEntity[]> checkTagFut = removeTagFut.compose(tagId -> {
             return TestHelper.getTagsForReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.OK.code());
         });
-        Future<Void> deleteTagFut = checkTagFut.compose(tagEntities -> {
+        Future<Void> deleteListFut = checkTagFut.compose(tagEntities -> {
             context.assertEquals(tagEntities.length, 0);
 
-            return TestHelper.deleteTag(context, client, this.tagId, HttpResponseStatus.NO_CONTENT.code());
+            return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
         });
-        Future<Void> deleteListFut = deleteTagFut.compose(x -> {
+        deleteListFut.compose(x -> {
+            return TestHelper.deleteUser(context, client, this.userId, HttpResponseStatus.NO_CONTENT.code());
+        })
+            .setHandler(x -> { async.complete(); });
+    }
+
+    @Test
+    public void getByTagTest(TestContext context) {
+        final Async async = context.async();
+
+        WebClient client = WebClient.create(vertx);
+
+        UserEntity entity = new UserEntity();
+        entity.email = "tagReadingList@test.com";
+        entity.name = "testuser";
+        entity.userId = "testId";
+
+        Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
+        Future<Long> postListFut = postFut.compose(userId -> {
+            ReadingListElementEntity rle = new ReadingListElementEntity();
+            rle.userId = userId;
+            rle.description = "description";
+            rle.name = "listName";
+            rle.amazonLink = "tag test amazon link";
+
+            this.userId = userId;
+
+            return TestHelper.postReadingListElement(context, client, rle, userId, HttpResponseStatus.CREATED.code()); });
+        Future<Long> postTagFut = postListFut.compose(rleId -> {
+            TagEntity tagEntity = new TagEntity();
+            tagEntity.tagName = "testReadingListElementTag";
+
+            this.rleId = rleId;
+
+            return TestHelper.postTag(context, client, tagEntity, HttpResponseStatus.CREATED.code());
+        });
+        Future<Long> addTagToListFut = postTagFut.compose(tagId -> {
+            long[] tagIds = { tagId };
+
+            this.tagId = tagId;
+
+            return TestHelper.addTagToReadingListElement(context, client, this.userId, this.rleId, tagIds, HttpResponseStatus.OK.code()).map(tagId);
+        });
+        Future<ReadingListElementEntity[]> getRLEsFut = addTagToListFut.compose(tagId -> {
+            return TestHelper.getReadingListElementsByTag(context, client, this.userId, this.tagId, HttpResponseStatus.OK.code());
+        });
+        Future<Void> deleteListFut = getRLEsFut.compose(rles -> {
+            context.assertEquals(rles.length, 1);
+            context.assertEquals(rles[0].id, this.rleId);
+
             return TestHelper.deleteReadingListElement(context, client, this.userId, this.rleId, HttpResponseStatus.NO_CONTENT.code());
         });
         deleteListFut.compose(x -> {

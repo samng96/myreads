@@ -1,6 +1,9 @@
 package me.samng.myreads.api.routes;
 
-import com.google.cloud.datastore.*;
+import com.google.cloud.datastore.Datastore;
+import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.Query;
+import com.google.cloud.datastore.QueryResults;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -93,28 +96,5 @@ public class TagRoute {
         routingContext.response()
             .putHeader("content-type", "text/plain")
             .end(Json.encode(tagEntity));
-    }
-
-    // DELETE /tags/{tagId}
-    public void deleteTag(RoutingContext routingContext) {
-        long tagId;
-        try {
-            tagId = Long.decode(routingContext.request().getParam("tagId"));
-        }
-        catch (Exception e) {
-            routingContext.response()
-                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
-                .putHeader("content-type", "text/plain")
-                .end("Invalid request parameters");
-            return;
-        }
-        Datastore datastore = DatastoreHelpers.getDatastore();
-        DatastoreHelpers.deleteTag(datastore, tagId);
-        // TODO: Not enough to just delete the tag, gotta clean up the system when it gets deleted.
-
-        routingContext.response()
-            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
-            .putHeader("content-type", "text/plain")
-            .end();
     }
 }

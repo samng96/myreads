@@ -1,7 +1,6 @@
 package me.samng.myreads.api.routes;
 
-import com.google.cloud.datastore.*;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.datastore.Datastore;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -12,7 +11,6 @@ import me.samng.myreads.api.entities.ReadingListEntity;
 import me.samng.myreads.api.entities.TagEntity;
 import me.samng.myreads.api.entities.UserEntity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ReadingListRoute {
@@ -152,9 +150,6 @@ public class ReadingListRoute {
     }
 
     // Delete a reading list, /users/{userId}/readingLists/{readingListId}
-    // TODO: when we delete a list, we need to do something about the followed lists - do we soft delete here
-    // TODO: and allow the user to see that it's a list that's no longer around? Or do we have a singleton
-    // TODO: that is a deleted list that the follow then points to? Likely the latter.
     public void deleteReadingList(RoutingContext routingContext) {
         long listId;
         long userId;
@@ -217,7 +212,7 @@ public class ReadingListRoute {
         }
 
         // We need to remove it from our reading list, but we also need to remove it from the RLE.
-        ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
+        ReadingListElementEntity rleEntity = EntityManager.GetReadingListElementIfUserOwnsIt(datastore, userId, rleId);
         assert rleEntity != null;
         assert rleEntity.listIds.contains(listId);
 
@@ -266,44 +261,8 @@ public class ReadingListRoute {
             return;
         }
 
-        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
-        // regardless of whether or not we have errors on the overall operation.
-        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        for (long rleId : rleIds) {
-            boolean valid = true;
-
-            if (readingListEntity.readingListElementIds() != null && readingListEntity.readingListElementIds().contains(rleId)) {
-                continue;
-            }
-
-            // We need to add it to our reading list, but we also need to add it to the RLE.
-            ReadingListElementEntity rleEntity = ReadingListElementRoute.getReadingListElementIfUserOwnsIt(datastore, userId, rleId);
-            assert rleEntity != null;
-            assert rleEntity.listIds == null || !rleEntity.listIds.contains(listId);
-
-            if (readingListEntity.readingListElementIds() == null) {
-                readingListEntity.readingListElementIds = new ArrayList<Long>();
-            }
-            readingListEntity.readingListElementIds.add(rleId);
-
-            if (rleEntity.listIds() == null) {
-                rleEntity.listIds = new ArrayList<Long>();
-            }
-            rleEntity.listIds.add(listId);
-
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
-                DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {
-                addedIds.add(rleId);
-            } else {
-                valid = false;
-            }
-
-            if (!valid) {
-                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
-                break;
-            }
-        }
+        List<Long> addedIds = EntityManager.AddReadingListElementsToReadingList(datastore, userId, readingListEntity, rleIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -338,35 +297,8 @@ public class ReadingListRoute {
             return;
         }
 
-        // Note that we're not transactional! As a result, we'll return the list of Ids that we've successfully added,
-        // regardless of whether or not we have errors on the overall operation.
-        ArrayList<Long> addedIds = new ArrayList<Long>();
         routingContext.response().setStatusCode(HttpResponseStatus.OK.code());
-        for (long tagId : tagIds) {
-            boolean valid = true;
-
-            if (readingListEntity.tagIds() != null && readingListEntity.tagIds().contains(tagId)) {
-                continue;
-            }
-
-            if (readingListEntity.tagIds() == null) {
-                readingListEntity.tagIds = new ArrayList<Long>();
-            }
-            readingListEntity.tagIds.add(tagId);
-
-            if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
-                addedIds.add(tagId);
-            } else {
-                valid = false;
-            }
-
-            if (!valid) {
-                // TODO: What error should we give here when we fail to update an entity? Should it really be
-                // TODO: a HttpResponseStatus.NOT_FOUND.code()? Or should this be some sort of 500? Or should we return some 202 type and retry?
-                routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
-                break;
-            }
-        }
+        List<Long> addedIds = EntityManager.AddTagsToReadingList(datastore, readingListEntity, tagIds);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -442,6 +374,8 @@ public class ReadingListRoute {
             return;
         }
 
+        DatastoreHelpers.deleteTagToReadingListMapping(datastore, userId, tagId, listId);
+
         readingListEntity.tagIds().remove(tagId);
         if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
@@ -452,5 +386,31 @@ public class ReadingListRoute {
         routingContext.response()
             .putHeader("content-type", "text/plain")
             .end();
+    }
+
+    // POST /users/{userId}/readingListsByTag
+    public void getAllReadingListsByTag(RoutingContext routingContext) {
+        // For now, we assume the body contains a single tag, but we can add
+        // more extensibility to this later.
+        long userId;
+        long tagId;
+        try {
+            userId = Long.decode(routingContext.request().getParam("userId"));
+            tagId = Long.decode(routingContext.getBodyAsString());
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        List<ReadingListEntity> rls = DatastoreHelpers.getAllReadingListsForUserWithTag(datastore, userId, tagId);
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(rls.toArray()));
     }
 }
