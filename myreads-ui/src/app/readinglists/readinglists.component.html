@@ -1,4 +1,11 @@
-<h2>{{ listData.name | uppercase }}</h2>
-<div><span>id: </span>{{ listData.id }}</div>
-<div><span>name: </span>{{ listData.name }}</div>
-<div><span>description: </span>{{ listData.description }}</div>
+<h2>Reading Lists:</h2>
+
+<ul class="readingLists">
+    <li *ngFor = "let list of readingLists"
+        (click)="onSelect(list)"
+        [class.selected]="list == selectedList">
+        <span class="badge">{{ list.id }}</span>{{ list.name | uppercase }}
+    </li>
+</ul>
+
+<app-readinglist-detail [list]="selectedList"></app-readinglist-detail>

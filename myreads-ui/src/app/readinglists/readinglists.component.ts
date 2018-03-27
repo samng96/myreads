@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ReadingList } from '../readinglist';
+import { Readinglist } from '../readinglist';
+import { ReadinglistService } from '../readinglist.service';
 
 @Component({
   selector: 'app-readinglists',
@@ -7,19 +8,20 @@ import { ReadingList } from '../readinglist';
   styleUrls: ['./readinglists.component.css']
 })
 export class ReadinglistsComponent implements OnInit {
+    readingLists: Readinglist[];
+    selectedList: Readinglist;
 
-    listData: ReadingList = {
-        id: 1,
-        name: "Test Reading List",
-        description: "This is my test reading list - we'll dynamically load stuff here later",
-        userId: 96,
-        tagIds: [1, 2, 3],
-        readingListElementIds: [10, 11, 12]
-    };
+    constructor(private readingListService: ReadinglistService) { }
 
-  constructor() { }
+    ngOnInit() {
+        this.getLists();
+    }
 
-  ngOnInit() {
-  }
+    onSelect(list : Readinglist): void {
+        this.selectedList = list;
+    }
 
+    getLists(): void {
+        this.readingListService.getLists().subscribe(lists => this.readingLists = lists);
+    }
 }

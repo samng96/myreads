@@ -1,4 +1,4 @@
-export class ReadingList {
+export class Readinglist {
     id: number;
     userId: number;
     name: string;

@@ -1,0 +1,10 @@
+<div *ngIf="list">
+    <h3>{{ list.name | uppercase }}</h3>
+    <label>id: </label>{{ list.id }}
+    <label>name:
+        <input [(ngModel)] = "list.name" placeholder="name"/>
+    </label>
+    <label>description:
+        <textarea [(ngModel)] = "list.description" rows="10" cols="30"></textarea>
+    </label>
+</div>
