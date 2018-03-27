@@ -8,6 +8,7 @@ import { ReadinglistDetailComponent } from './readinglist-detail/readinglist-det
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { ReadinglistService } from './readinglist.service';
+import { AppRoutingModule } from './/app-routing.module';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ReadinglistService } from './readinglist.service';
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    AppRoutingModule
   ],
   providers: [MessageService, ReadinglistService],
   bootstrap: [AppComponent]
