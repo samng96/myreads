@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+
 import { ServiceApi } from '../serviceapi.service';
+import { LoggerService } from '../logger.service';
 
 @Component({
     selector: 'app-login',
@@ -11,38 +13,42 @@ export class LoginComponent implements OnInit {
     username: string;
     password: string;
 
-    hardcodedUserId: long = 5732452450435072;
+    hardcodedUserId: number = 5732452450435072;
 
     constructor(
+        private router: Router,
         private serviceApi: ServiceApi,
-        private location: Location
+        private logger: LoggerService
     ) { }
 
     ngOnInit() {
-        //this.checkLogin();
-
-        this.serviceApi.getUser(this.hardcodedUserId).subscribe(user => alert(user));
+        this.checkLogin();
     }
 
     checkLogin(): void {
         // If we've logged in, we'll have a loginToken. Eventually, we'll
         // want to use that token with auth to our API, but for now we'll just
         // set it to 1 when we've logged in.
-        var loginToken = sessionStorage.getItem('loginToken');
+        var loginToken = localStorage.getItem('loginToken');
+        this.log(`checkLogin got token ${loginToken}`);
         if (loginToken != null) {
-            const url = '/users/' + sessionStorage.getItem('userId');
-            window.location = url;
+            this.router.navigate(['users', localStorage.getItem('userId')]);
         }
     }
 
     login(): void {
         // For now we don't have a login API, so just assume it all works out and
         // hard code the login tokens, then get the user object.
-        sessionStorage.setItem('userId', hardcodedUserId);
-        sessionStorage.setItem('loginToken', 1);
+        localStorage.setItem('userId', this.hardcodedUserId.toString());
+        localStorage.setItem('loginToken', "1");
 
-        //serviceApi.getUser(hardcodedUserId);
-
-        this.checkLogin();
+        this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
+            {
+                localStorage.setItem('userEntity', JSON.stringify(user));
+                this.log(`successful login for user ${user.name}`)
+                this.checkLogin();
+            });
     }
+
+    private log(message: string) { this.logger.log(message); }
 }

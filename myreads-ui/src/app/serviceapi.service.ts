@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
 
 import { LoggerService } from './logger.service';
 
 export class UserEntity {
-    id: long;
+    id: number;
     email: string;
     name: string;
     userId: string;
+    deleted: boolean;
 }
 
 @Injectable()
@@ -20,15 +22,13 @@ export class ServiceApi {
         private logger: LoggerService
     ) { }
 
-    getUser(userId: long): Observable<UserEntity> {
+    getUser(userId: number): Observable<UserEntity> {
         var url = `${ServiceApi.baseUrl}users/${userId}`;
         return this.http.get<UserEntity>(url)
             .pipe(
-                tap(_ => log(`Api: getUser(${userId})`))
+                tap(_ => this.log(`Api: getUser(${userId})`))
             );
     }
 
-    private log(message: string) {
-        logger.log(message);
-    }
+    private log(message: string) { this.logger.log(message); }
 }
