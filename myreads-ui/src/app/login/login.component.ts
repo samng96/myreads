@@ -8,11 +8,15 @@ import { Location } from '@angular/common';
 })
 export class LoginComponent implements OnInit {
 
+    id = 1;
+
     constructor(private location: Location) { }
 
     ngOnInit() {
-        if ($cookies.get('loggedIn') == true) {
-            this.location.go('/user/:id')
-        }
+        const url = '/users/' + this.id;
+
+        //if ($cookies.get('loggedIn') == true) {
+        window.location = url;
+        //}
     }
 }

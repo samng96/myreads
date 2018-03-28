@@ -6,9 +6,10 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { UsersComponent } from './users/users.component';
-import { ReadinglistsComponent } from './readinglists/readinglists.component';
-import { FollowedlistsComponent } from './followedlists/followedlists.component';
+import { ReadingListsComponent } from './readinglists/readinglists.component';
+import { FollowedListsComponent } from './followedlists/followedlists.component';
 import { TagsComponent } from './tags/tags.component';
+import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
 
 
 @NgModule({
@@ -16,9 +17,10 @@ import { TagsComponent } from './tags/tags.component';
         AppComponent,
         LoginComponent,
         UsersComponent,
-        ReadinglistsComponent,
-        FollowedlistsComponent,
-        TagsComponent
+        ReadingListsComponent,
+        FollowedListsComponent,
+        TagsComponent,
+        ReadingListElementsComponent
     ],
     imports: [
         BrowserModule,
