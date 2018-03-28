@@ -22,7 +22,7 @@ export class ServiceApi {
 
     getUser(userId: long): Observable<UserEntity> {
         var url = `${ServiceApi.baseUrl}users/${userId}`;
-        return this.http.get<UserEntity>(url));
+        return this.http.get<UserEntity>(url)
             .pipe(
                 tap(_ => log(`Api: getUser(${userId})`))
             );

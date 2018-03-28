@@ -19,12 +19,6 @@ export class ReadinglistService {
     getLists(): Observable<Readinglist[]> {
         this.messageService.add('ReadinglistService: fetched reading lists');
         return of(READINGLISTS);
-
-        return this.http.get<Readinglist[]>(this.readinglistUrl)
-            .pipe(
-                tap(readinglists => this.log('fetched readinglists')),
-                catchError(this.handleError('getLists', []))
-            );
     }
 
     updateReadingList(list: Readinglist): Observable<any> {
