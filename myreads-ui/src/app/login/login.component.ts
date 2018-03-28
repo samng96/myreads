@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { ServiceApi } from '../serviceapi.component';
+import { ServiceApi } from '../serviceapi.service';
 
 @Component({
     selector: 'app-login',
@@ -11,10 +11,17 @@ export class LoginComponent implements OnInit {
     username: string;
     password: string;
 
-    constructor(private location: Location) { }
+    hardcodedUserId: long = 5732452450435072;
+
+    constructor(
+        private serviceApi: ServiceApi,
+        private location: Location
+    ) { }
 
     ngOnInit() {
-        this.checkLogin();
+        //this.checkLogin();
+
+        this.serviceApi.getUser(this.hardcodedUserId).subscribe(user => alert(user));
     }
 
     checkLogin(): void {
@@ -30,9 +37,11 @@ export class LoginComponent implements OnInit {
 
     login(): void {
         // For now we don't have a login API, so just assume it all works out and
-        // hard code the login tokens.
-        sessionStorage.setItem('userId', 96);
+        // hard code the login tokens, then get the user object.
+        sessionStorage.setItem('userId', hardcodedUserId);
         sessionStorage.setItem('loginToken', 1);
+
+        //serviceApi.getUser(hardcodedUserId);
 
         this.checkLogin();
     }
