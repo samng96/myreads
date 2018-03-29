@@ -10,12 +10,28 @@ export class UserEntity {
     email: string;
     name: string;
     userId: string;
-    deleted: boolean;
+}
+
+export class ReadingListEntity {
+    id: number;
+    userId: number;
+    name: string;
+    description: string;
+    tagIds: number[];
+    readingListElementIds: number[];
+}
+
+export class FollowedListEntity {
+    id: number;
+    ownerId: number;
+    listId: number;
+    userId: number;
+    orphaned: boolean;
 }
 
 @Injectable()
 export class ServiceApi {
-    public static baseUrl = "http://localhost:8080/"
+    public static baseUrl = "http://localhost:8080"
 
     constructor(
         private http: HttpClient,
@@ -23,12 +39,36 @@ export class ServiceApi {
     ) { }
 
     getUser(userId: number): Observable<UserEntity> {
-        var url = `${ServiceApi.baseUrl}users/${userId}`;
+        var url = `${ServiceApi.baseUrl}/users/${userId}`;
         return this.http.get<UserEntity>(url)
             .pipe(
                 tap(_ => this.log(`Api: getUser(${userId})`))
             );
     }
 
-    private log(message: string) { this.logger.log(message); }
+    getReadingLists(userId: number): Observable<ReadingListEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists`;
+        return this.http.get<ReadingListEntity[]>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getReadingLists(${userId})`))
+            );
+    }
+
+    getReadingList(userId: number, listId: number): Observable<ReadingListEntity> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}`;
+        return this.http.get<ReadingListEntity>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getReadingList(${userId}, ${listId})`))
+            );
+    }
+
+    getFollowedLists(userId: number): Observable<FollowedListEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
+        return this.http.get<FollowedListEntity[]>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getFollowedLists(${userId})`))
+            );
+    }
+
+    private log(message: string) { this.logger.log(`[ServiceApi]: ${message}`); }
 }

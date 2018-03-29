@@ -44,11 +44,11 @@ export class LoginComponent implements OnInit {
 
         this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
             {
-                localStorage.setItem('userEntity', JSON.stringify(user));
+                localStorage.setItem('loggedInUserEntity', JSON.stringify(user));
                 this.log(`successful login for user ${user.name}`)
                 this.checkLogin();
             });
     }
 
-    private log(message: string) { this.logger.log(message); }
+    private log(message: string) { this.logger.log(`[Login]: ${message}`); }
 }

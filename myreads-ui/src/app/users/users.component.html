@@ -1,3 +1,13 @@
-<p>
-  users works! {{ this.userId }}
-</p>
+<div *ngIf="userEntity">
+    <h1>{{ userEntity.name }}</h1>
+
+    <h2>Reading Lists</h2>
+    <ul *ngIf="readingLists" class="readingLists">
+        <li *ngFor="let readingList of readingLists">{{ readingList.name }}</li>
+    </ul>
+
+    <h2>Followed Lists</h2>
+    <ul *ngIf="followedLists" class="readingLists">
+        <li *ngFor="let followedList of followedLists">{{ followedList.name }}</li>
+    </ul>
+</div>
