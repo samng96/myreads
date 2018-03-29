@@ -34,6 +34,8 @@ export class UsersComponent implements OnInit {
 
         var getUserMerge = this.serviceApi.getUser(this.userId);
 
+        // TODO: Need to add error handling. Since we have some stuff stored locally,
+        // TODO: we should be able to work in offline mode as needed.
         // Two paths here - one is to get the reading lists for the user, and the other is to get the followed lists.
         var getReadingListsMerge = getUserMerge.mergeMap(user =>
             {
@@ -64,6 +66,7 @@ export class UsersComponent implements OnInit {
 
                 // For each followed list, we need to resolve the list, then resolve the user.
                 for (let followedList of followedLists) {
+                    this.lso.updateFollowedList(followedList);
                     if (this.lso.readingLists[followedList.id] == null) {
                         var getReadingListForFollowedListMerge = this.serviceApi.getReadingList(followedList.ownerId, followedList.listId);
                         getReadingListForFollowedListMerge.subscribe(readingList =>
@@ -89,12 +92,16 @@ export class UsersComponent implements OnInit {
             });
     }
 
-    private onSelect(list: ReadingListEntity): void {
+    private onSelectFollowedList(list: ReadingListEntity): void {
         this.router.navigate(['users', this.userId, 'followedlists', list.id]);
     }
 
+    private onSelectReadingList(list: ReadingListEntity): void {
+        this.router.navigate(['users', this.userId, 'readinglists', list.id]);
+    }
+
     private isViewingCurrentUser(user: UserEntity): boolean {
-        var currentUser = this.lso.users[this.lso.loggedInUserId];
+        var currentUser = this.lso.users[this.lso.myUserId];
         if (currentUser == null) {
             return false;
         }

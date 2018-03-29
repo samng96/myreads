@@ -3,12 +3,13 @@
 
     <h2>Reading Lists</h2>
     <ul *ngIf="readingLists" class="readingLists">
-        <li *ngFor="let readingList of readingLists">{{ readingList.name }}</li>
+        <li *ngFor="let readingList of readingLists"
+            (click)="onSelectReadingList(readingList)">{{ readingList.name }}</li>
     </ul>
 
     <h2>Followed Lists</h2>
     <ul *ngIf="followedLists" class="readingLists">
         <li *ngFor="let followedList of followedLists"
-            (click)="onSelect(followedList)">{{ followedList.name }}</li>
+            (click)="onSelectFollowedList(followedList)">{{ followedList.name }}</li>
     </ul>
 </div>
