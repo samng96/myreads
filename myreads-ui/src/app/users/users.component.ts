@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
 import { ServiceApi, UserEntity, ReadingListEntity, FollowedListEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
+import { LocalStorageObject } from '../localstorageobject';
 
 @Component({
     selector: 'app-users',
@@ -12,25 +13,23 @@ import { LoggerService } from '../logger.service';
     styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
-    userId: number;
-    userEntity: UserEntity;
-    readingLists: ReadingListEntity[];
-    followedLists: ReadingListEntity[];
-    usersCollection: Map<number, UserEntity>;
+    userId: number; // This is the current user we're trying to view.
+    userEntity: UserEntity; // This is for presentation.
+    readingLists: ReadingListEntity[]; // The reading lists to present on this user.
+    followedLists: ReadingListEntity[]; // The followed lists to present on this user.
     canEdit: boolean;
+    lso: LocalStorageObject;
 
     constructor(
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
+        private router: Router,
         private logger: LoggerService
     ) { }
 
     ngOnInit() {
         // When we load up, we need to get the user in the route.
-        this.usersCollection = JSON.parse(localStorage.getItem("usersCollection"));
-        if (this.usersCollection == null) {
-            this.usersCollection = new Map<number, UserEntity>();
-        }
+        this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
 
         var getUserMerge = this.serviceApi.getUser(this.userId);
@@ -38,8 +37,9 @@ export class UsersComponent implements OnInit {
         // Two paths here - one is to get the reading lists for the user, and the other is to get the followed lists.
         var getReadingListsMerge = getUserMerge.mergeMap(user =>
             {
+                this.lso.updateUser(user);
                 this.userEntity = user;
-                this.canEdit = this.isViewingCurrentUser(user);
+                this.canEdit = this.isViewingCurrentUser(this.lso.users[user.id]);
                 this.log(`got user ${user.name}, editing permissions ${this.canEdit}`);
 
                 // Get the user's reading lists.
@@ -47,40 +47,54 @@ export class UsersComponent implements OnInit {
             });
         getReadingListsMerge.subscribe(readingLists =>
             {
-                this.log(`got ${readingLists.length} lists for user ${this.userEntity.name}`);
+                this.log(`got ${readingLists.length} lists for user ${this.lso.users[this.userId].name}`);
                 this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
+
+                // Save them to local storage object for later.
+                for (let list of readingLists) {
+                    this.lso.updateReadingList(list);
+                }
             });
 
         var getFollowedListsMerge = getUserMerge.mergeMap(user => this.serviceApi.getFollowedLists(user.id));
-        var resolveFollowedListsMerge = getFollowedListsMerge.mergeMap(followedLists =>
+        var resolveFollowedListsMerge = getFollowedListsMerge.subscribe(followedLists =>
             {
-                this.log(`got ${followedLists.length} followed lists for user ${user.name}`);
+                this.log(`got ${followedLists.length} followed lists for user ${this.lso.users[this.userId].name}`);
                 this.followedLists = [];
 
                 // For each followed list, we need to resolve the list, then resolve the user.
                 for (let followedList of followedLists) {
-                    var getReadingListForFollowedListMerge = this.serviceApi.getReadingList(followedList.ownerId, followedList.listId);
-                    getReadingListForFollowedListMerge.subscribe(readingList =>
-                    {
-                        this.log(`got list ${readingList.name} for followed user Id ${followedList.ownerId}`);
-                        this.followedLists.push(readingList);
-                        this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
+                    if (this.lso.readingLists[followedList.id] == null) {
+                        var getReadingListForFollowedListMerge = this.serviceApi.getReadingList(followedList.ownerId, followedList.listId);
+                        getReadingListForFollowedListMerge.subscribe(readingList =>
+                        {
+                            this.log(`got list ${readingList.name} for followed user Id ${followedList.ownerId}`);
+                            this.lso.updateReadingList(readingList);
 
-                        // Resolve the user, then add it to the cache.
-                        if (this.usersCollection[followedList.ownerId] == null) {
-                            this.serviceApi.getUser(followedList.ownerId).subscribe(user => {
-                                this.log(`got user ${user.name}`);
-                                this.usersCollection[user.id] = user;
-                                localStorage.setItem("usersCollection", JSON.stringify(this.usersCollection));
-                            })
-                        }
-                    });
+                            this.followedLists.push(readingList);
+                            this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
+                            if (this.lso.users[followedList.ownerId] == null) {
+                                this.serviceApi.getUser(followedList.ownerId).subscribe(user => {
+                                    this.log(`got user ${user.name}`);
+                                    this.lso.updateUser(user);
+                                })
+                            }
+                        });
+                    }
+                    else {
+                        this.followedLists.push(this.lso.readingLists[followedList.id]);
+                        this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
+                    }
                 }
             });
     }
 
+    private onSelect(list: ReadingListEntity): void {
+        this.router.navigate(['users', this.userId, 'followedlists', list.id]);
+    }
+
     private isViewingCurrentUser(user: UserEntity): boolean {
-        var currentUser = JSON.parse(localStorage.getItem("loggedInUserEntity"));
+        var currentUser = this.lso.users[this.lso.loggedInUserId];
         if (currentUser == null) {
             return false;
         }

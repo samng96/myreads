@@ -8,6 +8,7 @@
 
     <h2>Followed Lists</h2>
     <ul *ngIf="followedLists" class="readingLists">
-        <li *ngFor="let followedList of followedLists">{{ followedList.name }}</li>
+        <li *ngFor="let followedList of followedLists"
+            (click)="onSelect(followedList)">{{ followedList.name }}</li>
     </ul>
 </div>

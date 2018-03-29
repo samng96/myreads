@@ -11,10 +11,10 @@ import { TagsComponent } from './tags/tags.component';
 const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'users/:userId', component: UsersComponent },
-    { path: 'readinglists/:listId', component: ReadingListsComponent },
-    { path: 'readinglistelements/:elementId', component: ReadingListElementsComponent },
-    { path: 'followedlists/:followedId', component: FollowedListsComponent },
-    { path: 'tags/:tagId', component: TagsComponent },
+    { path: 'users/:userId/readinglists/:listId', component: ReadingListsComponent },
+    { path: 'users/:userId/readinglistelements/:elementId', component: ReadingListElementsComponent },
+    { path: 'users/:userId/followedlists/:followedId', component: FollowedListsComponent },
+    { path: 'users/:userId/tags/:tagId', component: TagsComponent },
     { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 

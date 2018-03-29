@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { ServiceApi } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
+import { LocalStorageObject } from '../localstorageobject';
 
 @Component({
     selector: 'app-login',
@@ -12,6 +13,7 @@ import { LoggerService } from '../logger.service';
 export class LoginComponent implements OnInit {
     username: string;
     password: string;
+    lso: LocalStorageObject;
 
     hardcodedUserId: number = 5732452450435072;
 
@@ -22,6 +24,7 @@ export class LoginComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.lso = LocalStorageObject.load();
         this.checkLogin();
     }
 
@@ -29,22 +32,22 @@ export class LoginComponent implements OnInit {
         // If we've logged in, we'll have a loginToken. Eventually, we'll
         // want to use that token with auth to our API, but for now we'll just
         // set it to 1 when we've logged in.
-        var loginToken = localStorage.getItem('loginToken');
+        var loginToken = this.lso.loginToken;
         this.log(`checkLogin got token ${loginToken}`);
         if (loginToken != null) {
-            this.router.navigate(['users', localStorage.getItem('userId')]);
+            this.router.navigate(['users', this.lso.loggedInUserId]);
         }
     }
 
     login(): void {
         // For now we don't have a login API, so just assume it all works out and
         // hard code the login tokens, then get the user object.
-        localStorage.setItem('userId', this.hardcodedUserId.toString());
-        localStorage.setItem('loginToken', "1");
+        this.lso.setCurrentUserId(this.hardcodedUserId);
+        this.lso.setCurrentLoginToken("1");
 
         this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
             {
-                localStorage.setItem('loggedInUserEntity', JSON.stringify(user));
+                this.lso.updateUser(user);
                 this.log(`successful login for user ${user.name}`)
                 this.checkLogin();
             });
