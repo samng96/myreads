@@ -1,3 +1,9 @@
-<p>
-  readinglists works!
-</p>
+<div *ngIf="readingList">
+    <h1>{{ readingList.name }}</h1>
+
+    <h2>Reading List Elements</h2>
+    <ul *ngIf="readingListElements" class="readingListElements">
+        <li *ngFor="let readingListElement of readingListElements"
+            (click)="onSelectReadingList(readingListElement)">{{ readingListElement.name }}</li>
+    </ul>
+</div>

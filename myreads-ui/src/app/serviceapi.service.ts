@@ -29,6 +29,29 @@ export class FollowedListEntity {
     orphaned: boolean;
 }
 
+export class ReadingListElementEntity {
+    id: number;
+    userId: number;
+    listIds: number[];
+    name: string;
+    description: string;
+    amazonLink: string;
+    tagIds: number[];
+    commentIds: number[];
+}
+
+export class TagEntity {
+    id: number;
+    tagName: string;
+}
+
+export class CommentEntity {
+    id: number;
+    userId: number;
+    readingListElementId: number;
+    commentText: string;
+}
+
 @Injectable()
 export class ServiceApi {
     public static baseUrl = "http://localhost:8080"
@@ -59,6 +82,14 @@ export class ServiceApi {
         return this.http.get<ReadingListEntity>(url)
             .pipe(
                 tap(_ => this.log(`Api: getReadingList(${userId}, ${listId})`))
+            );
+    }
+
+    getReadingListElement(userId: number, rleId: number): Observable<ReadingListElementEntity> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
+        return this.http.get<ReadingListElementEntity>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getReadingListElement(${userId}, ${rleId})`))
             );
     }
 

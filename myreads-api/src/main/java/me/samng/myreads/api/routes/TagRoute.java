@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagRoute {
+    // TODO: At some point, do we want to add the ability for users to get all the tags that they've used?
 
     public static List<TagEntity> getTagEntities(
         Datastore datastore,
