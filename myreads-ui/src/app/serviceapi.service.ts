@@ -101,5 +101,21 @@ export class ServiceApi {
             );
     }
 
+    getTags(): Observable<TagEntity[]> {
+        var url = `${ServiceApi.baseUrl}/tags`;
+        return this.http.get<TagEntity[]>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getTags()`))
+            );
+    }
+
+    getTag(tagId: number): Observable<TagEntity> {
+        var url = `${ServiceApi.baseUrl}/tags/${tagId}`;
+        return this.http.get<TagEntity>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getTags(${tagId})`))
+            );
+    }
+
     private log(message: string) { this.logger.log(`[ServiceApi]: ${message}`); }
 }

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-import { ServiceApi, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
+import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObject } from '../localstorageobject';
 
@@ -20,6 +20,7 @@ export class ReadingListsComponent implements OnInit {
 
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
+    tags: TagEntity[]; // This is for the display.
 
     constructor(
         private route: ActivatedRoute,
@@ -35,6 +36,7 @@ export class ReadingListsComponent implements OnInit {
         this.listId = +this.route.snapshot.paramMap.get('listId');
 
         this.readingListElements = [];
+        this.tags = [];
 
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
         {
@@ -42,13 +44,34 @@ export class ReadingListsComponent implements OnInit {
             this.readingList = readingList;
 
             // Now load up all the RLEs for the list.
-            for (let rleId of this.lso.readingLists[this.listId].readingListElementIds) {
+            for (let rleId of readingList.readingListElementIds) {
                 this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
                     this.lso.updateReadingListElement(rle);
                     this.readingListElements.push(rle);
                 });
             }
+
+            // Now get the tags.
+            for (let tagId of readingList.tagIds) {
+                if (this.lso.tags[tagId] != null) {
+                    this.tags.push(this.lso.tags[tagId]);
+                }
+                else {
+                    this.serviceApi.getTag(tagId).subscribe(tag => {
+                        this.lso.updateTag(tag);
+                        this.tags.push(tag);
+                    })
+                }
+            }
         });
+    }
+
+    private onSelectTag(tag: TagEntity): void {
+        this.router.navigate(['tags', tag.id]);
+    }
+
+    private onSelectReadingListElement(rle: ReadingListElementEntity): void {
+        this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
     }
 
     private isViewingCurrentUser(user: UserEntity): boolean {

@@ -4,6 +4,12 @@
     <h2>Reading List Elements</h2>
     <ul *ngIf="readingListElements" class="readingListElements">
         <li *ngFor="let readingListElement of readingListElements"
-            (click)="onSelectReadingList(readingListElement)">{{ readingListElement.name }}</li>
+            (click)="onSelectReadingListElement(readingListElement)">{{ readingListElement.name }}</li>
+    </ul>
+
+    <h2>Tags</h2>
+    <ul *ngIf="tags" class="tags">
+        <li *ngFor="let tag of tags"
+            (click)="onSelectTag(tag)">{{ tag.tagName }}</li>
     </ul>
 </div>

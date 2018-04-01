@@ -80,6 +80,16 @@ export class LocalStorageObject {
         this.save();
     }
 
+    public updateTags(tags: TagEntity[]): void {
+        for (let tag of tags) {
+            this.tags[tag.id] = tag;
+        }
+        this.save();
+    }
+    public updateTag(tag: TagEntity): void {
+        this.tags[tag.id] = tag;
+        this.save();
+    }
     public updateUser(userEntity: UserEntity): void {
         this.users[userEntity.id] = userEntity;
         this.save();
