@@ -18,6 +18,8 @@ export class ReadingListsComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.
     listId: number; // This is the current list we're trying to view.
 
+    ownList: boolean;
+    followingList: boolean;
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
     tags: TagEntity[]; // This is for the display.
@@ -30,6 +32,7 @@ export class ReadingListsComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // TODO: Every page needs to ensure that we're logged in.
         // When we load up, we need to get the user and the list in the route.
         this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
@@ -41,6 +44,7 @@ export class ReadingListsComponent implements OnInit {
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
         {
             this.lso.updateReadingList(readingList);
+            this.ownList = this.isViewingCurrentUser(readingList.userId);
             this.readingList = readingList;
 
             // Now load up all the RLEs for the list.
@@ -63,23 +67,58 @@ export class ReadingListsComponent implements OnInit {
                     })
                 }
             }
+
+            // Now get all the lists that the user is following.
+            this.serviceApi.getFollowedLists(this.lso.myUserId).subscribe(fles => {
+                for (let fle of fles) {
+                    this.lso.updateFollowedList(fle);
+                    this.lso.updateMyFollowedLists(fle.listId, fle.id);
+                }
+                this.followingList = this.isFollowingList(readingList.id);
+            });
+        });
+    }
+
+    private onFollowList(): void {
+        var fle = new FollowedListEntity();
+        fle.userId = this.lso.myUserId;
+        fle.ownerId = this.readingList.userId;
+        fle.listId = this.readingList.id;
+        this.serviceApi.postFollowedList(this.lso.myUserId, fle).subscribe(fleId => {
+            if (fleId != null) {
+                fle.id = fleId;
+                this.lso.updateFollowedList(fle);
+                this.lso.updateMyFollowedLists(fle.listId, fle.id);
+                this.followingList = true;
+            }
+        });
+    }
+    private onUnfollowList(): void {
+        var fleId = this.lso.myFollowedLists[this.listId];
+        this.serviceApi.deleteFollowedList(this.lso.myUserId, fleId).subscribe(x => {
+            this.followingList = false;
         });
     }
 
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
     }
-
     private onSelectReadingListElement(rle: ReadingListElementEntity): void {
         this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
     }
-
-    private isViewingCurrentUser(user: UserEntity): boolean {
+    private isFollowingList(listId: number): boolean {
+        return (this.lso.myFollowedLists[listId] != undefined);
+    }
+    private isViewingCurrentUser(userId: number): boolean {
         var currentUser = this.lso.users[this.lso.myUserId];
         if (currentUser == null) {
             return false;
         }
-        return currentUser.userId == user.userId;
+        var targetUser = this.lso.users[userId];
+        if (targetUser == null) {
+            return false;
+        }
+        return currentUser.userId == targetUser.userId;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

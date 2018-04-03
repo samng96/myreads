@@ -28,6 +28,7 @@ export class UsersComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // TODO: When we load up our lists and our followed lists, populate the lso.
         // When we load up, we need to get the user in the route.
         this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
@@ -41,7 +42,7 @@ export class UsersComponent implements OnInit {
             {
                 this.lso.updateUser(user);
                 this.userEntity = user;
-                this.canEdit = this.isViewingCurrentUser(this.lso.users[user.id]);
+                this.canEdit = this.isViewingCurrentUser(user.id);
                 this.log(`got user ${user.name}, editing permissions ${this.canEdit}`);
 
                 // Get the user's reading lists.
@@ -92,20 +93,20 @@ export class UsersComponent implements OnInit {
             });
     }
 
-    private onSelectFollowedList(list: ReadingListEntity): void {
-        this.router.navigate(['users', this.userId, 'followedlists', list.id]);
-    }
-
     private onSelectReadingList(list: ReadingListEntity): void {
-        this.router.navigate(['users', this.userId, 'readinglists', list.id]);
+        this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
 
-    private isViewingCurrentUser(user: UserEntity): boolean {
+    private isViewingCurrentUser(userId: number): boolean {
         var currentUser = this.lso.users[this.lso.myUserId];
         if (currentUser == null) {
             return false;
         }
-        return currentUser.userId == user.userId;
+        var targetUser = this.lso.users[userId];
+        if (targetUser == null) {
+            return false;
+        }
+        return currentUser.userId == targetUser.userId;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

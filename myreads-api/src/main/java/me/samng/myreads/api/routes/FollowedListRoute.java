@@ -79,8 +79,22 @@ public class FollowedListRoute {
             return;
         }
 
-        followedListEntity.userId = userId;
-        long addedId = DatastoreHelpers.createFollowedList(datastore, followedListEntity);
+        // See if we're already following the list or not.
+        boolean isFollowed = false;
+        long addedId = -1;
+        for (FollowedListEntity fle : DatastoreHelpers.getAllFollowedListsForUser(datastore, userId)) {
+            if (fle.listId == followedListEntity.listId) {
+                // We're already following this list, just bail out.
+                isFollowed = true;
+                addedId = fle.id;
+                break;
+            }
+        }
+
+        if (!isFollowed) {
+            followedListEntity.userId = userId;
+            addedId = DatastoreHelpers.createFollowedList(datastore, followedListEntity);
+        }
 
         routingContext.response()
             .setStatusCode(HttpResponseStatus.CREATED.code())

@@ -58,12 +58,16 @@ export class ReadingListElementsComponent implements OnInit {
         this.router.navigate(['tags', tag.id]);
     }
 
-    private isViewingCurrentUser(user: UserEntity): boolean {
+    private isViewingCurrentUser(userId: number): boolean {
         var currentUser = this.lso.users[this.lso.myUserId];
         if (currentUser == null) {
             return false;
         }
-        return currentUser.userId == user.userId;
+        var targetUser = this.lso.users[userId];
+        if (targetUser == null) {
+            return false;
+        }
+        return currentUser.userId == targetUser.userId;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

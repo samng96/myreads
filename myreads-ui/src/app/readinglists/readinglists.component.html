@@ -12,4 +12,11 @@
         <li *ngFor="let tag of tags"
             (click)="onSelectTag(tag)">{{ tag.tagName }}</li>
     </ul>
+
+    <div *ngIf="!followingList && !ownList">
+        This isn't your list - click <span (click)="onFollowList()">here</span> to follow it
+    </div>
+    <div *ngIf="followingList">
+        You're following this list - click <span (click)="onUnfollowList()">here</span> to stop following it
+    </div>
 </div>

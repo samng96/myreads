@@ -13,7 +13,7 @@ const routes: Routes = [
     { path: 'users/:userId', component: UsersComponent },
     { path: 'users/:userId/readinglists/:listId', component: ReadingListsComponent },
     { path: 'users/:userId/readinglistelements/:elementId', component: ReadingListElementsComponent },
-    { path: 'users/:userId/followedlists/:followedId', component: FollowedListsComponent },
+    //{ path: 'followedlists/:listId', component: FollowedListsComponent },
     { path: 'tags/:tagId', component: TagsComponent },
     { path: 'tags', component: TagsComponent },
     { path: '', redirectTo: '/login', pathMatch: 'full' }

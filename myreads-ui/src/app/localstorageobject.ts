@@ -4,7 +4,7 @@ export class LocalStorageObject {
     public myUserId: number; // The current user's Id
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
 
-    public myFollowedLists: number[];
+    public myFollowedLists: Map<number, number>; // [listId, followedEntityId]
     public myReadingLists: number[];
     public myReadingListElements: number[];
     public myComments: number[];
@@ -21,7 +21,7 @@ export class LocalStorageObject {
         this.myUserId = -1;
         this.myLoginToken = null;
         this.myReadingLists = [];
-        this.myFollowedLists = [];
+        this.myFollowedLists = new Map<number, number>();
         this.myReadingListElements = [];
         this.myComments = [];
 
@@ -68,16 +68,20 @@ export class LocalStorageObject {
     }
 
     public updateMyReadingLists(listId: number): void {
-        this.myReadingLists.push(listId);
-        this.save();
+        if (!this.myReadingLists.includes(listId)) {
+            this.myReadingLists.push(listId);
+            this.save();
+        }
     }
-    public updateMyFollowedLists(listId: number): void {
-        this.myFollowedLists.push(listId);
+    public updateMyFollowedLists(listId: number, fleId): void {
+        this.myFollowedLists[listId] = fleId;
         this.save();
     }
     public updateMyReadingListElements(rleId: number): void {
-        this.myReadingListElements.push(rleId);
-        this.save();
+        if (!this.myReadingListElements.includes(rleId)) {
+            this.myReadingListElements.push(rleId);
+            this.save();
+        }
     }
 
     public updateTags(tags: TagEntity[]): void {

@@ -52,6 +52,7 @@ export class CommentEntity {
     commentText: string;
 }
 
+// TODO: Need to handle errors gracefully.
 @Injectable()
 export class ServiceApi {
     public static baseUrl = "http://localhost:8080"
@@ -68,7 +69,6 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getUser(${userId})`))
             );
     }
-
     getReadingLists(userId: number): Observable<ReadingListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists`;
         return this.http.get<ReadingListEntity[]>(url)
@@ -76,7 +76,6 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getReadingLists(${userId})`))
             );
     }
-
     getReadingList(userId: number, listId: number): Observable<ReadingListEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}`;
         return this.http.get<ReadingListEntity>(url)
@@ -84,7 +83,6 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getReadingList(${userId}, ${listId})`))
             );
     }
-
     getReadingListElement(userId: number, rleId: number): Observable<ReadingListElementEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         return this.http.get<ReadingListElementEntity>(url)
@@ -92,7 +90,6 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getReadingListElement(${userId}, ${rleId})`))
             );
     }
-
     getFollowedLists(userId: number): Observable<FollowedListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
         return this.http.get<FollowedListEntity[]>(url)
@@ -100,7 +97,6 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getFollowedLists(${userId})`))
             );
     }
-
     getTags(): Observable<TagEntity[]> {
         var url = `${ServiceApi.baseUrl}/tags`;
         return this.http.get<TagEntity[]>(url)
@@ -108,12 +104,29 @@ export class ServiceApi {
                 tap(_ => this.log(`Api: getTags()`))
             );
     }
-
     getTag(tagId: number): Observable<TagEntity> {
         var url = `${ServiceApi.baseUrl}/tags/${tagId}`;
         return this.http.get<TagEntity>(url)
             .pipe(
                 tap(_ => this.log(`Api: getTags(${tagId})`))
+            );
+    }
+
+    postFollowedList(userId: number, followedListEntity: FollowedListEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
+        var returnValue = false;
+        return this.http.post(url, followedListEntity)
+            .pipe(
+                tap(_ => this.log(`Api: postFollowedList(${userId}, ${followedListEntity})`))
+            );
+    }
+
+    deleteFollowedList(userId: number, followedListId: number): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
+        var returnValue = false;
+        return this.http.delete(url)
+            .pipe(
+                tap(_ => this.log(`Api: deleteFollowedList(${userId}, ${followedListId})`))
             );
     }
 
