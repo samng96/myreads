@@ -106,14 +106,12 @@ export class ReadingListsComponent implements OnInit {
             // First check if the tag exists.
             this.serviceApi.getTagByName(this.addTagName).subscribe(tag => {
                 if (tag == null) {
-                    // TODO: Add a tag, and then add it to the list
                     var tagEntity = new TagEntity();
                     tagEntity.tagName = this.addTagName;
                     this.serviceApi.postTag(tagEntity).subscribe(tagId => {
                         tagEntity.id = tagId;
                         this.lso.updateTag(tagEntity);
 
-                        // TODO: Might want to fix - this takes an array, but really doesn't need to?
                         let tagIds: number[] = [tagId];
                         this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
                             this.tags.push(tagEntity);

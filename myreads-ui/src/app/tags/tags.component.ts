@@ -44,7 +44,10 @@ export class TagsComponent implements OnInit {
                 this.lso.updateTag(tag);
                 this.tag = tag;
 
-                // TODO: We might want to list all things associated with the tag here.
+                // TODO: We might want to list all things associated with the tag here. We'll want to
+                // TODO: collate of course, since it might be super long. Maybe show the first x?
+                // TODO: In general, we'll need to eventually handle uber huge lists of things, but for now,
+                // TODO: we can just give it a pass.
             })
         }
     }

@@ -53,7 +53,6 @@ export class CommentEntity {
     commentText: string;
 }
 
-// TODO: Need to handle errors gracefully.
 @Injectable()
 export class ServiceApi {
     public static baseUrl = "http://localhost:8080"
