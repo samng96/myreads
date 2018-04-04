@@ -142,13 +142,14 @@ export class ReadingListsComponent implements OnInit {
             this.tags.splice(index, 1);
         })
     }
-
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
     }
+
     private onSelectReadingListElement(rle: ReadingListElementEntity): void {
         this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
     }
+
     private isFollowingList(listId: number): boolean {
         return (this.lso.myFollowedLists[listId] != undefined);
     }

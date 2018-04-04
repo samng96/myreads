@@ -157,7 +157,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addTags`;
         return this.http.post(url, tagIds)
             .pipe(
-                tap(_ => this.log(`Api: addTagToReadingList(${userId}, ${tagIds})`)),
+                tap(_ => this.log(`Api: addTagToReadingList(${userId}, ${listId}, ${tagIds})`)),
                 catchError(this.handleError("addTagToReadingList", null))
             );
     }
@@ -170,6 +170,23 @@ export class ServiceApi {
             );
     }
 
+    addTagToReadingListElement(userId: number, rleId: number, tagIds: number[]): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/addTags`;
+        return this.http.post(url, tagIds)
+            .pipe(
+                tap(_ => this.log(`Api: addTagToReadingListElement(${userId}, ${rleId}, ${tagIds})`)),
+                catchError(this.handleError("addTagToReadingListElement", null))
+            );
+    }
+    removeTagFromReadingListElement(userId: number, rleId: number, tagId: number): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/tags/${tagId}`;
+        return this.http.delete(url)
+            .pipe(
+                tap(_ => this.log(`Api: removeTagFromReadingListElement(${userId}, ${rleId}, ${tagId})`)),
+                catchError(this.handleError("removeTagFromReadingListElement", null))
+            );
+    }
+    
     private log(message: string) { this.logger.log(`[ServiceApi]: ${message}`); }
     private handleError<T>(operation: string, result?:T) {
         return (error: any): Observable<T> => {

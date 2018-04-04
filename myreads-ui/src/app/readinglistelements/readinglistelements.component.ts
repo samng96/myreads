@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
+import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObject } from '../localstorageobject';
 
@@ -18,7 +18,10 @@ export class ReadingListElementsComponent implements OnInit {
     rleId: number;
     userId: number;
 
+    ownRle: boolean;
+    addTagName: string; // Bound to the form.
     readingListElement: ReadingListElementEntity; // This is for the display.
+    comments: CommentEntity[]; // This is for the display.
     tags: TagEntity[]; // This is for the display.
 
     constructor(
@@ -32,6 +35,7 @@ export class ReadingListElementsComponent implements OnInit {
         this.lso = LocalStorageObject.load();
         this.rleId = +this.route.snapshot.paramMap.get('elementId');
         this.userId = +this.route.snapshot.paramMap.get('userId');
+        this.ownRle = this.isViewingCurrentUser(this.userId);
 
         this.tags = [];
 
@@ -54,8 +58,53 @@ export class ReadingListElementsComponent implements OnInit {
         });
     }
 
+    private onAddTag(): void {
+        if (this.addTagName != undefined) {
+            // First check if the tag exists.
+            this.serviceApi.getTagByName(this.addTagName).subscribe(tag => {
+                if (tag == null) {
+                    var tagEntity = new TagEntity();
+                    tagEntity.tagName = this.addTagName;
+                    this.serviceApi.postTag(tagEntity).subscribe(tagId => {
+                        tagEntity.id = tagId;
+                        this.lso.updateTag(tagEntity);
+
+                        let tagIds: number[] = [tagId];
+                        this.serviceApi.addTagToReadingListElement(this.userId, this.rleId, tagIds).subscribe(x => {
+                            this.tags.push(tagEntity);
+                        });
+                    });
+                }
+                else {
+                    var tagEntity = new TagEntity();
+                    tagEntity.tagName = this.addTagName;
+                    let tagIds: number[] = [tag.id];
+
+                    // Make sure our tag isn't already added.
+                    for (let currentTag of this.tags) {
+                        if (currentTag.tagName == this.addTagName) {
+                            return;
+                        }
+                    }
+                    this.serviceApi.addTagToReadingListElement(this.userId, this.rleId, tagIds).subscribe(x => {
+                        this.tags.push(tagEntity);
+                    });
+                }
+            });
+        }
+    }
+    private onRemoveTag(tag: TagEntity): void {
+        this.serviceApi.removeTagFromReadingListElement(this.userId, this.rleId, tag.id).subscribe(x => {
+            var index = this.tags.indexOf(tag, 0);
+            this.tags.splice(index, 1);
+        })
+    }
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
+    }
+
+    private onAddComment(): void {
+
     }
 
     private isViewingCurrentUser(userId: number): boolean {
