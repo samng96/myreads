@@ -5,7 +5,6 @@ import { LoginComponent } from './login/login.component';
 import { UsersComponent } from './users/users.component';
 import { ReadingListsComponent } from './readinglists/readinglists.component';
 import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
-import { FollowedListsComponent } from './followedlists/followedlists.component';
 import { TagsComponent } from './tags/tags.component';
 
 const routes: Routes = [
