@@ -14,8 +14,10 @@
             <span *ngIf="ownList" (click)="onRemoveTag(tag)">remove</span>
         </li>
     </ul>
-    <input [(ngModel)]="addTagName" placeholder="add tag"/>
-    <span (click)="onAddTag()">add tag</span>
+    <span *ngIf="ownList">
+        <input [(ngModel)]="addTagName" placeholder="add tag"/>
+        <span (click)="onAddTag()">add tag</span>
+    </span>
 
     <div *ngIf="!followingList && !ownList">
         This isn't your list - click <span (click)="onFollowList()">here</span> to follow it
