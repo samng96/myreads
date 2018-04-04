@@ -28,7 +28,6 @@ export class UsersComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        // TODO: When we load up our lists and our followed lists, populate the lso.
         // When we load up, we need to get the user in the route.
         this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');

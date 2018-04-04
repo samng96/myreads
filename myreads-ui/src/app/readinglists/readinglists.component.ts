@@ -33,7 +33,6 @@ export class ReadingListsComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        // TODO: Every page needs to ensure that we're logged in.
         // When we load up, we need to get the user and the list in the route.
         this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
