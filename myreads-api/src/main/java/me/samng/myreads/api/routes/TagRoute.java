@@ -1,9 +1,6 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.Datastore;
-import com.google.cloud.datastore.Entity;
-import com.google.cloud.datastore.Query;
-import com.google.cloud.datastore.QueryResults;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -33,14 +30,7 @@ public class TagRoute {
     // GET /tags
     public void getAllTags(RoutingContext routingContext) {
         Datastore datastore = DatastoreHelpers.getDatastore();
-        Query<Entity> query = Query.newEntityQueryBuilder()
-            .setKind(DatastoreHelpers.tagKind)
-            .build();
-        QueryResults<Entity> queryresult = datastore.run(query);
-
-        // Iterate through the results to actually fetch them, then serialize them and return.
-        ArrayList<TagEntity> results = new ArrayList<TagEntity>();
-        queryresult.forEachRemaining(list -> { results.add(TagEntity.fromEntity(list)); });
+        List<TagEntity> results = DatastoreHelpers.getAllTags(datastore);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
@@ -86,6 +76,34 @@ public class TagRoute {
 
         Datastore datastore = DatastoreHelpers.getDatastore();
         TagEntity tagEntity = DatastoreHelpers.getTag(datastore, tagId);
+        if (tagEntity == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(tagEntity));
+    }
+
+    // GET /tagByName/{tagName}
+    public void getTagByName(RoutingContext routingContext) {
+        String tagName;
+        try {
+            tagName = routingContext.request().getParam("tagName");
+        } catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        TagEntity tagEntity = DatastoreHelpers.getTagByName(datastore, tagName);
         if (tagEntity == null) {
             routingContext.response()
                 .setStatusCode(HttpResponseStatus.NOT_FOUND.code())

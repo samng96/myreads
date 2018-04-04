@@ -73,7 +73,7 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
         router.mountSubRouter("/users", setupUsers());
-        router.mountSubRouter("/tags", setupTags());
+        router.mountSubRouter("/", setupTags());
 
         vertx.createHttpServer().requestHandler(router::accept).listen(MainVerticle.port, result -> {
             if (result.succeeded()) {
@@ -89,10 +89,11 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
+        router.get("/tags/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
+        router.get("/tagByName/:tagName").handler(routingContext -> { tagRoute.getTagByName(routingContext); });
 
-        router.get().handler(routingContext -> { tagRoute.getAllTags(routingContext); });
-        router.post().handler(routingContext -> { tagRoute.postTag(routingContext); });
+        router.get("/tags").handler(routingContext -> { tagRoute.getAllTags(routingContext); });
+        router.post("/tags").handler(routingContext -> { tagRoute.postTag(routingContext); });
 
         return router;
     }

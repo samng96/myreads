@@ -20,6 +20,7 @@ export class ReadingListsComponent implements OnInit {
 
     ownList: boolean;
     followingList: boolean;
+    addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
     tags: TagEntity[]; // This is for the display.
@@ -98,6 +99,50 @@ export class ReadingListsComponent implements OnInit {
         this.serviceApi.deleteFollowedList(this.lso.myUserId, fleId).subscribe(x => {
             this.followingList = false;
         });
+    }
+
+    private onAddTag(): void {
+        if (this.addTagName != undefined) {
+            // First check if the tag exists.
+            this.serviceApi.getTagByName(this.addTagName).subscribe(tag => {
+                if (tag == null) {
+                    // TODO: Add a tag, and then add it to the list
+                    var tagEntity = new TagEntity();
+                    tagEntity.tagName = this.addTagName;
+                    this.serviceApi.postTag(tagEntity).subscribe(tagId => {
+                        tagEntity.id = tagId;
+                        this.lso.updateTag(tagEntity);
+
+                        // TODO: Might want to fix - this takes an array, but really doesn't need to?
+                        let tagIds: number[] = [tagId];
+                        this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
+                            this.tags.push(tagEntity);
+                        });
+                    });
+                }
+                else {
+                    var tagEntity = new TagEntity();
+                    tagEntity.tagName = this.addTagName;
+                    let tagIds: number[] = [tag.id];
+
+                    // Make sure our tag isn't already added.
+                    for (let currentTag of this.tags) {
+                        if (currentTag.tagName == this.addTagName) {
+                            return;
+                        }
+                    }
+                    this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
+                        this.tags.push(tagEntity);
+                    });
+                }
+            });
+        }
+    }
+    private onRemoveTag(tag: TagEntity): void {
+        this.serviceApi.removeTagFromReadingList(this.userId, this.listId, tag.id).subscribe(x => {
+            var index = this.tags.indexOf(tag, 0);
+            this.tags.splice(index, 1);
+        })
     }
 
     private onSelectTag(tag: TagEntity): void {

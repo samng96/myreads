@@ -205,6 +205,19 @@ public class DatastoreHelpers {
         return results;
     }
 
+    public static List<TagEntity> getAllTags(Datastore datastore) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagKind)
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // Iterate through the results to actually fetch them, then serialize them and return.
+        ArrayList<TagEntity> results = new ArrayList<TagEntity>();
+        queryresult.forEachRemaining(list -> { results.add(TagEntity.fromEntity(list)); });
+
+        return results;
+    }
+
     public static List<ReadingListEntity> getAllReadingListsForUser(Datastore datastore, long userId) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListKind)
@@ -388,6 +401,20 @@ public class DatastoreHelpers {
             return null;
         }
         return tagEntity;
+    }
+
+    public static TagEntity getTagByName(Datastore datastore, String tagName) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.tagKind)
+            .setFilter(PropertyFilter.eq("tagName", tagName))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+
+        // We should only have one, but since there may be errors, just return the first one.
+        if (queryresult.hasNext()) {
+            return TagEntity.fromEntity(queryresult.next());
+        }
+        return null;
     }
 
     public static boolean updateUser(Datastore datastore, UserEntity userEntity, boolean updateForDelete) {

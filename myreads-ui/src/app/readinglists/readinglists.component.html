@@ -9,9 +9,13 @@
 
     <h2>Tags</h2>
     <ul *ngIf="tags" class="tags">
-        <li *ngFor="let tag of tags"
-            (click)="onSelectTag(tag)">{{ tag.tagName }}</li>
+        <li *ngFor="let tag of tags">
+            <span (click)="onSelectTag(tag)">{{ tag.tagName }}</span> -
+            <span *ngIf="ownList" (click)="onRemoveTag(tag)">remove</span>
+        </li>
     </ul>
+    <input [(ngModel)]="addTagName" placeholder="add tag"/>
+    <span (click)="onAddTag()">add tag</span>
 
     <div *ngIf="!followingList && !ownList">
         This isn't your list - click <span (click)="onFollowList()">here</span> to follow it

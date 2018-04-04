@@ -270,7 +270,7 @@ public class ReadingListRoute {
             .end(Json.encode(addedIds.toArray()));
     }
 
-    // POST /users/{userId}/readlingLists/{readingListId}/addTags
+    // POST /users/{userId}/readingLists/{readingListId}/addTags
     public void addTagsToReadingList(RoutingContext routingContext) {
         long listId;
         long userId;
@@ -306,7 +306,7 @@ public class ReadingListRoute {
             .end(Json.encode(addedIds.toArray()));
     }
 
-    // GET /users/{userId}/readlingLists/{readingListId}/tags
+    // GET /users/{userId}/readingLists/{readingListId}/tags
     public void getTagsForReadingList(RoutingContext routingContext) {
         long listId;
         long userId;
@@ -339,7 +339,7 @@ public class ReadingListRoute {
             .end(Json.encode(tags.toArray()));
     }
 
-    // DELETE /users/{userId}/readlingLists/{readingListId}/tags/{tagId}
+    // DELETE /users/{userId}/readingLists/{readingListId}/tags/{tagId}
     public void removeTagFromReadingList(RoutingContext routingContext) {
         long listId;
         long userId;
