@@ -126,12 +126,20 @@ export class ServiceApi {
                 catchError(this.handleError("getTagByName", null))
             );
     }
+    getComment(userId: number, rleId: number, commentId: number): Observable<CommentEntity> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
+        return this.http.get<CommentEntity>(url)
+            .pipe(
+                tap(_ => this.log(`Api: getComment(${userId}, ${rleId}, ${commentId})`)),
+                catchError(this.handleError("getComment", null))
+            );
+    }
 
-    postFollowedList(userId: number, followedListEntity: FollowedListEntity): Observable<any> {
-        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
+    postFollowedList(followedListEntity: FollowedListEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${followedListEntity.userId}/followedLists`;
         return this.http.post(url, followedListEntity)
             .pipe(
-                tap(_ => this.log(`Api: postFollowedList(${userId}, ${followedListEntity})`)),
+                tap(_ => this.log(`Api: postFollowedList(${followedListEntity.userId}, ${followedListEntity})`)),
                 catchError(this.handleError("postFollowedList", null))
             );
     }
@@ -141,6 +149,14 @@ export class ServiceApi {
             .pipe(
                 tap(_ => this.log(`Api: postTag(${tagEntity})`)),
                 catchError(this.handleError("postTag", null))
+            );
+    }
+    postComment(commentEntity: CommentEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${commentEntity.userId}/readingListElements/${commentEntity.readingListElementId}/comments`;
+        return this.http.post(url, commentEntity)
+            .pipe(
+                tap(_ => this.log(`Api: postComment(${commentEntity})`)),
+                catchError(this.handleError("postComment", null))
             );
     }
 
@@ -186,7 +202,7 @@ export class ServiceApi {
                 catchError(this.handleError("removeTagFromReadingListElement", null))
             );
     }
-    
+
     private log(message: string) { this.logger.log(`[ServiceApi]: ${message}`); }
     private handleError<T>(operation: string, result?:T) {
         return (error: any): Observable<T> => {

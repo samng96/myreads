@@ -85,7 +85,7 @@ export class ReadingListsComponent implements OnInit {
         fle.userId = this.lso.myUserId;
         fle.ownerId = this.readingList.userId;
         fle.listId = this.readingList.id;
-        this.serviceApi.postFollowedList(this.lso.myUserId, fle).subscribe(fleId => {
+        this.serviceApi.postFollowedList(fle).subscribe(fleId => {
             if (fleId != null) {
                 fle.id = fleId;
                 this.lso.updateFollowedList(fle);

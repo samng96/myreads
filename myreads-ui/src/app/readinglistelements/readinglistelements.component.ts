@@ -20,6 +20,7 @@ export class ReadingListElementsComponent implements OnInit {
 
     ownRle: boolean;
     addTagName: string; // Bound to the form.
+    addComment: string; // Bound to the form.
     readingListElement: ReadingListElementEntity; // This is for the display.
     comments: CommentEntity[]; // This is for the display.
     tags: TagEntity[]; // This is for the display.
@@ -38,6 +39,7 @@ export class ReadingListElementsComponent implements OnInit {
         this.ownRle = this.isViewingCurrentUser(this.userId);
 
         this.tags = [];
+        this.comments = [];
 
         this.serviceApi.getReadingListElement(this.userId, this.rleId).subscribe(rle => {
             this.lso.updateReadingListElement(rle);
@@ -54,6 +56,12 @@ export class ReadingListElementsComponent implements OnInit {
                         this.tags.push(tag);
                     })
                 }
+            }
+
+            for (let commentId of this.readingListElement.commentIds) {
+                this.serviceApi.getComment(this.userId, this.rleId, commentId).subscribe(comment => {
+                    this.comments.push(comment);
+                });
             }
         });
     }
@@ -104,7 +112,16 @@ export class ReadingListElementsComponent implements OnInit {
     }
 
     private onAddComment(): void {
-
+        if (this.addComment != undefined) {
+            var ce = new CommentEntity();
+            ce.userId = this.userId;
+            ce.readingListElementId = this.rleId;
+            ce.commentText = this.addComment;
+            this.serviceApi.postComment(ce).subscribe(comment => {
+                ce.id = comment.id;
+                this.comments.push(ce);
+            });
+        }
     }
 
     private isViewingCurrentUser(userId: number): boolean {
