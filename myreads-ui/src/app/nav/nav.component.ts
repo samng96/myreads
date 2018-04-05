@@ -10,7 +10,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
     styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
-    @Input()
     public isVisible: boolean;
 
     constructor(
@@ -20,6 +19,7 @@ export class NavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.isVisible = (this.lso.getMyLoginToken() != null);
         this.lso.change.subscribe(myLoginToken => {
             this.isVisible = (myLoginToken != null);
         });

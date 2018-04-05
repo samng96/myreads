@@ -19,7 +19,7 @@ export class LocalStorageObject {
     public tags: Map<number, TagEntity>;
 
     constructor() {
-        var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObjectService"));
+        var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObject"));
         if (loadedObject != null) {
             this.myUserId = loadedObject.myUserId;
             this.myLoginToken = loadedObject.myLoginToken;
@@ -53,7 +53,7 @@ export class LocalStorageObject {
     }
 
     public save(): void {
-        localStorage.setItem("LocalStorageObjectService", JSON.stringify(this));
+        localStorage.setItem("LocalStorageObject", JSON.stringify(this));
     }
 }
 
