@@ -15,6 +15,9 @@ import me.samng.myreads.api.routes.*;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO: We need to implement auth. We should ensure that every API call is auth'ed, and that we check
+// TODO: for ownership of an item only on write, but not on read.
+
 public class MainVerticle extends AbstractVerticle {
 
     public static int port = 8080;

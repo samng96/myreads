@@ -5,7 +5,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObject } from '../localstorageobject';
+import { LocalStorageObjectService } from '../LocalStorageObject';
 
 @Component({
     selector: 'app-readinglistelements',
@@ -13,8 +13,6 @@ import { LocalStorageObject } from '../localstorageobject';
     styleUrls: ['./readinglistelements.component.css']
 })
 export class ReadingListElementsComponent implements OnInit {
-    lso: LocalStorageObject;
-
     rleId: number;
     userId: number;
 
@@ -26,6 +24,7 @@ export class ReadingListElementsComponent implements OnInit {
     tags: TagEntity[]; // This is for the display.
 
     constructor(
+        private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private router: Router,
@@ -33,7 +32,6 @@ export class ReadingListElementsComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.lso = LocalStorageObject.load();
         this.rleId = +this.route.snapshot.paramMap.get('elementId');
         this.userId = +this.route.snapshot.paramMap.get('userId');
         this.ownRle = this.isViewingCurrentUser(this.userId);
@@ -47,8 +45,8 @@ export class ReadingListElementsComponent implements OnInit {
 
             // Now get the tags.
             for (let tagId of this.readingListElement.tagIds) {
-                if (this.lso.tags[tagId] != null) {
-                    this.tags.push(this.lso.tags[tagId]);
+                if (this.lso.getTags()[tagId] != null) {
+                    this.tags.push(this.lso.getTags()[tagId]);
                 }
                 else {
                     this.serviceApi.getTag(tagId).subscribe(tag => {
@@ -125,11 +123,11 @@ export class ReadingListElementsComponent implements OnInit {
     }
 
     private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.users[this.lso.myUserId];
+        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
         if (currentUser == null) {
             return false;
         }
-        var targetUser = this.lso.users[userId];
+        var targetUser = this.lso.getUsers()[userId];
         if (targetUser == null) {
             return false;
         }

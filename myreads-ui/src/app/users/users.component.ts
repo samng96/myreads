@@ -5,7 +5,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import { ServiceApi, UserEntity, ReadingListEntity, FollowedListEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObject } from '../localstorageobject';
+import { LocalStorageObjectService } from '../LocalStorageObject';
 
 @Component({
     selector: 'app-users',
@@ -18,9 +18,9 @@ export class UsersComponent implements OnInit {
     readingLists: ReadingListEntity[]; // The reading lists to present on this user.
     followedLists: ReadingListEntity[]; // The followed lists to present on this user.
     canEdit: boolean;
-    lso: LocalStorageObject;
 
     constructor(
+        private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private router: Router,
@@ -29,13 +29,11 @@ export class UsersComponent implements OnInit {
 
     ngOnInit() {
         // When we load up, we need to get the user in the route.
-        this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
 
         var getUserMerge = this.serviceApi.getUser(this.userId);
 
-        // TODO: Need to add error handling. Since we have some stuff stored locally,
-        // TODO: we should be able to work in offline mode as needed.
+        // TODO: Need to add error handling for when the service returns null.
         // Two paths here - one is to get the reading lists for the user, and the other is to get the followed lists.
         var getReadingListsMerge = getUserMerge.mergeMap(user =>
             {
@@ -49,7 +47,7 @@ export class UsersComponent implements OnInit {
             });
         getReadingListsMerge.subscribe(readingLists =>
             {
-                this.log(`got ${readingLists.length} lists for user ${this.lso.users[this.userId].name}`);
+                this.log(`got ${readingLists.length} lists for user ${this.lso.getUsers()[this.userId].name}`);
                 this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
 
                 // Save them to local storage object for later.
@@ -61,13 +59,13 @@ export class UsersComponent implements OnInit {
         var getFollowedListsMerge = getUserMerge.mergeMap(user => this.serviceApi.getFollowedLists(user.id));
         var resolveFollowedListsMerge = getFollowedListsMerge.subscribe(followedLists =>
             {
-                this.log(`got ${followedLists.length} followed lists for user ${this.lso.users[this.userId].name}`);
+                this.log(`got ${followedLists.length} followed lists for user ${this.lso.getUsers()[this.userId].name}`);
                 this.followedLists = [];
 
                 // For each followed list, we need to resolve the list, then resolve the user.
                 for (let followedList of followedLists) {
                     this.lso.updateFollowedList(followedList);
-                    if (this.lso.readingLists[followedList.id] == null) {
+                    if (this.lso.getReadingLists()[followedList.id] == null) {
                         var getReadingListForFollowedListMerge = this.serviceApi.getReadingList(followedList.ownerId, followedList.listId);
                         getReadingListForFollowedListMerge.subscribe(readingList =>
                         {
@@ -76,7 +74,7 @@ export class UsersComponent implements OnInit {
 
                             this.followedLists.push(readingList);
                             this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
-                            if (this.lso.users[followedList.ownerId] == null) {
+                            if (this.lso.getUsers()[followedList.ownerId] == null) {
                                 this.serviceApi.getUser(followedList.ownerId).subscribe(user => {
                                     this.log(`got user ${user.name}`);
                                     this.lso.updateUser(user);
@@ -85,7 +83,7 @@ export class UsersComponent implements OnInit {
                         });
                     }
                     else {
-                        this.followedLists.push(this.lso.readingLists[followedList.id]);
+                        this.followedLists.push(this.lso.getReadingLists()[followedList.id]);
                         this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                     }
                 }
@@ -97,11 +95,11 @@ export class UsersComponent implements OnInit {
     }
 
     private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.users[this.lso.myUserId];
+        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
         if (currentUser == null) {
             return false;
         }
-        var targetUser = this.lso.users[userId];
+        var targetUser = this.lso.getUsers()[userId];
         if (targetUser == null) {
             return false;
         }

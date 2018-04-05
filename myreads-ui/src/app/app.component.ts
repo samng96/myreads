@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalStorageObject } from './localstorageobject';
+import { LocalStorageObjectService } from './LocalStorageObject';
 
 @Component({
     selector: 'app-root',
@@ -9,16 +9,16 @@ import { LocalStorageObject } from './localstorageobject';
 })
 export class AppComponent {
     title = 'MyReads';
-    lso: LocalStorageObject;
+    isLoggedIn: boolean;
 
     constructor(
+        private lso: LocalStorageObjectService,
         private router: Router
     ) {}
 
     ngOnInit(): void {
-        this.lso = LocalStorageObject.load();
-
-        if (this.lso.myLoginToken == null) {
+        this.isLoggedIn = (this.lso.getMyLoginToken() != null);
+        if (!this.isLoggedIn) {
             this.router.navigate(['/login']);
         }
     }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { ServiceApi } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObject } from '../localstorageobject';
+import { LocalStorageObjectService } from '../LocalStorageObject';
 
 @Component({
     selector: 'app-login',
@@ -13,18 +13,17 @@ import { LocalStorageObject } from '../localstorageobject';
 export class LoginComponent implements OnInit {
     username: string;
     password: string;
-    lso: LocalStorageObject;
 
     hardcodedUserId: number = 5732452450435072;
 
     constructor(
+        private lso: LocalStorageObjectService,
         private router: Router,
         private serviceApi: ServiceApi,
         private logger: LoggerService
     ) { }
 
     ngOnInit() {
-        this.lso = LocalStorageObject.load();
         this.checkLogin();
     }
 
@@ -32,10 +31,10 @@ export class LoginComponent implements OnInit {
         // If we've logged in, we'll have a myLoginToken. Eventually, we'll
         // want to use that token with auth to our API, but for now we'll just
         // set it to 1 when we've logged in.
-        var myLoginToken = this.lso.myLoginToken;
+        var myLoginToken = this.lso.getMyLoginToken();
         this.log(`checkLogin got token ${myLoginToken}`);
         if (myLoginToken != null) {
-            this.router.navigate(['users', this.lso.myUserId]);
+            this.router.navigate(['users', this.lso.getMyUserId()]);
         }
     }
 

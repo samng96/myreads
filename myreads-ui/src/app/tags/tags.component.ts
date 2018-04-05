@@ -5,7 +5,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObject } from '../localstorageobject';
+import { LocalStorageObjectService } from '../LocalStorageObject';
 
 @Component({
     selector: 'app-tags',
@@ -13,12 +13,11 @@ import { LocalStorageObject } from '../localstorageobject';
     styleUrls: ['./tags.component.css']
 })
 export class TagsComponent implements OnInit {
-    lso: LocalStorageObject;
-
     tag: TagEntity; // This is for displaying a single tag.
     tags: TagEntity[]; // This is for the display.
 
     constructor(
+        private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private router: Router,
@@ -30,7 +29,6 @@ export class TagsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.lso = LocalStorageObject.load();
         var tagId = +this.route.snapshot.paramMap.get('tagId');
         if (tagId == 0) {
             // No Id means we just load up all tags and display em.

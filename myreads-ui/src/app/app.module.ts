@@ -14,6 +14,8 @@ import { ReadingListElementsComponent } from './readinglistelements/readingliste
 import { LoggerService } from './logger.service';
 import { ServiceApi } from './serviceapi.service';
 import { DebugComponent } from './debug/debug.component';
+import { NavComponent } from './nav/nav.component';
+import { LocalStorageObjectService } from './LocalStorageObject';
 
 
 @NgModule({
@@ -24,7 +26,8 @@ import { DebugComponent } from './debug/debug.component';
         ReadingListsComponent,
         TagsComponent,
         ReadingListElementsComponent,
-        DebugComponent
+        DebugComponent,
+        NavComponent
     ],
     imports: [
         BrowserModule,
@@ -32,7 +35,7 @@ import { DebugComponent } from './debug/debug.component';
         FormsModule,
         HttpClientModule
     ],
-    providers: [ LoggerService, ServiceApi ],
+    providers: [ LoggerService, ServiceApi, LocalStorageObjectService ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }

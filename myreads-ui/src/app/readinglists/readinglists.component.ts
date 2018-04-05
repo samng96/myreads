@@ -5,7 +5,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObject } from '../localstorageobject';
+import { LocalStorageObjectService } from '../LocalStorageObject';
 
 @Component({
     selector: 'app-readinglists',
@@ -13,8 +13,6 @@ import { LocalStorageObject } from '../localstorageobject';
     styleUrls: ['./readinglists.component.css']
 })
 export class ReadingListsComponent implements OnInit {
-    lso: LocalStorageObject;
-
     userId: number; // This is the current user we're trying to view.
     listId: number; // This is the current list we're trying to view.
 
@@ -26,6 +24,7 @@ export class ReadingListsComponent implements OnInit {
     tags: TagEntity[]; // This is for the display.
 
     constructor(
+        private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private router: Router,
@@ -34,7 +33,6 @@ export class ReadingListsComponent implements OnInit {
 
     ngOnInit() {
         // When we load up, we need to get the user and the list in the route.
-        this.lso = LocalStorageObject.load();
         this.userId = +this.route.snapshot.paramMap.get('userId');
         this.listId = +this.route.snapshot.paramMap.get('listId');
 
@@ -57,8 +55,8 @@ export class ReadingListsComponent implements OnInit {
 
             // Now get the tags.
             for (let tagId of readingList.tagIds) {
-                if (this.lso.tags[tagId] != null) {
-                    this.tags.push(this.lso.tags[tagId]);
+                if (this.lso.getTags()[tagId] != null) {
+                    this.tags.push(this.lso.getTags()[tagId]);
                 }
                 else {
                     this.serviceApi.getTag(tagId).subscribe(tag => {
@@ -69,7 +67,7 @@ export class ReadingListsComponent implements OnInit {
             }
 
             // Now get all the lists that the user is following.
-            this.serviceApi.getFollowedLists(this.lso.myUserId).subscribe(fles => {
+            this.serviceApi.getFollowedLists(this.lso.getMyUserId()).subscribe(fles => {
                 for (let fle of fles) {
                     this.lso.updateFollowedList(fle);
                     this.lso.updateMyFollowedLists(fle.listId, fle.id);
@@ -81,7 +79,7 @@ export class ReadingListsComponent implements OnInit {
 
     private onFollowList(): void {
         var fle = new FollowedListEntity();
-        fle.userId = this.lso.myUserId;
+        fle.userId = this.lso.getMyUserId();
         fle.ownerId = this.readingList.userId;
         fle.listId = this.readingList.id;
         this.serviceApi.postFollowedList(fle).subscribe(fleId => {
@@ -94,8 +92,8 @@ export class ReadingListsComponent implements OnInit {
         });
     }
     private onUnfollowList(): void {
-        var fleId = this.lso.myFollowedLists[this.listId];
-        this.serviceApi.deleteFollowedList(this.lso.myUserId, fleId).subscribe(x => {
+        var fleId = this.lso.getMyFollowedLists()[this.listId];
+        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fleId).subscribe(x => {
             this.followingList = false;
         });
     }
@@ -150,14 +148,14 @@ export class ReadingListsComponent implements OnInit {
     }
 
     private isFollowingList(listId: number): boolean {
-        return (this.lso.myFollowedLists[listId] != undefined);
+        return (this.lso.getMyFollowedLists()[listId] != undefined);
     }
     private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.users[this.lso.myUserId];
+        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
         if (currentUser == null) {
             return false;
         }
-        var targetUser = this.lso.users[userId];
+        var targetUser = this.lso.getUsers()[userId];
         if (targetUser == null) {
             return false;
         }
