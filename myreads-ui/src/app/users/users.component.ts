@@ -30,52 +30,40 @@ export class UsersComponent implements OnInit {
     ngOnInit() {
         // When we load up, we need to get the user in the route.
         this.userId = +this.route.snapshot.paramMap.get('userId');
+        this.followedLists = [];
+        this.readingLists = [];
 
-        var getUserMerge = this.serviceApi.getUser(this.userId);
+        this.serviceApi.getUser(this.userId).subscribe(user => {
+            this.lso.updateUser(user);
+            this.userEntity = user;
+            this.canEdit = this.isViewingCurrentUser(user.id);
+            this.log(`got user ${user.name}, editing permissions ${this.canEdit}`);
 
-        // TODO: Need to add error handling for when the service returns null.
-        // Two paths here - one is to get the reading lists for the user, and the other is to get the followed lists.
-        var getReadingListsMerge = getUserMerge.mergeMap(user =>
-            {
-                this.lso.updateUser(user);
-                this.userEntity = user;
-                this.canEdit = this.isViewingCurrentUser(user.id);
-                this.log(`got user ${user.name}, editing permissions ${this.canEdit}`);
+            this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
+                if (readingLists == null) { return; }
 
-                // Get the user's reading lists.
-                return this.serviceApi.getReadingLists(user.id);
-            });
-        getReadingListsMerge.subscribe(readingLists =>
-            {
-                this.log(`got ${readingLists.length} lists for user ${this.lso.getUsers()[this.userId].name}`);
+                this.log(`got ${readingLists.length} lists for user ${this.userEntity.name}`);
                 this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
-
-                // Save them to local storage object for later.
                 for (let list of readingLists) {
                     this.lso.updateReadingList(list);
                 }
             });
 
-        var getFollowedListsMerge = getUserMerge.mergeMap(user => this.serviceApi.getFollowedLists(user.id));
-        var resolveFollowedListsMerge = getFollowedListsMerge.subscribe(followedLists =>
-            {
-                this.log(`got ${followedLists.length} followed lists for user ${this.lso.getUsers()[this.userId].name}`);
-                this.followedLists = [];
+            this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
+                if (followedLists == null) { return; }
 
-                // For each followed list, we need to resolve the list, then resolve the user.
-                for (let followedList of followedLists) {
-                    this.lso.updateFollowedList(followedList);
-                    if (this.lso.getReadingLists()[followedList.id] == null) {
-                        var getReadingListForFollowedListMerge = this.serviceApi.getReadingList(followedList.ownerId, followedList.listId);
-                        getReadingListForFollowedListMerge.subscribe(readingList =>
-                        {
-                            this.log(`got list ${readingList.name} for followed user Id ${followedList.ownerId}`);
+                this.log(`got ${followedLists.length} followed lists for user ${this.userEntity.name}`);
+                for (let fl of followedLists) {
+                    this.lso.updateFollowedList(fl);
+                    if (this.lso.getReadingLists()[fl.listId] == null) {
+                        this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
+                            this.log(`got list ${readingList.name} for followed user Id ${fl.ownerId}`);
                             this.lso.updateReadingList(readingList);
 
                             this.followedLists.push(readingList);
                             this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
-                            if (this.lso.getUsers()[followedList.ownerId] == null) {
-                                this.serviceApi.getUser(followedList.ownerId).subscribe(user => {
+                            if (this.lso.getUsers()[fl.ownerId] == null) {
+                                this.serviceApi.getUser(fl.ownerId).subscribe(user => {
                                     this.log(`got user ${user.name}`);
                                     this.lso.updateUser(user);
                                 })
@@ -83,11 +71,12 @@ export class UsersComponent implements OnInit {
                         });
                     }
                     else {
-                        this.followedLists.push(this.lso.getReadingLists()[followedList.id]);
+                        this.followedLists.push(this.lso.getReadingLists()[fl.listId]);
                         this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                     }
                 }
             });
+        });
     }
 
     private onSelectReadingList(list: ReadingListEntity): void {
