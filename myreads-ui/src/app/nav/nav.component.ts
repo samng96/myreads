@@ -17,6 +17,8 @@ export class NavComponent implements OnInit {
     public userEntity: UserEntity;
     public readingLists: ReadingListEntity[]; // The reading lists to present on this user.
     public followedLists: ReadingListEntity[]; // The followed lists to present on this user.
+    public toggleRls: boolean;
+    public toggleFls: boolean;
 
     constructor(
         private serviceApi: ServiceApi,
@@ -29,6 +31,8 @@ export class NavComponent implements OnInit {
         this.userEntity = this.lso.getUsers()[this.lso.getMyUserId()];
         this.readingLists = [];
         this.followedLists = [];
+        this.toggleRls = false;
+        this.toggleFls = false;
 
         // Check if the nav should be visible.
         this.isVisible = (this.lso.getMyLoginToken() != null);
@@ -76,6 +80,12 @@ export class NavComponent implements OnInit {
         });
     }
 
+    private onToggleRls(): void {
+        this.toggleRls = !this.toggleRls;
+    }
+    private onToggleFls(): void {
+        this.toggleFls = !this.toggleFls;
+    }
     private onSelectReadingList(list: ReadingListEntity): void {
         // TODO: Why is it that clicking on one route works, but multiple stops until you
         // TODO: click on a route from a different component?

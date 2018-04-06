@@ -1,19 +1,31 @@
 <div *ngIf="isVisible">
     <h3>{{ userEntity.name }}</h3>
 
-    <table class="table table-hover" *ngIf="readingLists">
-        <tr>
-            <th scope="row">Reading Lists</th>
+    <table class="table table-sm table-hover" *ngIf="readingLists">
+        <tr class="table-primary" (click)="onToggleRls()">
+            <th scope="row">
+                <span *ngIf="toggleRls">-</span>
+                <span *ngIf="!toggleRls">+</span>
+                Reading Lists
+            </th>
         </tr>
+    </table>
+    <table class="table table-sm table-hover" *ngIf="toggleRls">
         <tr *ngFor="let readingList of readingLists" (click)="onSelectReadingList(readingList)">
             <td scope="row">{{ readingList.name }}</td>
         </tr>
     </table>
 
-    <table class="table table-hover" *ngIf="followedLists">
-        <tr>
-            <th scope="row">Followed Lists</th>
+    <table class="table table-sm table-hover" *ngIf="followedLists">
+        <tr class="table-primary" (click)="onToggleFls()">
+            <th scope="row">
+                <span *ngIf="toggleFls">-</span>
+                <span *ngIf="!toggleFls">+</span>
+                Followed Lists
+            </th>
         </tr>
+    </table>
+    <table class="table table-sm table-hover" *ngIf="toggleFls">
         <tr *ngFor="let followedList of followedLists" (click)="onSelectReadingList(followedList)">
             <td>{{ followedList.name }}</td>
         </tr>
