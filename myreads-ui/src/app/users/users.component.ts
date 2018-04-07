@@ -10,7 +10,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-users',
     templateUrl: './users.component.html',
-    styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.

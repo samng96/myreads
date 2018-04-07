@@ -6,8 +6,11 @@ import { UsersComponent } from './users/users.component';
 import { ReadingListsComponent } from './readinglists/readinglists.component';
 import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
 import { TagsComponent } from './tags/tags.component';
+import { AddListComponent } from './create/addlist.component';
+import { AddListElementComponent } from './create/addlistelement.component';
 
 const routes: Routes = [
+    // Basic service routes.
     { path: 'login', component: LoginComponent },
     { path: 'users/:userId', component: UsersComponent },
     { path: 'users/:userId/readinglists/:listId', component: ReadingListsComponent },
@@ -15,6 +18,11 @@ const routes: Routes = [
     //{ path: 'followedlists/:listId', component: FollowedListsComponent },
     { path: 'tags/:tagId', component: TagsComponent },
     { path: 'tags', component: TagsComponent },
+
+    // Creation routes.
+    { path: 'addlist', component: AddListComponent },
+    { path: 'addlistelement', component: AddListElementComponent },
+
     { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 

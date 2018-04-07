@@ -10,7 +10,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-readinglistelements',
     templateUrl: './readinglistelements.component.html',
-    styleUrls: ['./readinglistelements.component.css']
 })
 export class ReadingListElementsComponent implements OnInit {
     rleId: number;

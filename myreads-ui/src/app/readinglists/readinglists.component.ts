@@ -10,7 +10,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-readinglists',
     templateUrl: './readinglists.component.html',
-    styleUrls: ['./readinglists.component.css']
 })
 export class ReadingListsComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.

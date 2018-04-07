@@ -1,5 +1,5 @@
 <div *ngIf="isVisible">
-    <h3>{{ userEntity.name }}</h3>
+    <h4>{{ userEntity.name }}</h4>
 
     <table class="table table-sm table-hover" *ngIf="readingLists">
         <tr class="table-primary" (click)="onToggleRls()">
@@ -30,4 +30,9 @@
             <td>{{ followedList.name }}</td>
         </tr>
     </table>
+
+    <div class="text-center">
+        <span (click)="onAddList()">new list</span> <b>|</b>
+        <span (click)="onAddRLE()">new item</span>
+    </div>
 </div>

@@ -10,7 +10,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-tags',
     templateUrl: './tags.component.html',
-    styleUrls: ['./tags.component.css']
 })
 export class TagsComponent implements OnInit {
     tag: TagEntity; // This is for displaying a single tag.

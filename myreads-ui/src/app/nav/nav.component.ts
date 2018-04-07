@@ -8,7 +8,6 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-nav',
     templateUrl: './nav.component.html',
-    styleUrls: ['./nav.component.css']
 })
 export class NavComponent implements OnInit {
     public isVisible: boolean;
@@ -80,6 +79,12 @@ export class NavComponent implements OnInit {
         });
     }
 
+    private onAddList(): void {
+        this.router.navigate(['addlist']);
+    }
+    private onAddItem(): void {
+        this.router.navigate(['addlistelement']);
+    }
     private onToggleRls(): void {
         this.toggleRls = !this.toggleRls;
     }

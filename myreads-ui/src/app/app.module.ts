@@ -5,11 +5,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { UsersComponent } from './users/users.component';
 import { ReadingListsComponent } from './readinglists/readinglists.component';
 import { TagsComponent } from './tags/tags.component';
 import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
+import { AddListComponent } from './create/addlist.component';
+import { AddListElementComponent } from './create/addlistelement.component';
 
 import { LoggerService } from './logger.service';
 import { ServiceApi } from './serviceapi.service';
@@ -26,6 +28,8 @@ import { LocalStorageObjectService } from './LocalStorageObject';
         ReadingListsComponent,
         TagsComponent,
         ReadingListElementsComponent,
+        AddListComponent,
+        AddListElementComponent,
         DebugComponent,
         NavComponent
     ],
