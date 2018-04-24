@@ -6,6 +6,7 @@ import { of } from 'rxjs/observable/of';
 
 import { LoggerService } from './logger.service';
 
+// TODO: Move these to an entities.ts.
 export class UserEntity {
     id: number;
     email: string;
@@ -157,6 +158,14 @@ export class ServiceApi {
             .pipe(
                 tap(_ => this.log(`Api: postComment(${commentEntity})`)),
                 catchError(this.handleError("postComment", null))
+            );
+    }
+    postReadingList(listEntity: ReadingListEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists/`;
+        return this.http.post(url, listEntity)
+            .pipe(
+                tap(_ => this.log(`Api: postReadingList(${listEntity})`)),
+                catchError(this.handleError("postReadingList", null))
             );
     }
 

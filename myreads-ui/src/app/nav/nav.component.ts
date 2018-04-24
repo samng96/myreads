@@ -82,7 +82,7 @@ export class NavComponent implements OnInit {
     private onAddList(): void {
         this.router.navigate(['addlist']);
     }
-    private onAddItem(): void {
+    private onAddRLE(): void {
         this.router.navigate(['addlistelement']);
     }
     private onToggleRls(): void {
@@ -93,7 +93,7 @@ export class NavComponent implements OnInit {
     }
     private onSelectReadingList(list: ReadingListEntity): void {
         // TODO: Why is it that clicking on one route works, but multiple stops until you
-        // TODO: click on a route from a different component?
+        // TODO: click on a route to a different component?
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
     private log(message: string) { this.logger.log(`[Nav]: ${message}`); }

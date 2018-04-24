@@ -17,6 +17,7 @@ export class LocalStorageObject {
     public readingListElements: Map<number, ReadingListElementEntity>;
     public comments: Map<number, CommentEntity>;
     public tags: Map<number, TagEntity>;
+    public tagsByName: Map<string, TagEntity>;
 
     constructor() {
         var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObject"));
@@ -88,6 +89,7 @@ export class LocalStorageObjectService {
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
     public getUsers(): Map<number, UserEntity> { return this.lso.users; }
     public getTags(): Map<number, TagEntity> { return this.lso.tags; }
+    public getTagsByName(): Map<string, TagEntity> { return this.lso.tagsByName; }
     public getComments(): Map<number, CommentEntity> { return this.lso.comments; }
     public getFollowedLists(): Map<number, FollowedListEntity> { return this.lso.followedLists; }
 
@@ -116,6 +118,7 @@ export class LocalStorageObjectService {
     }
     public updateTag(tag: TagEntity): void {
         this.lso.tags[tag.id] = tag;
+        this.lso.tagsByName[tag.tagName] = tag;
         this.lso.save();
     }
     public updateUser(userEntity: UserEntity): void {

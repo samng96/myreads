@@ -1,0 +1,6 @@
+<h1>Add new reading list</h1>
+name: <input [(ngModel)]="name" placeholder="list name"/><br>
+description:<br><textarea [(ngModel)]="description" placeholder="description of your list"></textarea><br>
+tags: <input [(ngModel)]="tags" placeholder="semi-colon separated tags"/><br>
+
+<button (click)="addList()">Add list</button>
