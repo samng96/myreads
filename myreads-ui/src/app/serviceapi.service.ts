@@ -168,6 +168,14 @@ export class ServiceApi {
                 catchError(this.handleError("postReadingList", null))
             );
     }
+    postReadingListElement(rleEntity: ReadingListElementEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${rleEntity.userId}/readingListElements`;
+        return this.http.post(url, rleEntity)
+            .pipe(
+                tap(_ => this.log(`Api: postReadingListElement(${rleEntity})`)),
+                catchError(this.handleError("postReadingListElement", null))
+            );
+    }
 
     deleteFollowedList(userId: number, followedListId: number): Observable<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
@@ -209,6 +217,15 @@ export class ServiceApi {
             .pipe(
                 tap(_ => this.log(`Api: removeTagFromReadingListElement(${userId}, ${rleId}, ${tagId})`)),
                 catchError(this.handleError("removeTagFromReadingListElement", null))
+            );
+    }
+
+    addReadingListElementToReadingList(userId: number, listId: number, rleIds: number[]): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addReadingListElements`;
+        return this.http.post(url, rleIds)
+            .pipe(
+                tap(_ => this.log(`Api: addReadingListElementToReadingList(${userId}, ${listId}, ${rleIds})`)),
+                catchError(this.handleError("addReadingListElementToReadingList", null))
             );
     }
 

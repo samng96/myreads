@@ -65,7 +65,7 @@ export class AddListComponent implements OnInit {
                 listEntity.id = listId;
                 this.lso.updateReadingList(listEntity);
 
-                // After adding the list, route us to
+                // After adding the list, route us to the list.
                 this.router.navigate(['/users', this.lso.getMyUserId(), 'readinglists', listEntity.id]);
             });
         });
