@@ -27,7 +27,6 @@ export class NavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.userEntity = this.lso.getUsers()[this.lso.getMyUserId()];
         this.readingLists = [];
         this.followedLists = [];
         this.toggleRls = false;
@@ -35,11 +34,22 @@ export class NavComponent implements OnInit {
 
         // Check if the nav should be visible.
         this.isVisible = (this.lso.getMyLoginToken() != null);
+        if (this.isVisible) {
+            this.loadUser();
+        }
+
         this.lso.change.subscribe(myLoginToken => {
             this.isVisible = (myLoginToken != null);
-        });
 
+            if (this.isVisible) {
+                this.loadUser();
+            }
+        });
+    }
+
+    private loadUser() {
         // Load up everything we know about the user.
+        this.userEntity = this.lso.getUsers()[this.lso.getMyUserId()];
         this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
             if (readingLists == null) { return; }
 

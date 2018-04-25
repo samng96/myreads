@@ -161,7 +161,7 @@ export class ServiceApi {
             );
     }
     postReadingList(listEntity: ReadingListEntity): Observable<any> {
-        var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists/`;
+        var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists`;
         return this.http.post(url, listEntity)
             .pipe(
                 tap(_ => this.log(`Api: postReadingList(${listEntity})`)),

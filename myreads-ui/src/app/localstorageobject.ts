@@ -35,6 +35,7 @@ export class LocalStorageObject {
             this.readingListElements = loadedObject.readingListElements;
             this.comments = loadedObject.comments;
             this.tags = loadedObject.tags;
+            this.tagsByName = loadedObject.tagsByName;
         }
         else {
             this.myUserId = -1;
@@ -50,6 +51,7 @@ export class LocalStorageObject {
             this.readingListElements = new Map<number, ReadingListElementEntity>();
             this.comments = new Map<number, CommentEntity>();
             this.tags = new Map<number, TagEntity>();
+            this.tagsByName = new Map<string, TagEntity>();
         }
     }
 

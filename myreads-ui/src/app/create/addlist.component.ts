@@ -33,24 +33,36 @@ export class AddListComponent implements OnInit {
         listEntity.name = this.name;
         listEntity.description = this.description;
         listEntity.userId = this.lso.getMyUserId();
+        listEntity.tagIds = [];
 
         // Now get the tagIds.
         let requests = splitTags.map(item => {
             return new Promise(resolve => {
-                var tagEntity = this.lso.getTagsByName()[item];
+                var trimmed = item.trim();
+                var tagEntity = this.lso.getTagsByName()[trimmed];
                 if (tagEntity == null) {
+                    this.log(`loading tag ${trimmed}`)
                     tagEntity = new TagEntity();
-                    tagEntity.tagName = item;
-                    tagEntity.id = this.serviceApi.postTag(tagEntity);
-                    this.lso.updateTag(tagEntity);
+                    tagEntity.tagName = trimmed;
+                    this.serviceApi.postTag(tagEntity).subscribe(tagId => {
+                        tagEntity.id = tagId;
+                        this.lso.updateTag(tagEntity);
+                        listEntity.tagIds.push(tagEntity.id);
+
+                        resolve();
+                    });
                 }
-                listEntity.tagIds.push(tagEntity.id);
+                else {
+                    listEntity.tagIds.push(tagEntity.id);
+                    resolve();
+                }
             });
         });
 
         Promise.all(requests).then(() => {
-            this.serviceApi.postReadingList(listEntity).subscribe(newList => {
-                listEntity.id = newList.id;
+            this.log(`promise complete, updating reading list ${listEntity.name}`)
+            this.serviceApi.postReadingList(listEntity).subscribe(listId => {
+                listEntity.id = listId;
                 this.lso.updateReadingList(listEntity);
 
                 // After adding the list, route us to
@@ -58,4 +70,5 @@ export class AddListComponent implements OnInit {
             });
         });
     }
+    private log(message: string) { this.logger.log(`[AddList]: ${message}`); }
 }

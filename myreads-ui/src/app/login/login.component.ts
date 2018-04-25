@@ -40,12 +40,13 @@ export class LoginComponent implements OnInit {
     login(): void {
         this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
             {
+                this.lso.updateUser(user);
+
                 // For now we don't have a login API, so just assume it all works out and
                 // hard code the login tokens, then get the user object.
                 this.lso.setMyUserId(this.hardcodedUserId);
                 this.lso.setMyLoginToken("1");
 
-                this.lso.updateUser(user);
                 this.log(`successful login for user ${user.name}`)
                 this.checkLogin();
             });
