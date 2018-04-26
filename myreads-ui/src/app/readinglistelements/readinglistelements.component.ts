@@ -63,6 +63,17 @@ export class ReadingListElementsComponent implements OnInit {
         });
     }
 
+    private onDeleteReadingListElement(): void {
+        this.serviceApi.deleteReadingListElement(this.userId, this.rleId).subscribe(() => {
+            this.lso.deleteReadingListElement(this.rleId);
+            for (let commentId of this.readingListElement.commentIds) {
+                this.lso.deleteComment(commentId);
+            }
+
+            this.router.navigate(['users', this.userId]);
+        });
+    }
+
     private onAddTag(): void {
         if (this.addTagName != undefined) {
             // First check if the tag exists.

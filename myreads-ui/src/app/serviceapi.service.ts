@@ -185,6 +185,14 @@ export class ServiceApi {
                 catchError(this.handleError("deleteFollowedList", null))
             );
     }
+    deleteReadingListElement(userId: number, rleId: number): Observable<any>{
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
+        return this.http.delete(url)
+            .pipe(
+                tap(_ => this.log(`Api: deleteReadingListElement(${userId}, ${rleId})`)),
+                catchError(this.handleError("deleteReadingListElement", null))
+            );
+    }
 
     addTagToReadingList(userId: number, listId: number, tagIds: number[]): Observable<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addTags`;

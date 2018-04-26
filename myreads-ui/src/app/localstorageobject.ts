@@ -139,4 +139,13 @@ export class LocalStorageObjectService {
         this.lso.readingListElements[rle.id] = rle;
         this.lso.save();
     }
+
+    public deleteReadingListElement(rleId: number): void {
+        this.lso.readingListElements.delete(rleId);
+        this.lso.save();
+    }
+    public deleteComment(commentId: number): void {
+        this.lso.comments.delete(commentId);
+        this.lso.save();
+    }
 }

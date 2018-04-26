@@ -1,5 +1,6 @@
 <div *ngIf="readingListElement">
     <h1>{{ readingListElement.name }}</h1>
+    <div *ngIf="ownRle" (click)="onDeleteReadingListElement()">delete</div>
 
     {{ readingListElement.name }}
 
