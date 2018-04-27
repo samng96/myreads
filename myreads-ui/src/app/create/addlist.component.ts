@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { ServiceApi, UserEntity, ReadingListEntity, FollowedListEntity, TagEntity } from '../serviceapi.service';
+import { ServiceApi } from '../serviceapi.service';
+import { UserEntity, ReadingListEntity, FollowedListEntity, TagEntity } from '../entities';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObjectService } from '../LocalStorageObject';
 

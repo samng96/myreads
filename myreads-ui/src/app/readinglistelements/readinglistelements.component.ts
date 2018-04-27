@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-import { ServiceApi, TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../serviceapi.service';
+import { ServiceApi } from '../serviceapi.service';
+import { TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObjectService } from '../LocalStorageObject';
 
