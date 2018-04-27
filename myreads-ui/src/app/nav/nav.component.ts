@@ -53,7 +53,9 @@ export class NavComponent implements OnInit {
                 }
             }
         });
-        this.lso.changeListAdd.subscribe(list => this.readingLists.push(list));
+        this.lso.changeListAdd.subscribe(list => {
+            this.readingLists.push(list);
+        });
     }
 
     private loadUser() {

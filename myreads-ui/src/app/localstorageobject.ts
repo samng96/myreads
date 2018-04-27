@@ -119,14 +119,7 @@ export class LocalStorageObjectService {
         this.lso.save();
     }
     public updateReadingList(listEntity: ReadingListEntity): void {
-        var added = false;
-        if (!this.lso.readingLists.has(listEntity.id)) {
-            added = true;
-        }
         this.lso.readingLists[listEntity.id] = listEntity;
-        if (added) {
-            this.changeListAdd.emit(listEntity);
-        }
         this.lso.save();
     }
     public updateFollowedList(listEntity: FollowedListEntity): void {
@@ -136,6 +129,13 @@ export class LocalStorageObjectService {
     public updateReadingListElement(rle: ReadingListElementEntity): void {
         this.lso.readingListElements[rle.id] = rle;
         this.lso.save();
+    }
+
+    public addReadingList(listEntity: ReadingListEntity): void {
+        this.lso.readingLists[listEntity.id] = listEntity;
+        this.lso.save();
+
+        this.changeListAdd.emit(listEntity);
     }
 
     public deleteReadingListElement(rleId: number): void {

@@ -63,7 +63,7 @@ export class AddListComponent implements OnInit {
             this.log(`promise complete, updating reading list ${listEntity.name}`)
             this.serviceApi.postReadingList(listEntity).subscribe(listId => {
                 listEntity.id = listId;
-                this.lso.updateReadingList(listEntity);
+                this.lso.addReadingList(listEntity);
 
                 // After adding the list, route us to the list.
                 this.router.navigate(['/users', this.lso.getMyUserId(), 'readinglists', listEntity.id]);
