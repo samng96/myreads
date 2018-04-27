@@ -1,5 +1,7 @@
 <div *ngIf="readingList">
-    <h1>{{ readingList.name }}</h1>
+    <h1>{{ readingList.name }}
+        <div *ngIf="ownList">- <span (click)="onDeleteList()">delete</span></div>
+    </h1>
 
     <h2>Reading List Elements</h2>
     <ul *ngIf="readingListElements" class="readingListElements">

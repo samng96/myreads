@@ -93,6 +93,7 @@ export class ReadingListsComponent implements OnInit {
     private onUnfollowList(): void {
         var fleId = this.lso.getMyFollowedLists()[this.listId];
         this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fleId).subscribe(x => {
+            this.lso.deleteMyFollowedList(this.listId);
             this.followingList = false;
         });
     }
@@ -144,6 +145,13 @@ export class ReadingListsComponent implements OnInit {
 
     private onSelectReadingListElement(rle: ReadingListElementEntity): void {
         this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
+    }
+
+    private onDeleteList(): void {
+        this.serviceApi.deleteReadingList(this.lso.getMyUserId(), this.listId).subscribe(() => {
+            this.lso.deleteReadingList(this.readingList);
+            this.router.navigate(['/users', this.lso.getMyUserId()]);
+        });
     }
 
     private isFollowingList(listId: number): boolean {

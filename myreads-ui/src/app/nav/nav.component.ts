@@ -38,13 +38,22 @@ export class NavComponent implements OnInit {
             this.loadUser();
         }
 
-        this.lso.change.subscribe(myLoginToken => {
+        this.lso.changeLogin.subscribe(myLoginToken => {
             this.isVisible = (myLoginToken != null);
 
             if (this.isVisible) {
                 this.loadUser();
             }
         });
+
+        this.lso.changeListDelete.subscribe(list => {
+            for (let rl of this.readingLists) {
+                if (rl.id == list.id) {
+                    this.readingLists.splice(this.readingLists.indexOf(rl, 0), 1);
+                }
+            }
+        });
+        this.lso.changeListAdd.subscribe(list => this.readingLists.push(list));
     }
 
     private loadUser() {
@@ -56,7 +65,6 @@ export class NavComponent implements OnInit {
             this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
             for (let list of readingLists) {
                 this.lso.updateReadingList(list);
-                this.lso.updateMyReadingLists(list.id);
             }
         });
 

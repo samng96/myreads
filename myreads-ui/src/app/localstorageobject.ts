@@ -62,7 +62,9 @@ export class LocalStorageObject {
 
 @Injectable()
 export class LocalStorageObjectService {
-    @Output() change: EventEmitter<string> = new EventEmitter();
+    @Output() changeLogin: EventEmitter<string> = new EventEmitter();
+    @Output() changeListDelete: EventEmitter<ReadingListEntity> = new EventEmitter();
+    @Output() changeListAdd: EventEmitter<ReadingListEntity> = new EventEmitter();
     lso: LocalStorageObject;
 
     constructor() {
@@ -77,15 +79,12 @@ export class LocalStorageObjectService {
         this.lso.myLoginToken = myLoginToken;
         this.lso.save();
 
-        this.change.emit(this.lso.myLoginToken);
+        this.changeLogin.emit(this.lso.myLoginToken);
     }
 
     public getMyUserId(): number { return this.lso.myUserId; }
     public getMyLoginToken(): string { return this.lso.myLoginToken; }
     public getMyFollowedLists(): Map<number, number> { return this.lso.myFollowedLists; }
-    public getMyReadingLists(): number[] { return this.lso.myReadingLists; }
-    public getMyReadingListElements(): number[] { return this.lso.myReadingListElements; }
-    public getMyComments(): number[] { return this.lso.myComments; }
 
     public getReadingLists(): Map<number, ReadingListEntity> { return this.lso.readingLists; }
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
@@ -95,21 +94,13 @@ export class LocalStorageObjectService {
     public getComments(): Map<number, CommentEntity> { return this.lso.comments; }
     public getFollowedLists(): Map<number, FollowedListEntity> { return this.lso.followedLists; }
 
-    public updateMyReadingLists(listId: number): void {
-        if (!this.lso.myReadingLists.includes(listId)) {
-            this.lso.myReadingLists.push(listId);
-            this.lso.save();
-        }
-    }
     public updateMyFollowedLists(listId: number, fleId): void {
         this.lso.myFollowedLists[listId] = fleId;
         this.lso.save();
     }
-    public updateMyReadingListElements(rleId: number): void {
-        if (!this.lso.myReadingListElements.includes(rleId)) {
-            this.lso.myReadingListElements.push(rleId);
-            this.lso.save();
-        }
+    public deleteMyFollowedList(listId: number): void {
+        this.lso.myFollowedLists.delete(listId);
+        this.lso.save();
     }
 
     public updateTags(tags: TagEntity[]): void {
@@ -128,7 +119,14 @@ export class LocalStorageObjectService {
         this.lso.save();
     }
     public updateReadingList(listEntity: ReadingListEntity): void {
+        var added = false;
+        if (!this.lso.readingLists.has(listEntity.id)) {
+            added = true;
+        }
         this.lso.readingLists[listEntity.id] = listEntity;
+        if (added) {
+            this.changeListAdd.emit(listEntity);
+        }
         this.lso.save();
     }
     public updateFollowedList(listEntity: FollowedListEntity): void {
@@ -147,5 +145,11 @@ export class LocalStorageObjectService {
     public deleteComment(commentId: number): void {
         this.lso.comments.delete(commentId);
         this.lso.save();
+    }
+    public deleteReadingList(list: ReadingListEntity): void {
+        this.lso.readingLists.delete(list.id);
+        this.lso.save();
+
+        this.changeListDelete.emit(list);
     }
 }
