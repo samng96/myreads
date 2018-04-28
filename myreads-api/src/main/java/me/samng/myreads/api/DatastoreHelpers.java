@@ -134,8 +134,8 @@ public class DatastoreHelpers {
 
     public static long createReadingList(Datastore datastore, ReadingListEntity readingListEntity) {
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListKey())
-            .set("name", readingListEntity.name())
-            .set("description", readingListEntity.description())
+            .set("name", readingListEntity.name() == null ? "My Reading List" : readingListEntity.name())
+            .set("description", readingListEntity.description() == null ? "" : readingListEntity.description())
             .set("userId", readingListEntity.userId)
             .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()))
@@ -158,10 +158,10 @@ public class DatastoreHelpers {
 
     public static long createReadingListElement(Datastore datastore, ReadingListElementEntity rleEntity) {
         FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newReadingListElementKey())
-            .set("name", rleEntity.name())
-            .set("description", rleEntity.description())
+            .set("name", rleEntity.name() == null ? "My Reading List Element" : rleEntity.name())
+            .set("description", rleEntity.description() == null ? "" : rleEntity.description())
             .set("userId", rleEntity.userId())
-            .set("amazonLink", rleEntity.amazonLink())
+            .set("amazonLink", rleEntity.amazonLink() == null ? "" : rleEntity.amazonLink())
             .set("tagIds", ImmutableList.copyOf(rleEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("listIds", ImmutableList.copyOf(rleEntity.listIds().stream().map(LongValue::new).iterator()))
             .set("deleted", false)

@@ -1,5 +1,6 @@
 package me.samng.myreads.api.routes;
 
+import com.google.api.client.util.Strings;
 import com.google.cloud.datastore.*;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
@@ -77,6 +78,14 @@ public class CommentRoute {
             return;
         }
 
+        if (Strings.isNullOrEmpty(commentEntity.commentText())) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Cannot have empty comment text");
+            return;
+        }
+
         Datastore datastore = DatastoreHelpers.getDatastore();
         // First verify that we have the right reading list element in the system by getting it, then add
         // the comment, then add the newly added comment's ID to the RLE.
@@ -117,6 +126,14 @@ public class CommentRoute {
                 .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
+            return;
+        }
+
+        if (Strings.isNullOrEmpty(commentEntity.commentText())) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Cannot have empty comment text");
             return;
         }
 

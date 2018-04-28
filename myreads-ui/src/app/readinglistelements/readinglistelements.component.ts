@@ -71,7 +71,9 @@ export class ReadingListElementsComponent implements OnInit {
                 this.lso.deleteComment(commentId);
             }
             for (let listId of this.readingListElement.listIds) {
-                this.lso.getReadingLists()[listId].readingListElementIds.delete(this.rleId);
+                var arr = this.lso.getReadingLists()[listId].readingListElementIds;
+                var index = arr.indexOf(this.rleId, 0);
+                arr.splice(index, 1);
             }
 
             this.router.navigate(['users', this.userId]);

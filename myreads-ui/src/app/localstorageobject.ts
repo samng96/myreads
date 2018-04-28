@@ -6,9 +6,6 @@ export class LocalStorageObject {
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
 
     public myFollowedLists: Map<number, number>; // [listId, followedEntityId]
-    public myReadingLists: number[];
-    public myReadingListElements: number[];
-    public myComments: number[];
 
     // Globally cached stuff.
     public users: Map<number, UserEntity>;
@@ -24,10 +21,7 @@ export class LocalStorageObject {
         if (loadedObject != null) {
             this.myUserId = loadedObject.myUserId;
             this.myLoginToken = loadedObject.myLoginToken;
-            this.myReadingLists = loadedObject.myReadingLists;
             this.myFollowedLists = loadedObject.myFollowedLists;
-            this.myReadingListElements = loadedObject.myReadingListElements;
-            this.myComments = loadedObject.myComments;
 
             this.users = loadedObject.users;
             this.readingLists = loadedObject.readingLists;
@@ -40,10 +34,7 @@ export class LocalStorageObject {
         else {
             this.myUserId = -1;
             this.myLoginToken = null;
-            this.myReadingLists = [];
             this.myFollowedLists = new Map<number, number>();
-            this.myReadingListElements = [];
-            this.myComments = [];
 
             this.users = new Map<number, UserEntity>();
             this.readingLists = new Map<number, ReadingListEntity>();

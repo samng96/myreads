@@ -1,6 +1,7 @@
 package me.samng.myreads.api.routes;
 
 import com.google.cloud.datastore.Datastore;
+import com.google.common.base.Strings;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
@@ -49,6 +50,14 @@ public class TagRoute {
                 .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                 .putHeader("content-type", "text/plain")
                 .end("Invalid request parameters");
+            return;
+        }
+
+        if (Strings.isNullOrEmpty(tagEntity.tagName())) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Cannot have empty tag name");
             return;
         }
 

@@ -30,7 +30,6 @@ export class AddListElementComponent implements OnInit {
     }
 
     private addListElement() {
-        var splitTags = this.tags.split(";", AddListElementComponent.maxTags); // Max it out so we don't overflow.
 
         var rleEntity = new ReadingListElementEntity();
         rleEntity.name = this.name;
@@ -42,28 +41,35 @@ export class AddListElementComponent implements OnInit {
         rleEntity.listIds = this.listIds.split(";", AddListElementComponent.maxTags).map(Number);
 
         // Now get the tagIds.
-        let requests = splitTags.map(item => {
-            return new Promise(resolve => {
-                var trimmed = item.trim();
-                var tagEntity = this.lso.getTagsByName()[trimmed];
-                if (tagEntity == null) {
-                    this.log(`loading tag ${trimmed}`)
-                    tagEntity = new TagEntity();
-                    tagEntity.tagName = trimmed;
-                    this.serviceApi.postTag(tagEntity).subscribe(tagId => {
-                        tagEntity.id = tagId;
-                        this.lso.updateTag(tagEntity);
-                        rleEntity.tagIds.push(tagEntity.id);
+        var requests;
+        if (this.tags != null) {
+            var splitTags = this.tags.split(";", AddListElementComponent.maxTags); // Max it out so we don't overflow.
+            requests = splitTags.map(item => {
+                return new Promise(resolve => {
+                    var trimmed = item.trim();
+                    var tagEntity = this.lso.getTagsByName()[trimmed];
+                    if (tagEntity == null) {
+                        this.log(`loading tag ${trimmed}`)
+                        tagEntity = new TagEntity();
+                        tagEntity.tagName = trimmed;
+                        this.serviceApi.postTag(tagEntity).subscribe(tagId => {
+                            tagEntity.id = tagId;
+                            this.lso.updateTag(tagEntity);
+                            rleEntity.tagIds.push(tagEntity.id);
 
+                            resolve();
+                        });
+                    }
+                    else {
+                        rleEntity.tagIds.push(tagEntity.id);
                         resolve();
-                    });
-                }
-                else {
-                    rleEntity.tagIds.push(tagEntity.id);
-                    resolve();
-                }
+                    }
+                });
             });
-        });
+        }
+        else {
+            requests = Promise.resolve();
+        }
 
         Promise.all(requests).then(() => {
             this.log(`promise complete, updating reading list ${rleEntity.name}`)
