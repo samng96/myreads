@@ -19,9 +19,11 @@ export class ReadingListElementsComponent implements OnInit {
     ownRle: boolean;
     addTagName: string; // Bound to the form.
     addComment: string; // Bound to the form.
+    addRleToListId: string; // Bound to the form.
     readingListElement: ReadingListElementEntity; // This is for the display.
     comments: CommentEntity[]; // This is for the display.
     tags: TagEntity[]; // This is for the display.
+    lists: ReadingListEntity[];
 
     constructor(
         private lso: LocalStorageObjectService,
@@ -38,6 +40,7 @@ export class ReadingListElementsComponent implements OnInit {
 
         this.tags = [];
         this.comments = [];
+        this.lists = [];
 
         this.serviceApi.getReadingListElement(this.userId, this.rleId).subscribe(rle => {
             this.lso.updateReadingListElement(rle);
@@ -56,12 +59,36 @@ export class ReadingListElementsComponent implements OnInit {
                 }
             }
 
+            // Get all the comments
             for (let commentId of this.readingListElement.commentIds) {
                 this.serviceApi.getComment(this.userId, this.rleId, commentId).subscribe(comment => {
                     this.comments.push(comment);
                 });
             }
+
+            // Get all the lists that we're a part of
+            for (let listId of this.readingListElement.listIds) {
+                if (this.lso.getReadingLists()[listId] != null) {
+                    this.lists.push(this.lso.getReadingLists()[listId])
+                }
+                else {
+                    this.serviceApi.getReadingList(this.userId, listId).subscribe(list => {
+                        this.lists.push(list);
+                    });
+                }
+            }
         });
+    }
+
+    private onAddRleToList(): void {
+        var rleIds = [];
+        rleIds.push(this.rleId);
+
+        this.serviceApi.addReadingListElementToReadingList(
+            this.userId, +this.addRleToListId, rleIds).subscribe(() => {
+                this.lists.push(this.lso.getReadingLists()[+this.addRleToListId]);
+                this.addRleToListId = "added";
+            });
     }
 
     private onDeleteReadingListElement(): void {

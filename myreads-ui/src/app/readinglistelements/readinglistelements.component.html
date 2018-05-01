@@ -22,6 +22,14 @@
     </ul>
     <span *ngIf="ownRle">
         <input [(ngModel)]="addComment" placeholder="comment..."/>
-        <span (click)="onAddComment()">add comment</span>
+        <span (click)="onAddComment()">add comment</span><br>
+
+        <input [(ngModel)]="addRleToListId" placeholder="add Rle to this listId"/>
+        <span (click)="onAddRleToList()">add Rle to lists</span>
     </span>
+
+    <h2>Lists that this RLE belongs to</h2>
+    <ul *ngIf="lists" class="lists">
+        <li *ngFor="let list of lists">{{ list.name }}</li>
+    </ul>
 </div>
