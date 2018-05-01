@@ -20,7 +20,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}`;
         return this.http.get<UserEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getUser(${userId})`)),
+                tap(_ => this.log(`getUser(${userId})`)),
                 catchError(this.handleError("getUser", null))
             );
     }
@@ -28,7 +28,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists`;
         return this.http.get<ReadingListEntity[]>(url)
             .pipe(
-                tap(_ => this.log(`Api: getReadingLists(${userId})`)),
+                tap(_ => this.log(`getReadingLists(${userId})`)),
                 catchError(this.handleError("getReadingLists", null))
             );
     }
@@ -36,7 +36,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}`;
         return this.http.get<ReadingListEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getReadingList(${userId}, ${listId})`)),
+                tap(_ => this.log(`getReadingList(${userId}, ${listId})`)),
                 catchError(this.handleError("getReadingList", null))
             );
     }
@@ -44,7 +44,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         return this.http.get<ReadingListElementEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getReadingListElement(${userId}, ${rleId})`)),
+                tap(_ => this.log(`getReadingListElement(${userId}, ${rleId})`)),
                 catchError(this.handleError("getReadingListElement", null))
             );
     }
@@ -52,7 +52,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
         return this.http.get<FollowedListEntity[]>(url)
             .pipe(
-                tap(_ => this.log(`Api: getFollowedLists(${userId})`)),
+                tap(_ => this.log(`getFollowedLists(${userId})`)),
                 catchError(this.handleError("getFollowedLists", null))
             );
     }
@@ -60,7 +60,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/tags`;
         return this.http.get<TagEntity[]>(url)
             .pipe(
-                tap(_ => this.log(`Api: getTags()`)),
+                tap(_ => this.log(`getTags()`)),
                 catchError(this.handleError("getTags", null))
             );
     }
@@ -68,7 +68,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/tags/${tagId}`;
         return this.http.get<TagEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getTags(${tagId})`)),
+                tap(_ => this.log(`getTags(${tagId})`)),
                 catchError(this.handleError("getTag", null))
             );
     }
@@ -76,7 +76,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/tagByName/${tagName}`;
         return this.http.get<TagEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getTagByName(${tagName})`)),
+                tap(_ => this.log(`getTagByName(${tagName})`)),
                 catchError(this.handleError("getTagByName", null))
             );
     }
@@ -84,7 +84,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
         return this.http.get<CommentEntity>(url)
             .pipe(
-                tap(_ => this.log(`Api: getComment(${userId}, ${rleId}, ${commentId})`)),
+                tap(_ => this.log(`getComment(${userId}, ${rleId}, ${commentId})`)),
                 catchError(this.handleError("getComment", null))
             );
     }
@@ -93,7 +93,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${followedListEntity.userId}/followedLists`;
         return this.http.post(url, followedListEntity)
             .pipe(
-                tap(_ => this.log(`Api: postFollowedList(${followedListEntity.userId}, ${followedListEntity})`)),
+                tap(_ => this.log(`postFollowedList(${followedListEntity.userId}, ${followedListEntity})`)),
                 catchError(this.handleError("postFollowedList", null))
             );
     }
@@ -101,7 +101,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/tags`;
         return this.http.post(url, tagEntity)
             .pipe(
-                tap(_ => this.log(`Api: postTag(${tagEntity})`)),
+                tap(_ => this.log(`postTag(${tagEntity})`)),
                 catchError(this.handleError("postTag", null))
             );
     }
@@ -109,7 +109,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${commentEntity.userId}/readingListElements/${commentEntity.readingListElementId}/comments`;
         return this.http.post(url, commentEntity)
             .pipe(
-                tap(_ => this.log(`Api: postComment(${commentEntity})`)),
+                tap(_ => this.log(`postComment(${commentEntity})`)),
                 catchError(this.handleError("postComment", null))
             );
     }
@@ -117,7 +117,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists`;
         return this.http.post(url, listEntity)
             .pipe(
-                tap(_ => this.log(`Api: postReadingList(${listEntity})`)),
+                tap(_ => this.log(`postReadingList(${listEntity})`)),
                 catchError(this.handleError("postReadingList", null))
             );
     }
@@ -125,7 +125,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${rleEntity.userId}/readingListElements`;
         return this.http.post(url, rleEntity)
             .pipe(
-                tap(_ => this.log(`Api: postReadingListElement(${rleEntity})`)),
+                tap(_ => this.log(`postReadingListElement(${rleEntity})`)),
                 catchError(this.handleError("postReadingListElement", null))
             );
     }
@@ -134,7 +134,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
         return this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`Api: deleteFollowedList(${userId}, ${followedListId})`)),
+                tap(_ => this.log(`deleteFollowedList(${userId}, ${followedListId})`)),
                 catchError(this.handleError("deleteFollowedList", null))
             );
     }
@@ -142,7 +142,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         return this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`Api: deleteReadingListElement(${userId}, ${rleId})`)),
+                tap(_ => this.log(`deleteReadingListElement(${userId}, ${rleId})`)),
                 catchError(this.handleError("deleteReadingListElement", null))
             );
     }
@@ -150,7 +150,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${readingListId}`;
         return this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`Api: deleteReadingList(${userId}, ${readingListId})`)),
+                tap(_ => this.log(`deleteReadingList(${userId}, ${readingListId})`)),
                 catchError(this.handleError("deleteReadingList", null))
             );
     }
@@ -159,7 +159,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addTags`;
         return this.http.post(url, tagIds)
             .pipe(
-                tap(_ => this.log(`Api: addTagToReadingList(${userId}, ${listId}, ${tagIds})`)),
+                tap(_ => this.log(`addTagToReadingList(${userId}, ${listId}, ${tagIds})`)),
                 catchError(this.handleError("addTagToReadingList", null))
             );
     }
@@ -167,7 +167,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/tags/${tagId}`;
         return this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`Api: removeTagFromReadingList(${userId}, ${listId}, ${tagId})`)),
+                tap(_ => this.log(`removeTagFromReadingList(${userId}, ${listId}, ${tagId})`)),
                 catchError(this.handleError("removeTagFromReadingList", null))
             );
     }
@@ -176,7 +176,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/addTags`;
         return this.http.post(url, tagIds)
             .pipe(
-                tap(_ => this.log(`Api: addTagToReadingListElement(${userId}, ${rleId}, ${tagIds})`)),
+                tap(_ => this.log(`addTagToReadingListElement(${userId}, ${rleId}, ${tagIds})`)),
                 catchError(this.handleError("addTagToReadingListElement", null))
             );
     }
@@ -184,7 +184,7 @@ export class ServiceApi {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/tags/${tagId}`;
         return this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`Api: removeTagFromReadingListElement(${userId}, ${rleId}, ${tagId})`)),
+                tap(_ => this.log(`removeTagFromReadingListElement(${userId}, ${rleId}, ${tagId})`)),
                 catchError(this.handleError("removeTagFromReadingListElement", null))
             );
     }
@@ -195,6 +195,14 @@ export class ServiceApi {
             .pipe(
                 tap(_ => this.log(`Api: addReadingListElementToReadingList(${userId}, ${listId}, ${rleIds})`)),
                 catchError(this.handleError("addReadingListElementToReadingList", null))
+            );
+    }
+    removeReadingListElementFromReadingList(userId: number, listId: number, rleId: number): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/readingListElements/${rleId}`;
+        return this.http.delete(url)
+            .pipe(
+                tap(_ => this.log(`removeReadingListElementFromReadingList(${userId}, ${listId}, ${rleId})`)),
+                catchError(this.handleError("removeReadingListElementFromReadingList", null))
             );
     }
 

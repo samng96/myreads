@@ -91,6 +91,15 @@ export class ReadingListElementsComponent implements OnInit {
             });
     }
 
+    private onRemoveRleFromList(list: ReadingListEntity): void {
+        this.serviceApi.removeReadingListElementFromReadingList(
+            this.userId, list.id, this.rleId).subscribe(removedListId => {
+                var index = this.lists.indexOf(removedListId, 0);
+                this.lists.splice(index, 1);
+            });
+        )
+    }
+
     private onDeleteReadingListElement(): void {
         this.serviceApi.deleteReadingListElement(this.userId, this.rleId).subscribe(() => {
             this.lso.deleteReadingListElement(this.rleId);

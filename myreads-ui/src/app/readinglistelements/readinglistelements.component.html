@@ -30,6 +30,8 @@
 
     <h2>Lists that this RLE belongs to</h2>
     <ul *ngIf="lists" class="lists">
-        <li *ngFor="let list of lists">{{ list.name }}</li>
+        <li *ngFor="let list of lists">{{ list.name }} -
+            <span *ngIf="ownRle" (click)="onRemoveRleFromList(list)">remove</span>
+        </li>
     </ul>
 </div>
