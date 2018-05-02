@@ -16,7 +16,7 @@ export class AddListElementComponent implements OnInit {
     tags: string;
     listIds: string;
     description: string;
-    amazonLink: string;
+    link: string;
 
     private static maxTags: number = 20;
 
@@ -35,7 +35,7 @@ export class AddListElementComponent implements OnInit {
         rleEntity.name = this.name;
         rleEntity.description = this.description;
         rleEntity.userId = this.lso.getMyUserId();
-        rleEntity.amazonLink = this.amazonLink;
+        rleEntity.link = this.link;
         rleEntity.tagIds = [];
         // Get the list ids. This is temporary while we have crappy UI to not allow selection.
         rleEntity.listIds = this.listIds.split(";", AddListElementComponent.maxTags).map(Number);

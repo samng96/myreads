@@ -28,7 +28,7 @@ export class ReadingListElementEntity {
     listIds: number[];
     name: string;
     description: string;
-    amazonLink: string;
+    link: string;
     tagIds: number[];
     commentIds: number[];
 }
