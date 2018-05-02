@@ -97,7 +97,6 @@ export class ReadingListElementsComponent implements OnInit {
                 var index = this.lists.indexOf(removedListId, 0);
                 this.lists.splice(index, 1);
             });
-        )
     }
 
     private onDeleteReadingListElement(): void {

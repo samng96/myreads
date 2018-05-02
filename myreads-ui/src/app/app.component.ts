@@ -21,5 +21,7 @@ export class AppComponent {
         if (!this.isLoggedIn) {
             this.router.navigate(['/login']);
         }
+
+        this.router.onSameUrlNavigation = "reload";
     }
 }

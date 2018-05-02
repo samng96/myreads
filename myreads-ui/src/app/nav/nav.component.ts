@@ -113,8 +113,6 @@ export class NavComponent implements OnInit {
         this.toggleFls = !this.toggleFls;
     }
     private onSelectReadingList(list: ReadingListEntity): void {
-        // TODO: Why is it that clicking on one route works, but multiple stops until you
-        // TODO: click on a route to a different component?
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
     private log(message: string) { this.logger.log(`[Nav]: ${message}`); }

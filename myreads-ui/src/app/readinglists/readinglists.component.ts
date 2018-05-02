@@ -32,6 +32,12 @@ export class ReadingListsComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.route.params.subscribe(params => {
+            this.onInitializeComponent();
+        });
+    }
+
+    private onInitializeComponent(): void {
         // When we load up, we need to get the user and the list in the route.
         this.userId = +this.route.snapshot.paramMap.get('userId');
         this.listId = +this.route.snapshot.paramMap.get('listId');
