@@ -30,8 +30,8 @@ export class NavComponent implements OnInit {
     ngOnInit() {
         this.readingLists = [];
         this.followedLists = [];
-        this.toggleRls = false;
-        this.toggleFls = false;
+        this.toggleRls = true;
+        this.toggleFls = true;
 
         // Check if the nav should be visible.
         this.isVisible = (this.lso.getMyLoginToken() != null);

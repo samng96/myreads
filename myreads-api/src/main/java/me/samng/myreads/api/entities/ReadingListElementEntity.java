@@ -33,8 +33,8 @@ public class ReadingListElementEntity {
     @JsonProperty("description")
     public String description;
 
-    @JsonProperty("amazonLink")
-    public String amazonLink;
+    @JsonProperty("link")
+    public String link;
 
     @JsonProperty("tagIds")
     public List<Long> tagIds;

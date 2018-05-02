@@ -1,38 +1,52 @@
 <div *ngIf="isVisible">
-    <h4>{{ userEntity.name }}</h4>
+    <div class="nav-header">{{ userEntity.name }}</div>
 
-    <table class="table table-sm table-hover" *ngIf="readingLists">
-        <tr class="table-primary" (click)="onToggleRls()">
+    <table class="nav-table" *ngIf="readingLists">
+        <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
-                <span *ngIf="toggleRls">-</span>
-                <span *ngIf="!toggleRls">+</span>
                 Reading Lists
+                <span *ngIf="toggleRls"><img src="assets\nav-open.gif" align="right"></span>
+                <span *ngIf="!toggleRls"><img src="assets\nav-closed.gif" align="right"></span>
             </th>
         </tr>
     </table>
-    <table class="table table-sm table-hover" *ngIf="toggleRls">
+    <table class="nav-table" *ngIf="toggleRls">
         <tr *ngFor="let readingList of readingLists" (click)="onSelectReadingList(readingList)">
-            <td scope="row">{{ readingList.name }}</td>
+            <td><img src="assets\nav-list.gif"> {{ readingList.name }}</td>
         </tr>
     </table>
+    <table><tr><td class="nav-table-bottom"></td></tr></table>
 
-    <table class="table table-sm table-hover" *ngIf="followedLists">
-        <tr class="table-primary" (click)="onToggleFls()">
+    <table class="nav-table" *ngIf="followedLists">
+        <tr class="nav-table-header" (click)="onToggleFls()">
             <th scope="row">
-                <span *ngIf="toggleFls">-</span>
-                <span *ngIf="!toggleFls">+</span>
                 Followed Lists
+                <span *ngIf="toggleFls"><img src="assets\nav-open.gif" align="right"></span>
+                <span *ngIf="!toggleFls"><img src="assets\nav-closed.gif" align="right"></span>
             </th>
         </tr>
     </table>
-    <table class="table table-sm table-hover" *ngIf="toggleFls">
+    <table class="nav-table" *ngIf="toggleFls">
         <tr *ngFor="let followedList of followedLists" (click)="onSelectReadingList(followedList)">
-            <td>{{ followedList.name }}</td>
+            <td><img src="assets\nav-list.gif"> {{ followedList.name }}</td>
         </tr>
     </table>
+    <table><tr><td class="nav-table-bottom"></td></tr></table>
 
-    <div class="text-center">
-        <span (click)="onAddList()">new list</span> <b>|</b>
-        <span (click)="onAddRLE()">new item</span>
-    </div>
+    <table class="nav-additems">
+        <tr>
+            <td class="nav-space"></td>
+            <td>
+                <span class="nav-additem" (click)="onAddList()">
+                    <img src="assets\nav-plus.gif"><img src="assets\nav-list.gif">
+                </span>
+            </td>
+            <td>
+                <span class="nav-additem" (click)="onAddRLE()">
+                    <img src="assets\nav-plus.gif"><img src="assets\nav-item.gif">
+                </span>
+            </td>
+            <td class="nav-space"></td>
+        </tr>
+    </table>
 </div>

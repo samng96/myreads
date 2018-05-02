@@ -71,7 +71,7 @@ public class ReadingListElementRouteTest {
             rle.userId = userId;
             rle.description = "description";
             rle.name = "rleName";
-            rle.amazonLink = "some amazon link";
+            rle.link = "some amazon link";
 
             this.userId = userId;
 
@@ -82,7 +82,7 @@ public class ReadingListElementRouteTest {
         Future<Long> deleteListFut = getFut.compose(e -> {
             context.assertEquals("description", e.description);
             context.assertEquals("rleName", e.name);
-            context.assertEquals("some amazon link", e.amazonLink);
+            context.assertEquals("some amazon link", e.link);
             context.assertEquals(this.userId, e.userId);
 
             return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, HttpResponseStatus.NO_CONTENT.code()).map(e.id);
@@ -113,7 +113,7 @@ public class ReadingListElementRouteTest {
             rleEntity.userId = userId;
             rleEntity.description = "description";
             rleEntity.name = "RLEName";
-            rleEntity.amazonLink = "some amazon Link from Put";
+            rleEntity.link = "some amazon Link from Put";
 
             this.userId = userId;
 
@@ -124,7 +124,7 @@ public class ReadingListElementRouteTest {
             putEntity.userId = this.userId;
             putEntity.description = "newdescription";
             putEntity.name = "newRLEName";
-            putEntity.amazonLink = "amazon from Put";
+            putEntity.link = "amazon from Put";
 
             return TestHelper.putReadingListElement(context, client, putEntity, this.userId,HttpResponseStatus.NO_CONTENT.code()).map(rleId);
         });
@@ -132,7 +132,7 @@ public class ReadingListElementRouteTest {
         Future<Void> deleteFut = getFut.compose(e -> {
             context.assertEquals("newdescription", e.description);
             context.assertEquals("newRLEName", e.name);
-            context.assertEquals("amazon from Put", e.amazonLink);
+            context.assertEquals("amazon from Put", e.link);
 
             return TestHelper.deleteReadingListElement(context, client, this.userId, e.id, HttpResponseStatus.NO_CONTENT.code());
         });
@@ -159,7 +159,7 @@ public class ReadingListElementRouteTest {
             rle.userId = userId;
             rle.description = "description";
             rle.name = "listName";
-            rle.amazonLink = "tag test amazon link";
+            rle.link = "tag test amazon link";
 
             this.userId = userId;
 
@@ -220,7 +220,7 @@ public class ReadingListElementRouteTest {
             rle.userId = userId;
             rle.description = "description";
             rle.name = "listName";
-            rle.amazonLink = "tag test amazon link";
+            rle.link = "tag test amazon link";
 
             this.userId = userId;
 

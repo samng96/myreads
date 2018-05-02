@@ -165,7 +165,7 @@ public class ReadingListRouteTest {
             rle.userId = userId;
             rle.description = "description";
             rle.name = "rleName For addElementToList";
-            rle.amazonLink = "some amazon link";
+            rle.link = "some amazon link";
 
             this.listId = listId;
 

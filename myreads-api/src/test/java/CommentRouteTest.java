@@ -50,7 +50,7 @@ public class CommentRouteTest {
                 rle.userId = userId;
                 rle.description = "commentDescription";
                 rle.name = "commentRleName";
-                rle.amazonLink = "some amazon link";
+                rle.link = "some amazon link";
 
                 this.userId = userId;
 
@@ -87,7 +87,7 @@ public class CommentRouteTest {
             rle.userId = userId;
             rle.description = "commentDescription";
             rle.name = "commentRleName";
-            rle.amazonLink = "some amazon link";
+            rle.link = "some amazon link";
 
             this.userId = userId;
 
@@ -146,7 +146,7 @@ public class CommentRouteTest {
             rle.userId = userId;
             rle.description = "commentDescription";
             rle.name = "commentRleName";
-            rle.amazonLink = "some amazon link";
+            rle.link = "some amazon link";
 
             this.userId = userId;
 
