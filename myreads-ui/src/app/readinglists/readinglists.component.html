@@ -36,7 +36,7 @@
     <p></p><br>
 
     <!-- the list form of the elements -->
-    <table *ngIf="readingListElements" class="rles">
+    <table *ngIf="readingListElements && !this.isGridView" class="rles">
         <tr *ngFor="let readingListElement of readingListElements"
             class="rle">
             <td class="rle-image-cell">
@@ -71,6 +71,16 @@
     </table>
 
     <!-- the card form of the elements -->
+    <div *ngIf="readingListElements && this.isGridView" class="rles">
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="..." alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+    </div>
 
     <div *ngIf="!followingList && !ownList">
         This isn't your list - click <span (click)="onFollowList()">here</span> to follow it
