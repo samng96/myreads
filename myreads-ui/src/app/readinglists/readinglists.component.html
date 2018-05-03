@@ -47,11 +47,11 @@
                     <td class="rle-content-link">{{ readingListElement.link }}link</td>
                     <td>
                         <table> <!-- so we can have a space between tags -->
-                            <tr *ngIf="tags">
-                                <td *ngFor="let tag of tags">
-                                    <table class="tags"><tr><td>
+                            <tr *ngIf="readingListElement.tagIds">
+                                <td *ngFor="let tagId of readingListElement.tagIds">
+                                    <table *ngIf="this.lso.getTags()[tagId]" class="tags"><tr><td>
                                         <table><tr>
-                                            <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
+                                            <td class="tagitem" (click)="onSelectTag(this.lso.getTags()[tagId])">{{ this.lso.getTags()[tagId].tagName }}</td>
                                         </tr></table>
                                     </td><td width="5px">
                                     </td></tr></table>

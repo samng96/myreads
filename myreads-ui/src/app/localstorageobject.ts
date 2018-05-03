@@ -16,6 +16,8 @@ export class LocalStorageObject {
     public tags: Map<number, TagEntity>;
     public tagsByName: Map<string, TagEntity>;
 
+    // This stuff is cached for dispay, not just from the API.
+
     constructor() {
         var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObject"));
         if (loadedObject != null) {

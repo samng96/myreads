@@ -47,6 +47,7 @@ export class ReadingListsComponent implements OnInit {
         this.readingListElements = [];
         this.tags = [];
 
+        var tagIds = [];
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
         {
             this.lso.updateReadingList(readingList);
@@ -54,25 +55,40 @@ export class ReadingListsComponent implements OnInit {
             this.readingList = readingList;
 
             // Now load up all the RLEs for the list.
+            var promises = [];
             for (let rleId of readingList.readingListElementIds) {
-                this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
-                    this.lso.updateReadingListElement(rle);
-                    this.readingListElements.push(rle);
+                var promise = new Promise(resolve => {
+                    this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
+                        this.lso.updateReadingListElement(rle);
+                        this.readingListElements.push(rle);
+
+                        // Ensure that every RLE's tags are loaded.
+                        for (let tagId of rle.tagIds) {
+                            tagIds.push(tagId);
+                            resolve();
+                        }
+                    });
                 });
+                promises.push(promise);
             }
 
             // Now get the tags.
-            for (let tagId of readingList.tagIds) {
-                if (this.lso.getTags()[tagId] != null) {
-                    this.tags.push(this.lso.getTags()[tagId]);
+            Promise.all(promises).then(() => {
+                for (let tagId of readingList.tagIds) {
+                    tagIds.push(tagId);
                 }
-                else {
-                    this.serviceApi.getTag(tagId).subscribe(tag => {
-                        this.lso.updateTag(tag);
-                        this.tags.push(tag);
-                    })
+                for (let tagId of tagIds) {
+                    if (this.lso.getTags()[tagId] != null) {
+                        this.tags.push(this.lso.getTags()[tagId]);
+                    }
+                    else {
+                        this.serviceApi.getTag(tagId).subscribe(tag => {
+                            this.lso.updateTag(tag);
+                            this.tags.push(tag);
+                        })
+                    }
                 }
-            }
+            });
 
             // Now get all the lists that the user is following.
             this.serviceApi.getFollowedLists(this.lso.getMyUserId()).subscribe(fles => {
