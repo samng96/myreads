@@ -245,6 +245,16 @@ export class ReadingListsComponent implements OnInit {
         }
         return "";
     }
+    private getLink(rle: ReadingListElementEntity): string {
+        if (this.extractRootDomain(rle.link) == "amazon.com") {
+            var productId = this.extractAmazonProductId(rle.link);
+
+            if (productId != null) {
+                return `https://www.amazon.com/gp/product/${productId}/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0451495861&linkCode=as2&tag=samng96-20&linkId=0e3bf9c7ea3f23b726971dc8cfd7ba8d`;
+            }
+        }
+        return rle.link;
+    }
     private extractHostname(url: string): string {
         var hostname;
         //find & remove protocol (http, ftp, etc.) and get hostname

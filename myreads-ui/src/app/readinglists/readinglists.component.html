@@ -50,7 +50,7 @@
                 </div>
                 <table><tr>
                     <td class="rle-content-link">
-                        <a href="{{ readingListElement.link }}">{{ this.extractRootDomain(readingListElement.link) }}</a>
+                        <a href="{{ this.getLink(readingListElement) }}">{{ this.extractRootDomain(readingListElement.link) }}</a>
                     </td>
                     <td>
                         <table> <!-- so we can have a space between tags -->
