@@ -10,6 +10,7 @@ body {
     text-transform: uppercase;
 }
 
+/* Nav stuff */
 .nav-table {
     width: 100%;
 }
@@ -36,11 +37,52 @@ body {
     width: 100%;
     border-top: 1px solid #f0f0f0;
     text-align: center;
-    align-content: center;
 }
 .nav-additem {
     cursor: pointer;
 }
 .nav-space {
     width: 40px;
+}
+
+/* Reading list or RLE */
+.item-header {
+    font-weight: 500;
+    font-size: 22px;
+    width: 100%;
+}
+.item-header td {
+    padding-top: 25px;
+}
+.item-header-properties {
+    text-align: right;
+}
+.item-header-properties span:hover {
+    cursor: pointer;
+}
+
+/* Tags list */
+.tags table {
+    border-radius: 5px 5px 5px 5px;
+    color: #ff0000;
+    background-color: #ffbfbf;
+}
+.tags table:hover {
+    background-color: #ff9a9a;
+    color: #ffffff;
+}
+.tagitem {
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+}
+.tagspace {
+    width: 1px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: #ffffff;
+}
+.tagsadd {
+    width: 200px;
+    text-align: right;
 }

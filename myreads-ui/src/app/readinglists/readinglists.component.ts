@@ -11,6 +11,7 @@ import { LocalStorageObjectService } from '../LocalStorageObject';
 @Component({
     selector: 'app-readinglists',
     templateUrl: './readinglists.component.html',
+    styleUrls: ['./readinglists.component.css']
 })
 export class ReadingListsComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.
@@ -18,6 +19,7 @@ export class ReadingListsComponent implements OnInit {
 
     ownList: boolean;
     followingList: boolean;
+    isGridView: boolean = true;
     addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
@@ -146,10 +148,10 @@ export class ReadingListsComponent implements OnInit {
             this.tags.splice(index, 1);
         })
     }
+
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
     }
-
     private onSelectReadingListElement(rle: ReadingListElementEntity): void {
         this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
     }
@@ -159,6 +161,12 @@ export class ReadingListsComponent implements OnInit {
             this.lso.deleteReadingList(this.readingList);
             this.router.navigate(['/users', this.lso.getMyUserId()]);
         });
+    }
+    private onEditList(): void {
+
+    }
+    private onToggleView(): void {
+        this.isGridView = !this.isGridView;
     }
 
     private isFollowingList(listId: number): boolean {

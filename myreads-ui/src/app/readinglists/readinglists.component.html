@@ -1,25 +1,70 @@
 <div *ngIf="readingList">
-    <h1>{{ readingList.name }}
-        <div *ngIf="ownList">- <span (click)="onDeleteList()">delete</span></div>
-    </h1>
+    <table class="item-header">
+        <tr>
+            <td>{{ readingList.name }}</td>
+            <td class="item-header-properties">
+                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><img src="assets\grid-view.gif"></span>
+                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><img src="assets\list-view.gif"></span>
+                <span *ngIf="ownList" (click)="onEditList()"><img src="assets\icon-edit.gif"></span>
+                <span *ngIf="ownList" (click)="onDeleteList()"><img src="assets\icon-delete.gif"></span>
+            </td>
+        </tr>
+    </table>
+    <table width="100%"> <!-- so we can right-align adding -->
+        <tr>
+            <td>
+                <table> <!-- so we can have a space between tags -->
+                    <tr *ngIf="tags">
+                        <td *ngFor="let tag of tags">
+                            <table class="tags"><tr><td>
+                                <table><tr>
+                                    <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
+                                    <td class="tagspace" *ngIf="ownList"></td>
+                                    <td class="tagitem" *ngIf="ownList" (click)="onRemoveTag(tag)">x</td>
+                                </tr></table>
+                            </td><td width="5px">
+                            </td></tr></table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td *ngIf="ownList" class="tagsadd">
+                <input [(ngModel)]="addTagName" placeholder="add tag"/>
+                <span (click)="onAddTag()"><img src="assets\icon-plus.gif"><img src="assets\icon-tag.gif"></span>
+            </td>
+        </tr>
+    </table>
+    <p></p><br>
 
-    <h2>Reading List Elements</h2>
-    <ul *ngIf="readingListElements" class="readingListElements">
-        <li *ngFor="let readingListElement of readingListElements"
-            (click)="onSelectReadingListElement(readingListElement)">{{ readingListElement.name }}</li>
-    </ul>
+    <!-- the list form of the elements -->
+    <table *ngIf="readingListElements" class="rles">
+        <tr *ngFor="let readingListElement of readingListElements"
+            (click)="onSelectReadingListElement(readingListElement)" class="rle">
+            <td class="rle-image">image</td>
+            <td class="rle-content">
+                <div class="rle-content-title">{{ readingListElement.name }}</div>
+                <table><tr>
+                    <td class="rle-content-link">{{ readingListElement.link }}link</td>
+                    <td>
+                        <table> <!-- so we can have a space between tags -->
+                            <tr *ngIf="tags">
+                                <td *ngFor="let tag of tags">
+                                    <table class="tags"><tr><td>
+                                        <table><tr>
+                                            <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
+                                        </tr></table>
+                                    </td><td width="5px">
+                                    </td></tr></table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr></table>
+            </td>
+        </tr>
+    </table>
 
-    <h2>Tags</h2>
-    <ul *ngIf="tags" class="tags">
-        <li *ngFor="let tag of tags">
-            <span (click)="onSelectTag(tag)">{{ tag.tagName }}</span> -
-            <span *ngIf="ownList" (click)="onRemoveTag(tag)">remove</span>
-        </li>
-    </ul>
-    <span *ngIf="ownList">
-        <input [(ngModel)]="addTagName" placeholder="add tag"/>
-        <span (click)="onAddTag()">add tag</span>
-    </span>
+    <!-- the card form of the elements -->
 
     <div *ngIf="!followingList && !ownList">
         This isn't your list - click <span (click)="onFollowList()">here</span> to follow it

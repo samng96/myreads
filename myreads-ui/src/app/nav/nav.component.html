@@ -28,7 +28,7 @@
     </table>
     <table class="nav-table" *ngIf="toggleFls">
         <tr *ngFor="let followedList of followedLists" (click)="onSelectReadingList(followedList)">
-            <td><img src="assets\nav-list.gif"> {{ followedList.name }}</td>
+            <td><img src="assets\icon-list.gif"> {{ followedList.name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
@@ -37,13 +37,15 @@
         <tr>
             <td class="nav-space"></td>
             <td>
+                <br>
                 <span class="nav-additem" (click)="onAddList()">
-                    <img src="assets\nav-plus.gif"><img src="assets\nav-list.gif">
+                    <img src="assets\icon-plus.gif"><img src="assets\icon-list.gif">
                 </span>
             </td>
             <td>
+                <br>
                 <span class="nav-additem" (click)="onAddRLE()">
-                    <img src="assets\nav-plus.gif"><img src="assets\nav-item.gif">
+                    <img src="assets\icon-plus.gif"><img src="assets\icon-rle.gif">
                 </span>
             </td>
             <td class="nav-space"></td>
