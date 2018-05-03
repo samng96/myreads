@@ -3,8 +3,8 @@
         <tr>
             <td>{{ readingList.name }}</td>
             <td class="item-header-properties">
-                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><img src="assets\grid-view.gif"></span>
-                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><img src="assets\list-view.gif"></span>
+                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><img src="assets\icon-grid-view.gif"></span>
+                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><img src="assets\icon-list-view.gif"></span>
                 <span *ngIf="ownList" (click)="onEditList()"><img src="assets\icon-edit.gif"></span>
                 <span *ngIf="ownList" (click)="onDeleteList()"><img src="assets\icon-delete.gif"></span>
             </td>

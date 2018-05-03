@@ -107,15 +107,15 @@ export class ReadingListsComponent implements OnInit {
                     tagIds.push(tagId);
                 }
                 for (let tagId of tagIds) {
-                    if (this.lso.getTags()[tagId] != null) {
-                        this.tags.push(this.lso.getTags()[tagId]);
-                    }
-                    else {
+                    if (this.lso.getTags()[tagId] == null) {
                         this.serviceApi.getTag(tagId).subscribe(tag => {
                             this.lso.updateTag(tag);
-                            this.tags.push(tag);
                         })
                     }
+                }
+            }).then(() => {
+                for (let tagId of readingList.tagIds) {
+                    this.tags.push(this.lso.getTags()[tagId]);
                 }
             });
 
@@ -215,6 +215,7 @@ export class ReadingListsComponent implements OnInit {
     }
 
     private getRleExtra(rle: ReadingListElementEntity): Observable<LinkPreviewResultObject> {
+        // TODO: Looks like this API throttles - figure out how we can delay load.
         var url = `http://api.linkpreview.net/?key=${this.linkPreviewApiKey}&q=${rle.link}`
         return this.http.get<LinkPreviewResultObject>(url)
             .pipe(
