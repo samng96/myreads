@@ -1,6 +1,13 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity, TagEntity, CommentEntity } from './entities';
 
+export class ReadingListElementExtras {
+    title: string;
+    description: string;
+    image: string;
+    url: string;
+}
+
 export class LocalStorageObject {
     public myUserId: number; // The current user's Id
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
@@ -17,6 +24,7 @@ export class LocalStorageObject {
     public tagsByName: Map<string, TagEntity>;
 
     // This stuff is cached for dispay, not just from the API.
+    public rleExtras: Map<number, ReadingListElementExtras>;
 
     constructor() {
         var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObject"));
@@ -32,6 +40,8 @@ export class LocalStorageObject {
             this.comments = loadedObject.comments;
             this.tags = loadedObject.tags;
             this.tagsByName = loadedObject.tagsByName;
+
+            this.rleExtras = loadedObject.rleExtras;
         }
         else {
             this.myUserId = -1;
@@ -45,6 +55,8 @@ export class LocalStorageObject {
             this.comments = new Map<number, CommentEntity>();
             this.tags = new Map<number, TagEntity>();
             this.tagsByName = new Map<string, TagEntity>();
+
+            this.rleExtras = new Map<number, ReadingListElementExtras>();
         }
     }
 
@@ -145,4 +157,10 @@ export class LocalStorageObjectService {
 
         this.changeListDelete.emit(list);
     }
+
+    public updateRleExtras(rleId: number, rleExtra: ReadingListElementExtras): void {
+        this.lso.rleExtras[rleId] = rleExtra;
+        this.lso.save();
+    }
+    public getRleExtras(): Map<number, ReadingListElementExtras> { return this.lso.rleExtras; }
 }

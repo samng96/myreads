@@ -39,12 +39,19 @@
     <!-- the list form of the elements -->
     <table *ngIf="readingListElements" class="rles">
         <tr *ngFor="let readingListElement of readingListElements"
-            (click)="onSelectReadingListElement(readingListElement)" class="rle">
-            <td class="rle-image">image</td>
+            class="rle">
+            <td class="rle-image-cell">
+                <img class="rle-image" src="{{ this.getImageUrl(readingListElement) }}"
+                    (click)="onSelectReadingListElement(readingListElement)">
+            </td>
             <td class="rle-content">
-                <div class="rle-content-title">{{ readingListElement.name }}</div>
+                <div class="rle-content-title" (click)="onSelectReadingListElement(readingListElement)">
+                    {{ this.pickTitle(readingListElement) }}
+                </div>
                 <table><tr>
-                    <td class="rle-content-link">{{ readingListElement.link }}link</td>
+                    <td class="rle-content-link">
+                        <a href="{{ readingListElement.link }}">{{ this.extractRootDomain(readingListElement.link) }}</a>
+                    </td>
                     <td>
                         <table> <!-- so we can have a space between tags -->
                             <tr *ngIf="readingListElement.tagIds">
