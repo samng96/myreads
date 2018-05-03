@@ -37,8 +37,7 @@
 
     <!-- the list form of the elements -->
     <table *ngIf="readingListElements && !this.isGridView" class="rles">
-        <tr *ngFor="let readingListElement of readingListElements"
-            class="rle">
+        <tr *ngFor="let readingListElement of readingListElements" class="rle">
             <td class="rle-image-cell">
                 <img class="rle-image" src="{{ this.getImageUrl(readingListElement) }}"
                     (click)="onSelectReadingListElement(readingListElement)">
@@ -72,8 +71,8 @@
 
     <!-- the card form of the elements -->
     <div *ngIf="readingListElements && this.isGridView" class="rles">
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="..." alt="Card image cap">
+        <div *ngFor="let readingListElement of readingListElements" class="card">
+            <img class="card-img-top" src="{{ this.getImageUrl(readingListElement) }}">
             <div class="card-body">
                 <h5 class="card-title">Card title</h5>
                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
