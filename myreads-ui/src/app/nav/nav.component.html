@@ -5,14 +5,14 @@
         <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
                 Reading Lists
-                <span *ngIf="toggleRls"><img src="assets\nav-open.gif" align="right"></span>
-                <span *ngIf="!toggleRls"><img src="assets\nav-closed.gif" align="right"></span>
+                <span *ngIf="toggleRls" style="float:right"><i class="highlight fas fa-angle-down"></i></span>
+                <span *ngIf="!toggleRls" style="float:right"><i class="highlight fas fa-angle-left"></i></span>
             </th>
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleRls">
         <tr *ngFor="let readingList of readingLists" (click)="onSelectReadingList(readingList)">
-            <td><img src="assets\icon-list.gif"> {{ readingList.name }}</td>
+            <td><i class="highlight fas fa-list-ul"></i> {{ readingList.name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
@@ -21,14 +21,14 @@
         <tr class="nav-table-header" (click)="onToggleFls()">
             <th scope="row">
                 Followed Lists
-                <span *ngIf="toggleFls"><img src="assets\nav-open.gif" align="right"></span>
-                <span *ngIf="!toggleFls"><img src="assets\nav-closed.gif" align="right"></span>
+                <span *ngIf="toggleFls" style="float:right"><i class="highlight fas fa-angle-down"></i></span>
+                <span *ngIf="!toggleFls" style="float:right"><i class="highlight fas fa-angle-left"></i></span>
             </th>
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleFls">
         <tr *ngFor="let followedList of followedLists" (click)="onSelectReadingList(followedList)">
-            <td><img src="assets\icon-list.gif"> {{ followedList.name }}</td>
+            <td><i class="highlight fas fa-list-ul"></i> {{ followedList.name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
@@ -39,13 +39,13 @@
             <td>
                 <br>
                 <span class="nav-additem" (click)="onAddList()">
-                    <img src="assets\icon-plus.gif"><img src="assets\icon-list.gif">
+                    <i class="accent fas fa-plus fa-sm"></i> <i class="highlight fas fa-list-ul"></i>
                 </span>
             </td>
             <td>
                 <br>
                 <span class="nav-additem" (click)="onAddRLE()">
-                    <img src="assets\icon-plus.gif"><img src="assets\icon-rle.gif">
+                    <i class="accent fas fa-plus fa-sm"></i> <i class="highlight fas fa-file"></i>
                 </span>
             </td>
             <td class="nav-space"></td>

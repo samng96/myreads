@@ -110,7 +110,7 @@ export class LocalStorageObjectService {
 
     public updateTags(tags: TagEntity[]): void {
         for (let tag of tags) {
-            this.lso.tags[tag.id] = tag;
+            this.updateTag(tag);
         }
         this.lso.save();
     }

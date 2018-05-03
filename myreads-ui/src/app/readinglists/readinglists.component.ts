@@ -29,6 +29,7 @@ export class ReadingListsComponent implements OnInit {
 
     private linkPreviewApiKey: string = "5aeaa317b64a2ae9950b87ffc3b372739ad468bb2a676";
     private maxTitleLength: number = 75;
+    private numTagStyles: number = 6;
 
     ownList: boolean;
     followingList: boolean;
@@ -36,7 +37,6 @@ export class ReadingListsComponent implements OnInit {
     addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
-    tags: TagEntity[]; // This is for the display.
 
     constructor(
         private http: HttpClient,
@@ -59,7 +59,6 @@ export class ReadingListsComponent implements OnInit {
         this.listId = +this.route.snapshot.paramMap.get('listId');
 
         this.readingListElements = [];
-        this.tags = [];
 
         var tagIds = [];
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
@@ -113,10 +112,6 @@ export class ReadingListsComponent implements OnInit {
                         })
                     }
                 }
-            }).then(() => {
-                for (let tagId of readingList.tagIds) {
-                    this.tags.push(this.lso.getTags()[tagId]);
-                }
             });
 
             // Now get all the lists that the user is following.
@@ -164,8 +159,9 @@ export class ReadingListsComponent implements OnInit {
                         this.lso.updateTag(tagEntity);
 
                         let tagIds: number[] = [tagId];
-                        this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
-                            this.tags.push(tagEntity);
+                        this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(() => {
+                            this.readingList.tagIds.push(tagEntity.id);
+                            this.lso.updateReadingList(this.readingList);
                         });
                     });
                 }
@@ -175,13 +171,14 @@ export class ReadingListsComponent implements OnInit {
                     let tagIds: number[] = [tag.id];
 
                     // Make sure our tag isn't already added.
-                    for (let currentTag of this.tags) {
-                        if (currentTag.tagName == this.addTagName) {
+                    for (let currentTag of this.readingList.tagIds) {
+                        if (currentTag == tag.id) {
                             return;
                         }
                     }
                     this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
-                        this.tags.push(tagEntity);
+                        this.readingList.tagIds.push(tag.id);
+                        this.lso.updateReadingList(this.readingList);
                     });
                 }
             });
@@ -189,9 +186,13 @@ export class ReadingListsComponent implements OnInit {
     }
     private onRemoveTag(tag: TagEntity): void {
         this.serviceApi.removeTagFromReadingList(this.userId, this.listId, tag.id).subscribe(x => {
-            var index = this.tags.indexOf(tag, 0);
-            this.tags.splice(index, 1);
+            var index = this.readingList.tagIds.indexOf(tag.id, 0);
+            this.readingList.tagIds.splice(index, 1);
+            this.lso.updateReadingList(this.readingList);
         })
+    }
+    private getTagStyle(tagId: number): string {
+        return `tagcolor${tagId % this.numTagStyles}`
     }
 
     private onSelectTag(tag: TagEntity): void {
