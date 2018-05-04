@@ -17,7 +17,7 @@
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
 
-    <table class="nav-table" *ngIf="followedLists">
+    <table class="nav-table">
         <tr class="nav-table-header" (click)="onToggleFls()">
             <th scope="row">
                 Followed Lists
@@ -27,8 +27,8 @@
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleFls">
-        <tr *ngFor="let followedList of followedLists" (click)="onSelectReadingList(followedList)">
-            <td><i class="highlight fas fa-list-ul"></i> {{ followedList.name }}</td>
+        <tr *ngFor="let flid of this.lso.getMyFollowedLists()" (click)="onSelectReadingList(this.lso.getReadingLists()[flid])">
+            <td><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>

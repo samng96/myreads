@@ -29,6 +29,7 @@ export class ReadingListsComponent implements OnInit {
 
     private linkPreviewApiKey: string = "5aeaa317b64a2ae9950b87ffc3b372739ad468bb2a676";
     private maxTitleLength: number = 75;
+    private maxDescriptionLength: number = 150;
     private numTagStyles: number = 6;
 
     ownList: boolean;
@@ -224,6 +225,19 @@ export class ReadingListsComponent implements OnInit {
                 catchError(this.handleError("linkPreview", null))
             );
     }
+    private pickDescription(rle: ReadingListElementEntity): string {
+        var desc;
+        if (this.lso.getRleExtras()[rle.id] != null) {
+            desc = this.lso.getRleExtras()[rle.id].description;
+        }
+        else {
+            desc = rle.description;
+        }
+        if (desc.length > this.maxDescriptionLength) {
+            return `${desc.substring(0, this.maxDescriptionLength)} ...`;
+        }
+        return desc;
+    }
     private pickTitle(rle: ReadingListElementEntity): string {
         if (this.lso.getRleExtras()[rle.id] != null) {
             var title = this.lso.getRleExtras()[rle.id].title;
@@ -240,7 +254,7 @@ export class ReadingListsComponent implements OnInit {
 
             if (productId != null) {
                 // TODO: Get a larger amazon image
-                return `http://ws-na.amazon-adsystem.com/widgets/q?ASIN=${productId}&ServiceVersion=20070822&ID=AsinImage&WS=1`;
+                return `http://ws-na.amazon-adsystem.com/widgets/q?ASIN=${productId}&ServiceVersion=20070822&ID=AsinImage&WS=1&Format`;
             }
         }
         if (this.lso.getRleExtras()[rle.id] != null) {
@@ -298,7 +312,7 @@ export class ReadingListsComponent implements OnInit {
     }
 
     private isFollowingList(listId: number): boolean {
-        return (this.lso.getMyFollowedLists()[listId] != undefined);
+        return (this.lso.getMyFollowedLists().indexOf(listId) != -1);
     }
     private isViewingCurrentUser(userId: number): boolean {
         var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];

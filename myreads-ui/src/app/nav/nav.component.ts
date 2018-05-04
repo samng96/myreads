@@ -16,7 +16,6 @@ export class NavComponent implements OnInit {
     // Display binding variables.
     public userEntity: UserEntity;
     public readingLists: ReadingListEntity[]; // The reading lists to present on this user.
-    public followedLists: ReadingListEntity[]; // The followed lists to present on this user.
     public toggleRls: boolean;
     public toggleFls: boolean;
 
@@ -28,8 +27,8 @@ export class NavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // TODO: Need to move this to lso so that we get updates.
         this.readingLists = [];
-        this.followedLists = [];
         this.toggleRls = true;
         this.toggleFls = true;
 
@@ -76,14 +75,12 @@ export class NavComponent implements OnInit {
 
             for (let fl of followedLists) {
                 this.lso.updateFollowedList(fl);
-                this.lso.updateMyFollowedLists(fl.listId, fl.id)
+                this.lso.updateMyFollowedLists(fl.listId);
                 if (this.lso.getReadingLists()[fl.listId] == null) {
                     this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
                         this.log(`got list ${readingList.name} for followed user Id ${fl.ownerId}`);
                         this.lso.updateReadingList(readingList);
 
-                        this.followedLists.push(readingList);
-                        this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                         if (this.lso.getUsers()[fl.ownerId] == null) {
                             this.serviceApi.getUser(fl.ownerId).subscribe(user => {
                                 this.log(`got user ${user.name}`);
@@ -91,10 +88,6 @@ export class NavComponent implements OnInit {
                             })
                         }
                     });
-                }
-                else {
-                    this.followedLists.push(this.lso.getReadingLists()[fl.listId]);
-                    this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                 }
             }
         });

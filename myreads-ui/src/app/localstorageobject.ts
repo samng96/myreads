@@ -46,7 +46,7 @@ export class LocalStorageObject {
         else {
             this.myUserId = -1;
             this.myLoginToken = null;
-            this.myFollowedLists = new Map<number, number>();
+            this.myFollowedLists = [];
 
             this.users = new Map<number, UserEntity>();
             this.readingLists = new Map<number, ReadingListEntity>();
@@ -89,7 +89,7 @@ export class LocalStorageObjectService {
 
     public getMyUserId(): number { return this.lso.myUserId; }
     public getMyLoginToken(): string { return this.lso.myLoginToken; }
-    public getMyFollowedLists(): Map<number, number> { return this.lso.myFollowedLists; }
+    public getMyFollowedLists(): number[] { return this.lso.myFollowedLists; }
 
     public getReadingLists(): Map<number, ReadingListEntity> { return this.lso.readingLists; }
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
@@ -99,13 +99,18 @@ export class LocalStorageObjectService {
     public getComments(): Map<number, CommentEntity> { return this.lso.comments; }
     public getFollowedLists(): Map<number, FollowedListEntity> { return this.lso.followedLists; }
 
-    public updateMyFollowedLists(listId: number, fleId): void {
-        this.lso.myFollowedLists[listId] = fleId;
-        this.lso.save();
+    public updateMyFollowedLists(listId: number): void {
+        if (this.lso.myFollowedLists.indexOf(listId, 0) == -1) {
+            this.lso.myFollowedLists.push(listId);
+            this.lso.save();
+        }
     }
     public deleteMyFollowedList(listId: number): void {
-        this.lso.myFollowedLists.delete(listId);
-        this.lso.save();
+        var index = this.lso.myFollowedLists.indexOf(listId, 0);
+        if (index != -1) {
+            this.lso.myFollowedLists.splice(index, 1);
+            this.lso.save();
+        }
     }
 
     public updateTags(tags: TagEntity[]): void {

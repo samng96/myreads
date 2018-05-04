@@ -68,6 +68,12 @@ body {
 .item-header-properties span:hover {
     cursor: pointer;
 }
+.item-header-properties a {
+    font-size: 16px;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 400;
+}
 
 /* Tags list */
 .tags table {

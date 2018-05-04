@@ -7,6 +7,8 @@
                 <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
                 <span *ngIf="ownList" (click)="onEditList()"><i class="accent fas fa-pen-square"></i></span>
                 <span *ngIf="ownList" (click)="onDeleteList()"><i class="accent fas fa-times"></i></span>
+                <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
+                <button *ngIf="followingList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
             </td>
         </tr>
     </table>
@@ -70,21 +72,16 @@
     </table>
 
     <!-- the card form of the elements -->
-    <div *ngIf="readingListElements && this.isGridView" class="rles">
-        <div *ngFor="let readingListElement of readingListElements" class="card">
-            <img class="card-img-top" src="{{ this.getImageUrl(readingListElement) }}">
+    <div *ngIf="readingListElements && this.isGridView" class="card-deck">
+        <div *ngFor="let readingListElement of readingListElements" class="card" style="width:300px;cursor:pointer"
+            (click)="onSelectReadingListElement(readingListElement)">
+            <div style="max-height:200px;overflow:hidden;" class="mx-auto">
+                <img class="card-img-top" src="{{ this.getImageUrl(readingListElement) }}">
+            </div>
             <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
+                <h6 class="card-title">{{ this.pickTitle(readingListElement) }}</h6>
+                <p class="small">{{ this.pickDescription(readingListElement) }}</p>
+            </div>
         </div>
-    </div>
-
-    <div *ngIf="!followingList && !ownList">
-        This isn't your list - click <span (click)="onFollowList()">here</span> to follow it
-    </div>
-    <div *ngIf="followingList">
-        You're following this list - click <span (click)="onUnfollowList()">here</span> to stop following it
     </div>
 </div>
