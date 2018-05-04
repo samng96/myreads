@@ -210,7 +210,8 @@ export class ReadingListsComponent implements OnInit {
         });
     }
     private onEditList(): void {
-        // TODO:
+        // TODO: switch the title to put it in an input box for updating the title of the RL.
+        // TODO: do reading lists need descriptions?
     }
     private onToggleView(): void {
         this.isGridView = !this.isGridView;

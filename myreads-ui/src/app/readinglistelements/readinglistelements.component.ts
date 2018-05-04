@@ -22,8 +22,9 @@ export class ReadingListElementsComponent implements OnInit {
     addRleToListId: string; // Bound to the form.
     readingListElement: ReadingListElementEntity; // This is for the display.
     comments: CommentEntity[]; // This is for the display.
-    tags: TagEntity[]; // This is for the display.
     lists: ReadingListEntity[];
+
+    private numTagStyles: number = 6;
 
     constructor(
         private lso: LocalStorageObjectService,
@@ -38,7 +39,6 @@ export class ReadingListElementsComponent implements OnInit {
         this.userId = +this.route.snapshot.paramMap.get('userId');
         this.ownRle = this.isViewingCurrentUser(this.userId);
 
-        this.tags = [];
         this.comments = [];
         this.lists = [];
 
@@ -48,14 +48,10 @@ export class ReadingListElementsComponent implements OnInit {
 
             // Now get the tags.
             for (let tagId of this.readingListElement.tagIds) {
-                if (this.lso.getTags()[tagId] != null) {
-                    this.tags.push(this.lso.getTags()[tagId]);
-                }
-                else {
+                if (this.lso.getTags()[tagId] == null) {
                     this.serviceApi.getTag(tagId).subscribe(tag => {
                         this.lso.updateTag(tag);
-                        this.tags.push(tag);
-                    })
+                    });
                 }
             }
 
@@ -100,6 +96,7 @@ export class ReadingListElementsComponent implements OnInit {
     }
 
     private onDeleteReadingListElement(): void {
+        // TODO: Should verify the user meant to do this... ;)
         this.serviceApi.deleteReadingListElement(this.userId, this.rleId).subscribe(() => {
             this.lso.deleteReadingListElement(this.rleId);
             for (let commentId of this.readingListElement.commentIds) {
@@ -128,7 +125,8 @@ export class ReadingListElementsComponent implements OnInit {
 
                         let tagIds: number[] = [tagId];
                         this.serviceApi.addTagToReadingListElement(this.userId, this.rleId, tagIds).subscribe(x => {
-                            this.tags.push(tagEntity);
+                            this.readingListElement.tagIds.push(tagEntity.id);
+                            this.lso.updateReadingListElement(this.readingListElement);
                         });
                     });
                 }
@@ -138,13 +136,12 @@ export class ReadingListElementsComponent implements OnInit {
                     let tagIds: number[] = [tag.id];
 
                     // Make sure our tag isn't already added.
-                    for (let currentTag of this.tags) {
-                        if (currentTag.tagName == this.addTagName) {
-                            return;
-                        }
+                    if (this.readingListElement.tagIds.indexOf(tag.id) != -1) {
+                        return;
                     }
                     this.serviceApi.addTagToReadingListElement(this.userId, this.rleId, tagIds).subscribe(x => {
-                        this.tags.push(tagEntity);
+                        this.readingListElement.tagIds.push(tagEntity.id);
+                        this.lso.updateReadingListElement(this.readingListElement);
                     });
                 }
             });
@@ -152,9 +149,13 @@ export class ReadingListElementsComponent implements OnInit {
     }
     private onRemoveTag(tag: TagEntity): void {
         this.serviceApi.removeTagFromReadingListElement(this.userId, this.rleId, tag.id).subscribe(x => {
-            var index = this.tags.indexOf(tag, 0);
-            this.tags.splice(index, 1);
+            var index = this.readingListElement.tagIds.indexOf(tag.id, 0);
+            this.readingListElement.tagIds.splice(index, 1);
+            this.lso.updateReadingListElement(this.readingListElement);
         })
+    }
+    private getTagStyle(tagId: number): string {
+        return `tagcolor${tagId % this.numTagStyles}`
     }
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);

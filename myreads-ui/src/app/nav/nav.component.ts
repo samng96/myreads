@@ -27,7 +27,6 @@ export class NavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        // TODO: Need to move this to lso so that we get updates.
         this.readingLists = [];
         this.toggleRls = true;
         this.toggleFls = true;

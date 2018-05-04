@@ -3,7 +3,7 @@
         <tr>
             <td>{{ readingListElement.name }}</td>
             <td class="item-header-properties">
-                <span *ngIf="ownRle" (click)="onDeleteReadingListElement()"><img src="assets\icon-delete.gif"> </span>
+                <span *ngIf="ownRle" (click)="onDeleteReadingListElement()"><i class="accent fas fa-times"></i></span>
             </td>
         </tr>
     </table>
@@ -11,13 +11,13 @@
         <tr>
             <td>
                 <table> <!-- so we can have a space between tags -->
-                    <tr *ngIf="tags">
-                        <td *ngFor="let tag of tags">
-                            <table class="tags"><tr><td>
+                    <tr *ngIf="readingListElement.tagIds">
+                        <td *ngFor="let tagId of readingListElement.tagIds">
+                            <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.getTagStyle(tagId) }}"><tr><td>
                                 <table><tr>
-                                    <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
+                                    <td class="tagitem" (click)="onSelectTag(this.lso.getTags()[tagId])">{{ this.lso.getTags()[tagId].tagName }}</td>
                                     <td class="tagspace" *ngIf="ownRle"></td>
-                                    <td class="tagitem" *ngIf="ownRle" (click)="onRemoveTag(tag)">x</td>
+                                    <td class="tagitem" *ngIf="ownRle" (click)="onRemoveTag(this.lso.getTags()[tagId])">x</td>
                                 </tr></table>
                             </td><td width="5px">
                             </td></tr></table>
@@ -26,8 +26,7 @@
                 </table>
             </td>
             <td *ngIf="ownRle" class="tagsadd">
-                <input [(ngModel)]="addTagName" placeholder="add tag"/>
-                <span (click)="onAddTag()"><img src="assets\icon-plus.gif"><img src="assets\icon-tag.gif"></span>
+                <input class="form-control form-rounded" [(ngModel)]="addTagName" (keyup.enter)="onAddTag()" placeholder="add tag"/>
             </td>
         </tr>
     </table>
