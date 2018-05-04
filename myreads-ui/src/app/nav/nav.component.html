@@ -28,7 +28,7 @@
     </table>
     <table class="nav-table" *ngIf="toggleFls">
         <tr *ngFor="let flid of this.lso.getMyFollowedLists()" (click)="onSelectReadingList(this.lso.getReadingLists()[flid])">
-            <td><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
+            <td *ngIf="this.lso.getReadingLists()[flid]"><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>

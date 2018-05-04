@@ -19,6 +19,8 @@ import { DebugComponent } from './debug/debug.component';
 import { NavComponent } from './nav/nav.component';
 import { LocalStorageObjectService } from './LocalStorageObject';
 
+import { ExtrasHelpers } from './entityextras';
+
 
 @NgModule({
     declarations: [
@@ -39,7 +41,7 @@ import { LocalStorageObjectService } from './LocalStorageObject';
         FormsModule,
         HttpClientModule
     ],
-    providers: [ LoggerService, ServiceApi, LocalStorageObjectService ],
+    providers: [ LoggerService, ServiceApi, LocalStorageObjectService, ExtrasHelpers ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }

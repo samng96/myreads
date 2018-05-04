@@ -1,18 +1,12 @@
 import { Injectable, EventEmitter, Output } from '@angular/core';
 import { UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity, TagEntity, CommentEntity } from './entities';
-
-export class ReadingListElementExtras {
-    title: string;
-    description: string;
-    image: string;
-    url: string;
-}
+import { ReadingListElementExtras } from './entityextras';
 
 export class LocalStorageObject {
     public myUserId: number; // The current user's Id
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
 
-    public myFollowedLists: Map<number, number>; // [listId, followedEntityId]
+    public myFollowedLists: number[];
 
     // Globally cached stuff.
     public users: Map<number, UserEntity>;

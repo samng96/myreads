@@ -18,7 +18,7 @@
                 <table> <!-- so we can have a space between tags -->
                     <tr *ngIf="readingList.tagIds">
                         <td *ngFor="let tagId of readingList.tagIds">
-                            <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.getTagStyle(tagId) }}"><tr><td>
+                            <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.helper.getTagStyle(tagId) }}"><tr><td>
                                 <table><tr>
                                     <td class="tagitem" (click)="onSelectTag(this.lso.getTags()[tagId])">{{ this.lso.getTags()[tagId].tagName }}</td>
                                     <td class="tagspace" *ngIf="ownList"></td>
@@ -41,12 +41,12 @@
     <table *ngIf="readingListElements && !this.isGridView" class="rles">
         <tr *ngFor="let readingListElement of readingListElements" class="rle">
             <td class="rle-image-cell">
-                <img class="rle-image" src="{{ this.getImageUrl(readingListElement) }}"
+                <img class="rle-image" src="{{ this.helper.getImageUrl(readingListElement) }}"
                     (click)="onSelectReadingListElement(readingListElement)">
             </td>
             <td class="rle-content">
                 <div class="rle-content-title" (click)="onSelectReadingListElement(readingListElement)">
-                    {{ this.pickTitle(readingListElement) }}
+                    {{ this.helper.pickTitle(readingListElement) }}
                 </div>
                 <table><tr>
                     <td class="rle-content-link">
@@ -56,7 +56,7 @@
                         <table> <!-- so we can have a space between tags -->
                             <tr *ngIf="readingListElement.tagIds">
                                 <td *ngFor="let tagId of readingListElement.tagIds">
-                                    <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.getTagStyle(tagId) }}"><tr><td>
+                                    <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.helper.getTagStyle(tagId) }}"><tr><td>
                                         <table><tr>
                                             <td class="tagitem" (click)="onSelectTag(this.lso.getTags()[tagId])">{{ this.lso.getTags()[tagId].tagName }}</td>
                                         </tr></table>
@@ -76,11 +76,11 @@
         <div *ngFor="let readingListElement of readingListElements" class="card" style="width:300px;cursor:pointer"
             (click)="onSelectReadingListElement(readingListElement)">
             <div style="max-height:200px;overflow:hidden;" class="mx-auto">
-                <img class="card-img-top" src="{{ this.getImageUrl(readingListElement) }}">
+                <img class="card-img-top" src="{{ this.helper.getImageUrl(readingListElement) }}">
             </div>
             <div class="card-body">
-                <h6 class="card-title">{{ this.pickTitle(readingListElement) }}</h6>
-                <p class="small">{{ this.pickDescription(readingListElement) }}</p>
+                <h6 class="card-title">{{ this.helper.pickTitle(readingListElement) }}</h6>
+                <p class="small">{{ this.helper.pickDescription(readingListElement) }}</p>
             </div>
         </div>
     </div>
