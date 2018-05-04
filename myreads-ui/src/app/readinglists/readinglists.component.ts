@@ -79,8 +79,8 @@ export class ReadingListsComponent implements OnInit {
                         // Ensure that every RLE's tags are loaded.
                         for (let tagId of rle.tagIds) {
                             tagIds.push(tagId);
-                            resolve();
                         }
+                        resolve();
 
                         // Now asynchronously load up the link previews.
                         if (this.lso.getRleExtras()[rle.id] == null) {
