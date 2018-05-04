@@ -3,8 +3,8 @@
         <tr>
             <td>{{ readingList.name }}</td>
             <td class="item-header-properties">
-                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="accent fas fa-th-large"></i></span>
-                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
+                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-th-large"></i></span>
+                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
                 <span *ngIf="ownList" (click)="onEditList()"><i class="accent fas fa-pen-square"></i></span>
                 <span *ngIf="ownList" (click)="onDeleteList()"><i class="accent fas fa-times"></i></span>
                 <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
