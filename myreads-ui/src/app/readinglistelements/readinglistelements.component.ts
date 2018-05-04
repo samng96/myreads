@@ -7,6 +7,7 @@ import { ServiceApi } from '../serviceapi.service';
 import { TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObjectService } from '../LocalStorageObject';
+import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../entityextras';
 
 @Component({
     selector: 'app-readinglistelements',
@@ -22,13 +23,11 @@ export class ReadingListElementsComponent implements OnInit {
     addRleToListId: string; // Bound to the form.
     readingListElement: ReadingListElementEntity; // This is for the display.
     comments: CommentEntity[]; // This is for the display.
-    lists: ReadingListEntity[];
-
-    private numTagStyles: number = 6;
 
     constructor(
         private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
+        private helper: ExtrasHelpers,
         private serviceApi: ServiceApi,
         private router: Router,
         private logger: LoggerService
@@ -40,7 +39,6 @@ export class ReadingListElementsComponent implements OnInit {
         this.ownRle = this.isViewingCurrentUser(this.userId);
 
         this.comments = [];
-        this.lists = [];
 
         this.serviceApi.getReadingListElement(this.userId, this.rleId).subscribe(rle => {
             this.lso.updateReadingListElement(rle);
@@ -64,12 +62,9 @@ export class ReadingListElementsComponent implements OnInit {
 
             // Get all the lists that we're a part of
             for (let listId of this.readingListElement.listIds) {
-                if (this.lso.getReadingLists()[listId] != null) {
-                    this.lists.push(this.lso.getReadingLists()[listId])
-                }
-                else {
+                if (this.lso.getReadingLists()[listId] == null) {
                     this.serviceApi.getReadingList(this.userId, listId).subscribe(list => {
-                        this.lists.push(list);
+                        this.lso.updateReadingList(list);
                     });
                 }
             }
@@ -82,16 +77,28 @@ export class ReadingListElementsComponent implements OnInit {
 
         this.serviceApi.addReadingListElementToReadingList(
             this.userId, +this.addRleToListId, rleIds).subscribe(() => {
-                this.lists.push(this.lso.getReadingLists()[+this.addRleToListId]);
+                this.readingListElement.listIds.push(+this.addRleToListId);
+                var list = this.lso.getReadingLists()[+this.addRleToListId];
+                list.readingListElementIds.push(this.rleId);
+                this.lso.updateReadingList(list);
+                this.lso.updateReadingListElement(this.readingListElement);
                 this.addRleToListId = "added";
             });
     }
 
-    private onRemoveRleFromList(list: ReadingListEntity): void {
+// TODO: Make sure we're only loading what's not cached everywhere.
+    private onRemoveRleFromList(listId: number): void {
         this.serviceApi.removeReadingListElementFromReadingList(
-            this.userId, list.id, this.rleId).subscribe(removedListId => {
-                var index = this.lists.indexOf(removedListId, 0);
-                this.lists.splice(index, 1);
+            this.userId, listId, this.rleId).subscribe(removedListId => {
+                var index = this.readingListElement.listIds.indexOf(removedListId, 0);
+                this.readingListElement.listIds.splice(index, 1);
+
+                var list = this.lso.getReadingLists()[listId];
+                index = list.readingListElementIds.indexOf(this.rleId, 0);
+                list.readingListElementIds.splice(index, 1);
+
+                this.lso.updateReadingList(list);
+                this.lso.updateReadingListElement(this.readingListElement);
             });
     }
 
@@ -154,13 +161,9 @@ export class ReadingListElementsComponent implements OnInit {
             this.lso.updateReadingListElement(this.readingListElement);
         })
     }
-    private getTagStyle(tagId: number): string {
-        return `tagcolor${tagId % this.numTagStyles}`
-    }
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
     }
-
     private onAddComment(): void {
         if (this.addComment != undefined) {
             var ce = new CommentEntity();
@@ -172,6 +175,9 @@ export class ReadingListElementsComponent implements OnInit {
                 this.comments.push(ce);
             });
         }
+    }
+    private onSelectList(list: ReadingListEntity): void {
+        this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
 
     private isViewingCurrentUser(userId: number): boolean {

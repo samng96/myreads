@@ -50,7 +50,7 @@ export class ExtrasHelpers {
                 catchError(this.handleError("linkPreview", null))
             );
     }
-    public pickDescription(rle: ReadingListElementEntity): string {
+    public pickDescription(rle: ReadingListElementEntity, truncate: boolean = true): string {
         var desc;
         if (this.lso.getRleExtras()[rle.id] != null) {
             desc = this.lso.getRleExtras()[rle.id].description;
@@ -58,15 +58,15 @@ export class ExtrasHelpers {
         else {
             desc = rle.description;
         }
-        if (desc.length > this.maxDescriptionLength) {
+        if (truncate && (desc.length > this.maxDescriptionLength)) {
             return `${desc.substring(0, this.maxDescriptionLength)} ...`;
         }
         return desc;
     }
-    public pickTitle(rle: ReadingListElementEntity): string {
+    public pickTitle(rle: ReadingListElementEntity, truncate: boolean = true): string {
         if (this.lso.getRleExtras()[rle.id] != null) {
             var title = this.lso.getRleExtras()[rle.id].title;
-            if (title.length > this.maxTitleLength) {
+            if (truncate && (title.length > this.maxTitleLength)) {
                 return `${title.substring(0, this.maxTitleLength)} ...`;
             }
             return title;

@@ -25,6 +25,7 @@ public class CommentEntity {
     @JsonProperty("deleted")
     public boolean deleted;
 
+    // TODO: Add a date posted to the comment.
     public CommentEntity() {
         deleted = false;
     }

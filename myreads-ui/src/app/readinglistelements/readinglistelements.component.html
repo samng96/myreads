@@ -13,11 +13,11 @@
                 <table> <!-- so we can have a space between tags -->
                     <tr *ngIf="readingListElement.tagIds">
                         <td *ngFor="let tagId of readingListElement.tagIds">
-                            <table *ngIf="this.lso.getTags()[tagId]" class="tags {{ this.getTagStyle(tagId) }}"><tr><td>
+                            <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
                                 <table><tr>
-                                    <td class="tagitem" (click)="onSelectTag(this.lso.getTags()[tagId])">{{ this.lso.getTags()[tagId].tagName }}</td>
+                                    <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>
                                     <td class="tagspace" *ngIf="ownRle"></td>
-                                    <td class="tagitem" *ngIf="ownRle" (click)="onRemoveTag(this.lso.getTags()[tagId])">x</td>
+                                    <td class="tagitem" *ngIf="ownRle" (click)="onRemoveTag(lso.getTags()[tagId])">x</td>
                                 </tr></table>
                             </td><td width="5px">
                             </td></tr></table>
@@ -30,11 +30,46 @@
             </td>
         </tr>
     </table>
+    <p></p><br>
 
-    <h2>Comments</h2>
-    <ul *ngIf="comments" class="comments">
-        <li *ngFor="let comment of comments">{{ comment.commentText }}</li>
-    </ul>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <img src="{{ helper.getImageUrl(readingListElement) }}" width="100%">
+            </div>
+            <div class="col">
+                <h4>{{ helper.pickTitle(readingListElement, false) }}</h4>
+                <p>{{ helper.pickDescription(readingListElement, false) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <hr width="95%">
+
+    <h6>This item is in these lists:</h6>
+    <table> <!-- so we can have a space between tags -->
+        <tr *ngIf="readingListElement.listIds">
+            <td *ngFor="let listId of readingListElement.listId">
+                <table *ngIf="lso.getReadingLists()[listId]" class="tags {{ helper.getTagStyle(listId) }}"><tr><td>
+                    <table><tr>
+                        <td class="tagitem" (click)="onSelectList(lso.getReadingLists()[listId])">{{ lso.getReadingLists()[listId].name }}</td>
+                        <td class="tagspace" *ngIf="ownRle"></td>
+                        <td class="tagitem" *ngIf="ownRle" (click)="onRemoveRleFromList(listId)">x</td>
+                    </tr></table>
+                </td><td width="5px">
+                </td></tr></table>
+            </td>
+        </tr>
+    </table>
+
+    <h6>Notes</h6>
+    <p *ngIf="comments" class="comments">
+        <!-- TODO: Add the date posted to the note etc -->
+        <span *ngFor="let comment of comments">
+            <span class="highlight">June 13, 2018</span><br>
+            {{ comment.commentText }}
+        </span>
+    </p>
     <span *ngIf="ownRle">
         <input [(ngModel)]="addComment" placeholder="comment..."/>
         <span (click)="onAddComment()">add comment</span><br>
@@ -42,11 +77,4 @@
         <input [(ngModel)]="addRleToListId" placeholder="add Rle to this listId"/>
         <span (click)="onAddRleToList()">add Rle to lists</span>
     </span>
-
-    <h2>Lists that this RLE belongs to</h2>
-    <ul *ngIf="lists" class="lists">
-        <li *ngFor="let list of lists">{{ list.name }} -
-            <span *ngIf="ownRle" (click)="onRemoveRleFromList(list)">remove</span>
-        </li>
-    </ul>
 </div>

@@ -132,3 +132,7 @@ body {
 .tagcolor5 table:hover {
     background-color: #968f12;
 }
+
+.comments {
+    font-size: 13px;
+}
