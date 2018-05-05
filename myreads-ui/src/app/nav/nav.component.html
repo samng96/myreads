@@ -1,7 +1,7 @@
 <div *ngIf="isVisible">
     <div class="nav-header">{{ userEntity.name }}</div>
 
-    <table class="nav-table" *ngIf="readingLists">
+    <table class="nav-table" *ngIf="lso.getMyReadingLists()">
         <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
                 Reading Lists
@@ -11,8 +11,8 @@
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleRls">
-        <tr *ngFor="let readingList of readingLists" (click)="onSelectReadingList(readingList)">
-            <td><i class="highlight fas fa-list-ul"></i> {{ readingList.name }}</td>
+        <tr *ngFor="let rlid of lso.getMyReadingLists()" (click)="onSelectReadingList(lso.getReadingLists()[rlid])">
+            <td><i class="highlight fas fa-list-ul"></i> {{ lso.getReadingLists()[rlid].name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
@@ -27,8 +27,8 @@
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleFls">
-        <tr *ngFor="let flid of this.lso.getMyFollowedLists()" (click)="onSelectReadingList(this.lso.getReadingLists()[flid])">
-            <td *ngIf="this.lso.getReadingLists()[flid]"><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
+        <tr *ngFor="let flid of lso.getMyFollowedLists()" (click)="onSelectReadingList(lso.getReadingLists()[flid])">
+            <td *ngIf="lso.getReadingLists()[flid]"><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>

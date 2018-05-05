@@ -14,6 +14,7 @@ import me.samng.myreads.api.entities.UserEntity;
 import java.util.List;
 
 // TODO: Do we want to make it so that gets for everything never check for ownership, but we only check for updates?
+// TODO: Ensure uniqueness in all the lists of things that we're adding, be it tags or lists or rles.
 public class ReadingListRoute {
     private ReadingListEntity getListIfUserOwnsIt(
         Datastore datastore,

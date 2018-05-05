@@ -49,7 +49,7 @@
     <h6>This item is in these lists:</h6>
     <table> <!-- so we can have a space between tags -->
         <tr *ngIf="readingListElement.listIds">
-            <td *ngFor="let listId of readingListElement.listId">
+            <td *ngFor="let listId of readingListElement.listIds">
                 <table *ngIf="lso.getReadingLists()[listId]" class="tags {{ helper.getTagStyle(listId) }}"><tr><td>
                     <table><tr>
                         <td class="tagitem" (click)="onSelectList(lso.getReadingLists()[listId])">{{ lso.getReadingLists()[listId].name }}</td>
@@ -61,6 +61,15 @@
             </td>
         </tr>
     </table>
+    <div class="input-group" *ngIf="ownRle">
+        <select class="custom-select" (change)="onSelectChange($event)">
+            <option selected>Select list to add to...</option>
+            <option *ngFor="let list of getListsThatRleIsNotIn()" [value]="list.id">{{ list.name }}</option>
+        </select>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" (click)="onAddRleToList()" type="button">add to list</button>
+        </div>
+    </div>
 
     <h6>Notes</h6>
     <p *ngIf="comments" class="comments">
@@ -73,8 +82,5 @@
     <span *ngIf="ownRle">
         <input [(ngModel)]="addComment" placeholder="comment..."/>
         <span (click)="onAddComment()">add comment</span><br>
-
-        <input [(ngModel)]="addRleToListId" placeholder="add Rle to this listId"/>
-        <span (click)="onAddRleToList()">add Rle to lists</span>
     </span>
 </div>

@@ -20,7 +20,7 @@ export class ReadingListElementsComponent implements OnInit {
     ownRle: boolean;
     addTagName: string; // Bound to the form.
     addComment: string; // Bound to the form.
-    addRleToListId: string; // Bound to the form.
+    selectedRlidForAdd: number;
     readingListElement: ReadingListElementEntity; // This is for the display.
     comments: CommentEntity[]; // This is for the display.
 
@@ -71,22 +71,25 @@ export class ReadingListElementsComponent implements OnInit {
         });
     }
 
+    private onSelectChange(value): void {
+        this.selectedRlidForAdd = value.target.selectedOptions[0].value;
+    }
     private onAddRleToList(): void {
         var rleIds = [];
         rleIds.push(this.rleId);
 
         this.serviceApi.addReadingListElementToReadingList(
-            this.userId, +this.addRleToListId, rleIds).subscribe(() => {
-                this.readingListElement.listIds.push(+this.addRleToListId);
-                var list = this.lso.getReadingLists()[+this.addRleToListId];
+            this.userId, this.selectedRlidForAdd, rleIds).subscribe(() => {
+                this.readingListElement.listIds.push(this.selectedRlidForAdd);
+                var list = this.lso.getReadingLists()[this.selectedRlidForAdd];
                 list.readingListElementIds.push(this.rleId);
                 this.lso.updateReadingList(list);
                 this.lso.updateReadingListElement(this.readingListElement);
-                this.addRleToListId = "added";
             });
     }
 
 // TODO: Make sure we're only loading what's not cached everywhere.
+
     private onRemoveRleFromList(listId: number): void {
         this.serviceApi.removeReadingListElementFromReadingList(
             this.userId, listId, this.rleId).subscribe(removedListId => {
@@ -101,7 +104,6 @@ export class ReadingListElementsComponent implements OnInit {
                 this.lso.updateReadingListElement(this.readingListElement);
             });
     }
-
     private onDeleteReadingListElement(): void {
         // TODO: Should verify the user meant to do this... ;)
         this.serviceApi.deleteReadingListElement(this.userId, this.rleId).subscribe(() => {
@@ -180,6 +182,16 @@ export class ReadingListElementsComponent implements OnInit {
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
 
+    private getListsThatRleIsNotIn(): ReadingListEntity[] {
+        var lists = [];
+        for (let rlid of this.lso.getMyReadingLists()) {
+            let rl = this.lso.getReadingLists()[rlid];
+            if (rl.readingListElementIds.indexOf(this.rleId, 0) == -1) {
+                lists.push(rl);
+            }
+        }
+        return lists;
+    }
     private isViewingCurrentUser(userId: number): boolean {
         var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
         if (currentUser == null) {

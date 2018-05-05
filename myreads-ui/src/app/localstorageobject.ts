@@ -7,6 +7,7 @@ export class LocalStorageObject {
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
 
     public myFollowedLists: number[];
+    public myReadingLists: number[];
 
     // Globally cached stuff.
     public users: Map<number, UserEntity>;
@@ -26,6 +27,7 @@ export class LocalStorageObject {
             this.myUserId = loadedObject.myUserId;
             this.myLoginToken = loadedObject.myLoginToken;
             this.myFollowedLists = loadedObject.myFollowedLists;
+            this.myReadingLists = loadedObject.myReadingLists;
 
             this.users = loadedObject.users;
             this.readingLists = loadedObject.readingLists;
@@ -41,6 +43,7 @@ export class LocalStorageObject {
             this.myUserId = -1;
             this.myLoginToken = null;
             this.myFollowedLists = [];
+            this.myReadingLists = [];
 
             this.users = new Map<number, UserEntity>();
             this.readingLists = new Map<number, ReadingListEntity>();
@@ -59,10 +62,10 @@ export class LocalStorageObject {
     }
 }
 
+// TODO: Ensure uniqueness in each of these lists.
 @Injectable()
 export class LocalStorageObjectService {
     @Output() changeLogin: EventEmitter<string> = new EventEmitter();
-    @Output() changeListDelete: EventEmitter<ReadingListEntity> = new EventEmitter();
     @Output() changeListAdd: EventEmitter<ReadingListEntity> = new EventEmitter();
     lso: LocalStorageObject;
 
@@ -84,6 +87,7 @@ export class LocalStorageObjectService {
     public getMyUserId(): number { return this.lso.myUserId; }
     public getMyLoginToken(): string { return this.lso.myLoginToken; }
     public getMyFollowedLists(): number[] { return this.lso.myFollowedLists; }
+    public getMyReadingLists(): number[] { return this.lso.myReadingLists; }
 
     public getReadingLists(): Map<number, ReadingListEntity> { return this.lso.readingLists; }
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
@@ -124,6 +128,13 @@ export class LocalStorageObjectService {
     }
     public updateReadingList(listEntity: ReadingListEntity): void {
         this.lso.readingLists[listEntity.id] = listEntity;
+
+        if (listEntity.userId == this.lso.myUserId) {
+            var index = this.lso.myReadingLists.indexOf(listEntity.id, 0);
+            if (index == -1) {
+                this.lso.myReadingLists.push(listEntity.id);
+            }
+        }
         this.lso.save();
     }
     public updateFollowedList(listEntity: FollowedListEntity): void {
@@ -152,9 +163,12 @@ export class LocalStorageObjectService {
     }
     public deleteReadingList(list: ReadingListEntity): void {
         this.lso.readingLists.delete(list.id);
-        this.lso.save();
 
-        this.changeListDelete.emit(list);
+        var index = this.lso.myReadingLists.indexOf(list.id, 0);
+        if (index != -1) {
+            this.lso.myReadingLists.splice(index, 1);
+        }
+        this.lso.save();
     }
 
     public updateRleExtras(rleId: number, rleExtra: ReadingListElementExtras): void {

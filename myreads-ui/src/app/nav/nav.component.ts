@@ -15,7 +15,6 @@ export class NavComponent implements OnInit {
 
     // Display binding variables.
     public userEntity: UserEntity;
-    public readingLists: ReadingListEntity[]; // The reading lists to present on this user.
     public toggleRls: boolean;
     public toggleFls: boolean;
 
@@ -27,7 +26,6 @@ export class NavComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.readingLists = [];
         this.toggleRls = true;
         this.toggleFls = true;
 
@@ -44,17 +42,6 @@ export class NavComponent implements OnInit {
                 this.loadUser();
             }
         });
-
-        this.lso.changeListDelete.subscribe(list => {
-            for (let rl of this.readingLists) {
-                if (rl.id == list.id) {
-                    this.readingLists.splice(this.readingLists.indexOf(rl, 0), 1);
-                }
-            }
-        });
-        this.lso.changeListAdd.subscribe(list => {
-            this.readingLists.push(list);
-        });
     }
 
     private loadUser() {
@@ -63,7 +50,6 @@ export class NavComponent implements OnInit {
         this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
             if (readingLists == null) { return; }
 
-            this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
             for (let list of readingLists) {
                 this.lso.updateReadingList(list);
             }
