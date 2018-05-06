@@ -172,8 +172,9 @@ export class ReadingListElementsComponent implements OnInit {
             ce.userId = this.userId;
             ce.readingListElementId = this.rleId;
             ce.commentText = this.addComment;
-            this.serviceApi.postComment(ce).subscribe(comment => {
-                ce.id = comment.id;
+            ce.lastModified = Date.now();
+            this.serviceApi.postComment(ce).subscribe(commentId => {
+                ce.id = commentId;
                 this.comments.push(ce);
             });
         }
@@ -182,6 +183,10 @@ export class ReadingListElementsComponent implements OnInit {
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
 
+    private getDate(dateInMilli: number): Date {
+        var options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
+        return new Date(dateInMilli).toLocaleDateString('en-US', options);
+    }
     private getListsThatRleIsNotIn(): ReadingListEntity[] {
         var lists = [];
         for (let rlid of this.lso.getMyReadingLists()) {

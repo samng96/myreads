@@ -1,11 +1,15 @@
 package me.samng.myreads.api.entities;
 
 import com.google.cloud.datastore.Entity;
+import com.google.cloud.datastore.TimestampValue;
+import com.google.cloud.datastore.Value;
 import com.google.common.collect.Maps;
 import io.vertx.core.json.Json;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.Date;
 
 @Data
 @Accessors(fluent = true)
@@ -22,6 +26,9 @@ public class CommentEntity {
     @JsonProperty("commentText")
     public String commentText;
 
+    @JsonProperty("lastModified")
+    public Date lastModified;
+
     @JsonProperty("deleted")
     public boolean deleted;
 
@@ -31,7 +38,16 @@ public class CommentEntity {
     }
 
     public static CommentEntity fromEntity(Entity e) {
-        CommentEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> e.getValue(k).get()), CommentEntity.class);
+        CommentEntity entity = Json.mapper.convertValue(Maps.toMap(e.getNames(), k -> {
+            Value<?> value = e.getValue(k);
+            if(value instanceof TimestampValue) {
+                return new Date(((TimestampValue) value).get().getSeconds() * 1000);
+            }
+            else {
+                Object thing = value.get();
+                return thing;
+            }
+        }), CommentEntity.class);
         entity.id = e.getKey().getId();
         return entity;
     }

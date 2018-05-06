@@ -10,6 +10,7 @@ import me.samng.myreads.api.entities.CommentEntity;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CommentRoute {
     private static CommentEntity getCommentIfOnCorrectUserAndRLE(
@@ -19,7 +20,7 @@ public class CommentRoute {
         long commentId) {
 
         CommentEntity commentEntity = DatastoreHelpers.getComment(datastore, commentId);
-        if (commentEntity.readingListElementId != rleId || commentEntity.userId != userId) {
+        if (commentEntity == null || commentEntity.readingListElementId != rleId || commentEntity.userId != userId) {
             return null;
         }
         return commentEntity;
@@ -100,6 +101,7 @@ public class CommentRoute {
 
         commentEntity.userId = userId;
         commentEntity.readingListElementId = readingListElementId;
+        commentEntity.lastModified = new Date();
         long addedId = DatastoreHelpers.createComment(datastore, commentEntity);
         rleEntity.commentIds.add(addedId);
         DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false);
@@ -146,6 +148,7 @@ public class CommentRoute {
             return;
         }
 
+        commentEntity.lastModified = new Date();
         if (DatastoreHelpers.updateComment(datastore, commentEntity, false)) {
             routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         }

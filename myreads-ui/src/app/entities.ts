@@ -43,4 +43,5 @@ export class CommentEntity {
     userId: number;
     readingListElementId: number;
     commentText: string;
+    lastModified: Date;
 }

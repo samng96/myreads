@@ -61,6 +61,7 @@
             </td>
         </tr>
     </table>
+    <br>
     <div class="input-group" *ngIf="ownRle">
         <select class="custom-select" (change)="onSelectChange($event)">
             <option selected>Select list to add to...</option>
@@ -74,12 +75,10 @@
     <br>
     <h6>Notes</h6>
     <p *ngIf="comments" class="comments">
-        <!-- TODO: Add the date posted to the note etc -->
         <span *ngFor="let comment of comments">
-            <p>
-                <span class="highlight">June 13, 2018</span><br>
-                {{ comment.commentText }}
-            </p>
+            <span class="highlight">{{ getDate(comment.lastModified) }}</span>
+            <div style="white-space:pre-wrap">{{ comment.commentText }}</div>
+            <br>
         </span>
     </p>
     <div class="input-group" *ngIf="ownRle">

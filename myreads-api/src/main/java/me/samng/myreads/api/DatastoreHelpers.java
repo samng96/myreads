@@ -1,6 +1,7 @@
 package me.samng.myreads.api;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
 import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
@@ -176,6 +177,7 @@ public class DatastoreHelpers {
             .set("commentText", commentEntity.commentText())
             .set("userId", commentEntity.userId)
             .set("readingListElementId", commentEntity.readingListElementId)
+            .set("lastModified", Timestamp.of(commentEntity.lastModified))
             .set("deleted", false)
             .build();
         Entity entity = datastore.add(insertEntity);
