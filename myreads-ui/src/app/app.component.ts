@@ -1,6 +1,6 @@
 import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LocalStorageObjectService } from ../localstorageobject';
+import { LocalStorageObjectService } from './localstorageobject';
 
 @Component({
     selector: 'app-root',

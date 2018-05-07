@@ -17,7 +17,7 @@ import { LoggerService } from './logger.service';
 import { ServiceApi } from './serviceapi.service';
 import { DebugComponent } from './debug/debug.component';
 import { NavComponent } from './nav/nav.component';
-import { LocalStorageObjectService } from ../localstorageobject';
+import { LocalStorageObjectService } from './localstorageobject';
 
 import { ExtrasHelpers } from './entityextras';
 
