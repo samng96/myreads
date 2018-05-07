@@ -154,6 +154,14 @@ export class ServiceApi {
                 catchError(this.handleError("deleteReadingList", null))
             );
     }
+    deleteComment(userId: number, rleId: number, commentId: number): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
+        return this.http.delete(url)
+            .pipe(
+                tap(_ => this.log(`deleteComment(${userId}, ${rleId}, ${commentId})`)),
+                catchError(this.handleError("deleteComment", null))
+            );
+    }
 
     addTagToReadingList(userId: number, listId: number, tagIds: number[]): Observable<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addTags`;

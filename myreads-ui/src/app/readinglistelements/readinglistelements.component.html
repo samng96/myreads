@@ -77,6 +77,9 @@
     <p *ngIf="comments" class="comments">
         <span *ngFor="let comment of comments">
             <span class="highlight">{{ getDate(comment.lastModified) }}</span>
+            <span (click)="onDeleteComment(comment)">
+                <i class="accent fas fa-times" style="cursor:pointer"></i>
+            </span>
             <div style="white-space:pre-wrap">{{ comment.commentText }}</div>
             <br>
         </span>

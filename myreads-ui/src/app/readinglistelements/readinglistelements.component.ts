@@ -120,6 +120,11 @@ export class ReadingListElementsComponent implements OnInit {
             this.router.navigate(['users', this.userId]);
         });
     }
+    private onDeleteComment(comment: CommentEntity): void {
+        this.serviceApi.deleteComment(comment.userId, comment.readingListElementId, comment.id).subscribe(() => {
+            this.lso.deleteComment(comment.id);
+        });
+    }
 
     private onAddTag(): void {
         if (this.addTagName != undefined) {

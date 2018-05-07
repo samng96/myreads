@@ -63,7 +63,7 @@ export class LocalStorageObject {
 }
 
 // TODO: Ensure uniqueness in each of these lists.
-// TODO: Something wrong with deleting lists... Something about map.delete not existing. Stupid map.
+// TODO: Something wrong with deleting lists... Something about map.delete not existing. Stupid map .
 @Injectable()
 export class LocalStorageObjectService {
     @Output() changeLogin: EventEmitter<string> = new EventEmitter();

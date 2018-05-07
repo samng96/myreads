@@ -78,7 +78,6 @@ export class ExtrasHelpers {
             var productId = this.extractAmazonProductId(rle.link);
 
             if (productId != null) {
-                // TODO: Get a larger amazon image
                 return `http://ws-na.amazon-adsystem.com/widgets/q?ASIN=${productId}&ServiceVersion=20070822&ID=AsinImage&WS=1&Format`;
             }
         }
