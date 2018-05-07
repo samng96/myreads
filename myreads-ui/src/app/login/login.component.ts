@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { ServiceApi } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../LocalStorageObject';
+import { LocalStorageObjectService } from '../localstorageobject';
 
 @Component({
     selector: 'app-login',

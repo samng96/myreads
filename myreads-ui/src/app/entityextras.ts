@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
-import { LocalStorageObjectService } from './LocalStorageObject';
+import { LocalStorageObjectService } from ../localstorageobject';
 import { ReadingListElementEntity } from './entities';
 
 import { Observable } from 'rxjs/Observable';

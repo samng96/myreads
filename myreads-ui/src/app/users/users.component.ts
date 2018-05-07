@@ -6,7 +6,7 @@ import 'rxjs/add/operator/mergeMap';
 import { ServiceApi } from '../serviceapi.service';
 import { UserEntity, ReadingListEntity, FollowedListEntity } from '../entities';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../LocalStorageObject';
+import { LocalStorageObjectService } from '../localstorageobject';
 
 @Component({
     selector: 'app-users',

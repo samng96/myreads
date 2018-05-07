@@ -8,7 +8,7 @@ import { of } from 'rxjs/observable/of';
 import { ServiceApi } from '../serviceapi.service';
 import { TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../LocalStorageObject';
+import { LocalStorageObjectService } from '../localstorageobject';
 import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../entityextras';
 
 @Component({

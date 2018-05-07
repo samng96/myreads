@@ -6,7 +6,7 @@ import 'rxjs/add/operator/mergeMap';
 import { ServiceApi } from '../serviceapi.service';
 import { TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
 import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../LocalStorageObject';
+import { LocalStorageObjectService } from '../localstorageobject';
 
 @Component({
     selector: 'app-tags',
