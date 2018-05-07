@@ -1,4 +1,4 @@
-runtime: node.js
+runtime: nodejs
 env: flex
 env_variables:
     API_KEY: ffe12248d8b584f9fd2af1458c6afeb23a604237
