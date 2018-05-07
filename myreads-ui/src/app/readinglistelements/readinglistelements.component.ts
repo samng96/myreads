@@ -177,7 +177,7 @@ export class ReadingListElementsComponent implements OnInit {
             ce.userId = this.userId;
             ce.readingListElementId = this.rleId;
             ce.commentText = this.addComment;
-            ce.lastModified = Date.now();
+            ce.lastModified = new Date();
             this.serviceApi.postComment(ce).subscribe(commentId => {
                 ce.id = commentId;
                 this.comments.push(ce);
@@ -188,7 +188,7 @@ export class ReadingListElementsComponent implements OnInit {
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
     }
 
-    private getDate(dateInMilli: number): Date {
+    private getDate(dateInMilli: number): string {
         var options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric" }
         return new Date(dateInMilli).toLocaleDateString('en-US', options);
     }
