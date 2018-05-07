@@ -2,6 +2,7 @@ import { Injectable, EventEmitter, Output } from '@angular/core';
 import { UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity, TagEntity, CommentEntity } from './entities';
 import { ReadingListElementExtras } from './entityextras';
 
+@Injectable()
 export class LocalStorageObject {
     public myUserId: number; // The current user's Id
     public myLoginToken: string; // TODO: This will eventually do some auth thing.
