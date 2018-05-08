@@ -29,7 +29,7 @@ export class AddListElementComponent implements OnInit {
     ngOnInit() {
     }
 
-    private addListElement() {
+    addListElement() {
 
         var rleEntity = new ReadingListElementEntity();
         rleEntity.name = this.name;

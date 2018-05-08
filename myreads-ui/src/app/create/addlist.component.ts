@@ -27,7 +27,7 @@ export class AddListComponent implements OnInit {
     ngOnInit() {
     }
 
-    private addList() {
+    addList() {
         var splitTags = this.tags.split(";", AddListComponent.maxTags); // Max it out so we don't overflow.
 
         var listEntity = new ReadingListEntity();
