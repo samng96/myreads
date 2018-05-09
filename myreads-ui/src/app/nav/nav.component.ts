@@ -17,6 +17,8 @@ export class NavComponent implements OnInit {
     public userEntity: UserEntity;
     public toggleRls: boolean;
     public toggleFls: boolean;
+    public toggleAddList: boolean;
+    public addListName: string;
 
     constructor(
         private serviceApi: ServiceApi,
@@ -28,6 +30,7 @@ export class NavComponent implements OnInit {
     ngOnInit() {
         this.toggleRls = true;
         this.toggleFls = true;
+        this.toggleAddList = false;
 
         // Check if the nav should be visible.
         this.isVisible = (this.lso.getMyLoginToken() != null);
@@ -78,8 +81,26 @@ export class NavComponent implements OnInit {
         });
     }
 
+    private onClickAddList(): void {
+        this.toggleAddList = !this.toggleAddList;
+    }
     private onAddList(): void {
-        this.router.navigate(['addlist']);
+        if (this.addListName == null || this.addListName == "") {
+            return;
+        }
+
+        var rl = new ReadingListEntity();
+        rl.userId = this.lso.getMyUserId();
+        rl.name = this.addListName;
+        rl.description = "empty description";
+        rl.tagIds = [];
+        rl.readingListElementIds = [];
+        this.serviceApi.postReadingList(rl).subscribe(addedListId => {
+            rl.id = addedListId;
+            this.lso.updateReadingList(rl);
+
+            this.addListName = null;
+        });
     }
     private onAddRLE(): void {
         this.router.navigate(['addlistelement']);
