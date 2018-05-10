@@ -78,7 +78,7 @@ export class ReadingListsComponent implements OnInit {
                                 if (lp != null) {
                                     var rlee = new ReadingListElementExtras();
                                     rlee.image = lp.image;
-                                    rlee.title = lp.title;
+                                    rlee.title = this.cleanTitle(lp.title);
                                     rlee.url = lp.url;
                                     rlee.description = lp.description;
 
@@ -195,7 +195,7 @@ export class ReadingListsComponent implements OnInit {
             var rlee = new ReadingListElementExtras();
             if (lp != null) {
                 rlee.image = lp.image;
-                rlee.title = lp.title;
+                rlee.title = this.cleanTitle(lp.title);
                 rlee.url = lp.url;
                 rlee.description = lp.description;
 
@@ -225,6 +225,17 @@ export class ReadingListsComponent implements OnInit {
                 });
             });
         });
+    }
+
+    private cleanTitle(title: string): string {
+        var index = title.indexOf("Amazon.com: ", 0);
+        if (index == 0) {
+            return title.slice(12);
+        }
+        else if (index != -1) {
+            return title.slice(0, index);
+        }
+        return title;
     }
 
     private onDeleteList(): void {
