@@ -29,15 +29,15 @@ export class LocalStorageObject {
             this.myFollowedLists = loadedObject.myFollowedLists;
             this.myReadingLists = loadedObject.myReadingLists;
 
-            this.users = loadedObject.users;
-            this.readingLists = loadedObject.readingLists;
-            this.followedLists = loadedObject.followedLists;
-            this.readingListElements = loadedObject.readingListElements;
-            this.comments = loadedObject.comments;
-            this.tags = loadedObject.tags;
-            this.tagsByName = loadedObject.tagsByName;
+            this.users = this.makeMap(loadedObject.users);
+            this.readingLists = this.makeMap(loadedObject.readingLists);
+            this.followedLists = this.makeMap(loadedObject.followedLists);
+            this.readingListElements = this.makeMap(loadedObject.readingListElements);
+            this.comments = this.makeMap(loadedObject.comments);
+            this.tags = this.makeMap(loadedObject.tags);
+            this.tagsByName = this.makeMap(loadedObject.tagsByName);
 
-            this.rleExtras = loadedObject.rleExtras;
+            this.rleExtras = this.makeMap(loadedObject.rleExtras);
         }
         else {
             this.myUserId = -1;
@@ -57,13 +57,20 @@ export class LocalStorageObject {
         }
     }
 
+    private makeMap(obj: any): Map<any, any> {
+        var map = new Map();
+        Object.keys(obj).forEach(key => {
+            map[key] = obj[key];
+        });
+        return map;
+    }
+
     public save(): void {
         localStorage.setItem("LocalStorageObject", JSON.stringify(this));
     }
 }
 
 // TODO: Ensure uniqueness in each of these lists.
-// TODO: Something wrong with deleting lists... Something about map.delete not existing. Stupid map .
 @Injectable()
 export class LocalStorageObjectService {
     @Output() changeLogin: EventEmitter<string> = new EventEmitter();
