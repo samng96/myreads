@@ -18,6 +18,7 @@ export class ReadingListElementsComponent implements OnInit {
     userId: number;
 
     ownRle: boolean;
+    isAddTag: boolean = false;
     addTagName: string; // Bound to the form.
     addComment: string; // Bound to the form.
     selectedRlidForAdd: number;
@@ -86,6 +87,9 @@ export class ReadingListElementsComponent implements OnInit {
                 this.lso.updateReadingList(list);
                 this.lso.updateReadingListElement(this.readingListElement);
             });
+    }
+    private onToggleAddTag(): void {
+        this.isAddTag = !this.isAddTag;
     }
 
 // TODO: Make sure we're only loading what's not cached everywhere.

@@ -17,7 +17,6 @@ export class NavComponent implements OnInit {
     public userEntity: UserEntity;
     public toggleRls: boolean;
     public toggleFls: boolean;
-    public toggleAddList: boolean;
     public addListName: string;
 
     constructor(
@@ -30,7 +29,6 @@ export class NavComponent implements OnInit {
     ngOnInit() {
         this.toggleRls = true;
         this.toggleFls = true;
-        this.toggleAddList = false;
 
         // Check if the nav should be visible.
         this.isVisible = (this.lso.getMyLoginToken() != null);
@@ -81,9 +79,6 @@ export class NavComponent implements OnInit {
         });
     }
 
-    private onToggleAddList(): void {
-        this.toggleAddList = !this.toggleAddList;
-    }
     private onAddList(): void {
         if (this.addListName == null || this.addListName == "") {
             return;
@@ -100,7 +95,6 @@ export class NavComponent implements OnInit {
             this.lso.updateReadingList(rl);
 
             this.addListName = null;
-            this.toggleAddList = false;
         });
     }
     private onToggleRls(): void {
