@@ -99,6 +99,7 @@ export class LocalStorageObjectService {
 
     public getReadingLists(): Map<number, ReadingListEntity> { return this.lso.readingLists; }
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
+    public getReadingListElement(rleId: number): ReadingListElementEntity { return this.lso.readingListElements[rleId]; }
     public getUsers(): Map<number, UserEntity> { return this.lso.users; }
     public getTags(): Map<number, TagEntity> { return this.lso.tags; }
     public getTagsByName(): Map<string, TagEntity> { return this.lso.tagsByName; }

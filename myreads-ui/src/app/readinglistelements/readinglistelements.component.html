@@ -1,9 +1,30 @@
 <div *ngIf="readingListElement">
+    <!-- Modal for deleting the rle -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete the item '{{ readingListElement.name }}'?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" (click)="onDeleteReadingListElement()" data-dismiss="modal">Delete</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <table class="item-header">
         <tr>
             <td>{{ readingListElement.name }}</td>
             <td class="item-header-properties">
-                <span *ngIf="ownRle" (click)="onDeleteReadingListElement()"><i class="accent fas fa-times"></i></span>
+                <span *ngIf="ownRle" data-toggle="modal" data-target="#deleteModal"><i class="accent fas fa-times"></i></span>
             </td>
         </tr>
     </table>

@@ -1,4 +1,25 @@
 <div *ngIf="readingList">
+    <!-- Modal for deleting a list -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete the list '{{ readingList.name }}'?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" (click)="onDeleteList()" data-dismiss="modal">Delete</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <table class="item-header">
         <tr>
             <td>{{ readingList.name }}</td>
@@ -6,7 +27,7 @@
                 <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-th-large"></i></span>
                 <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
                 <span *ngIf="ownList" (click)="onEditList()"><i class="accent fas fa-pen-square"></i></span>
-                <span *ngIf="ownList" (click)="onDeleteList()"><i class="accent fas fa-times"></i></span>
+                <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="accent fas fa-times"></i></span>
                 <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
                 <button *ngIf="followingList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
             </td>
@@ -39,26 +60,26 @@
     <p></p>
 
     <!-- the list form of the elements -->
-    <table *ngIf="readingListElements && !isGridView" class="rles">
-        <tr *ngFor="let readingListElement of readingListElements" class="rle">
+    <table *ngIf="(readingList.readingListElementIds != null) && !isGridView" class="rles">
+        <tr *ngFor="let rleId of readingList.readingListElementIds" class="rle">
             <td class="rle-image-cell">
-                <img class="rle-image" src="{{ helper.getImageUrl(readingListElement) }}"
-                    (click)="onSelectReadingListElement(readingListElement)">
+                <img class="rle-image" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}"
+                    (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
             </td>
             <td class="rle-content">
-                <div class="rle-content-title" (click)="onSelectReadingListElement(readingListElement)">
-                    {{ helper.pickTitle(readingListElement) }}
+                <div class="rle-content-title" (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
+                    {{ helper.pickTitle(lso.getReadingListElement(rleId)) }}
                 </div>
                 <table><tr>
                     <td class="rle-content-link">
-                        <a href="{{ helper.getLink(readingListElement) }}">
-                            {{ helper.extractRootDomain(readingListElement.link) }}
+                        <a href="{{ helper.getLink(lso.getReadingListElement(rleId)) }}">
+                            {{ helper.extractRootDomain(lso.getReadingListElement(rleId).link) }}
                         </a>
                     </td>
                     <td>
                         <table> <!-- so we can have a space between tags -->
-                            <tr *ngIf="readingListElement.tagIds">
-                                <td *ngFor="let tagId of readingListElement.tagIds">
+                            <tr *ngIf="lso.getReadingListElement(rleId).tagIds">
+                                <td *ngFor="let tagId of lso.getReadingListElement(rleId).tagIds">
                                     <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
                                         <table><tr>
                                             <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>
@@ -75,15 +96,15 @@
     </table>
 
     <!-- the card form of the elements -->
-    <div *ngIf="readingListElements && isGridView" class="card-columns">
-        <div *ngFor="let readingListElement of readingListElements" class="card" style="cursor:pointer"
-            (click)="onSelectReadingListElement(readingListElement)">
+    <div *ngIf="(readingList.readingListElementIds != null) && isGridView" class="card-columns">
+        <div *ngFor="let rleId of readingList.readingListElementIds" class="card" style="cursor:pointer"
+            (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
             <div style="max-height:200px;overflow:hidden;" class="mx-auto">
-                <img class="card-img-top" src="{{ helper.getImageUrl(readingListElement) }}">
+                <img class="card-img-top" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}">
             </div>
             <div class="card-body">
-                <h6 class="card-title">{{ helper.pickTitle(readingListElement) }}</h6>
-                <p class="small">{{ helper.pickDescription(readingListElement) }}</p>
+                <h6 class="card-title">{{ helper.pickTitle(lso.getReadingListElement(rleId)) }}</h6>
+                <p class="small">{{ helper.pickDescription(lso.getReadingListElement(rleId)) }}</p>
             </div>
         </div>
     </div>

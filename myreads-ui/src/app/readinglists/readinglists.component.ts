@@ -25,7 +25,6 @@ export class ReadingListsComponent implements OnInit {
     isGridView: boolean = true;
     addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
-    readingListElements: ReadingListElementEntity[]; // This is for the display.
     addRleLink: string; // Bound to the form.
 
     constructor(
@@ -49,8 +48,6 @@ export class ReadingListsComponent implements OnInit {
         this.userId = +this.route.snapshot.paramMap.get('userId');
         this.listId = +this.route.snapshot.paramMap.get('listId');
 
-        this.readingListElements = [];
-
         var tagIds = [];
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
         {
@@ -64,7 +61,6 @@ export class ReadingListsComponent implements OnInit {
                 var promise = new Promise(resolve => {
                     this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
                         this.lso.updateReadingListElement(rle);
-                        this.readingListElements.push(rle);
 
                         // Ensure that every RLE's tags are loaded.
                         for (let tagId of rle.tagIds) {
@@ -212,16 +208,16 @@ export class ReadingListsComponent implements OnInit {
             rle.link = this.addRleLink;
 
             this.serviceApi.postReadingListElement(rle).subscribe(rleId => {
+                rle.id = rleId;
+                this.lso.updateReadingListElement(rle);
                 if (lp != null) {
                     this.lso.updateRleExtras(rle.id, rlee);
                 }
 
-                rle.id = rleId;
-                this.lso.updateReadingListElement(rle);
-
                 var rleIds = [rleId];
                 this.serviceApi.addReadingListElementToReadingList(this.userId, this.listId, rleIds).subscribe(() => {
-                    this.readingList.readingListElementIds.push(this.listId);
+                    this.readingList.readingListElementIds.push(rleId);
+                    this.lso.updateReadingList(this.readingList);
                 });
             });
         });

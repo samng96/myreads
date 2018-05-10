@@ -100,6 +100,7 @@ export class NavComponent implements OnInit {
             this.lso.updateReadingList(rl);
 
             this.addListName = null;
+            this.toggleAddList = false;
         });
     }
     private onToggleRls(): void {

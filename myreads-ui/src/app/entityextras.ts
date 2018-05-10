@@ -112,7 +112,6 @@ export class ExtrasHelpers {
         }
         return domain;
     }
-
     private extractHostname(url: string): string {
         var hostname;
         //find & remove protocol (http, ftp, etc.) and get hostname
