@@ -24,8 +24,8 @@
         <tr>
             <td class="item-header-label">{{ readingListElement.name }}</td>
             <td class="item-header-properties">
-                <span *ngIf="ownRle" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag"></i></span>
-                <span *ngIf="ownRle" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-times"></i></span>
+                <span *ngIf="ownRle" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this item"></i></span>
+                <span *ngIf="ownRle" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-times" title="Delete this item"></i></span>
             </td>
         </tr>
     </table>
