@@ -81,7 +81,7 @@ export class NavComponent implements OnInit {
         });
     }
 
-    private onClickAddList(): void {
+    private onToggleAddList(): void {
         this.toggleAddList = !this.toggleAddList;
     }
     private onAddList(): void {

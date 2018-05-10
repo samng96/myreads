@@ -37,11 +37,11 @@
         <tr>
             <td>
                 <br>
-                <span class="nav-additem" (click)="onClickAddList()">
+                <span class="nav-additem" (click)="onToggleAddList()">
                     <i *ngIf="!toggleAddList" class="accent fas fa-plus fa-sm"></i>
                 </span>
                 <span *ngIf="toggleAddList">
-                    <input class="form-control form-rounded" [(ngModel)]="addListName" (keyup.enter)="onAddList()" placeholder="add list"/>
+                    <input class="form-control form-rounded" [(ngModel)]="addListName" (keyup.enter)="onAddList()" (keyup.esc)="onToggleAddList()" placeholder="add list"/>
                 </span>
             </td>
         </tr>

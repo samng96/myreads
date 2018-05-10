@@ -41,12 +41,12 @@ export class ExtrasHelpers {
         return `tagcolor${tagId % this.numTagStyles}`;
     }
 
-    public getRleExtra(rle: ReadingListElementEntity): Observable<LinkPreviewResultObject> {
+    public getLinkPreview(link: string): Observable<LinkPreviewResultObject> {
         // TODO: Looks like this API throttles - figure out how we can delay load.
-        var url = `http://api.linkpreview.net/?key=${this.linkPreviewApiKey}&q=${rle.link}`
+        var url = `http://api.linkpreview.net/?key=${this.linkPreviewApiKey}&q=${link}`
         return this.http.get<LinkPreviewResultObject>(url)
             .pipe(
-                tap(_ => this.log(`linkPreview(${rle.link})`)),
+                tap(_ => this.log(`linkPreview(${link})`)),
                 catchError(this.handleError("linkPreview", null))
             );
     }

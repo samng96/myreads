@@ -35,7 +35,8 @@
             </td>
         </tr>
     </table>
-    <p></p><br>
+    <input class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
+    <p></p>
 
     <!-- the list form of the elements -->
     <table *ngIf="readingListElements && !isGridView" class="rles">
@@ -74,8 +75,8 @@
     </table>
 
     <!-- the card form of the elements -->
-    <div *ngIf="readingListElements && isGridView" class="card-deck">
-        <div *ngFor="let readingListElement of readingListElements" class="card" style="width:300px;cursor:pointer"
+    <div *ngIf="readingListElements && isGridView" class="card-columns">
+        <div *ngFor="let readingListElement of readingListElements" class="card" style="cursor:pointer"
             (click)="onSelectReadingListElement(readingListElement)">
             <div style="max-height:200px;overflow:hidden;" class="mx-auto">
                 <img class="card-img-top" src="{{ helper.getImageUrl(readingListElement) }}">

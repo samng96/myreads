@@ -26,6 +26,7 @@ export class ReadingListsComponent implements OnInit {
     addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
     readingListElements: ReadingListElementEntity[]; // This is for the display.
+    addRleLink: string; // Bound to the form.
 
     constructor(
         private http: HttpClient,
@@ -73,7 +74,7 @@ export class ReadingListsComponent implements OnInit {
 
                         // Now asynchronously load up the link previews.
                         if (this.lso.getRleExtras()[rle.id] == null) {
-                            this.helper.getRleExtra(rle).subscribe(lp => {
+                            this.helper.getLinkPreview(rle.link).subscribe(lp => {
                                 if (lp != null) {
                                     var rlee = new ReadingListElementExtras();
                                     rlee.image = lp.image;
@@ -181,12 +182,49 @@ export class ReadingListsComponent implements OnInit {
             this.lso.updateReadingList(this.readingList);
         })
     }
-
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
     }
+
     private onSelectReadingListElement(rle: ReadingListElementEntity): void {
         this.router.navigate(['users', rle.userId, 'readinglistelements', rle.id]);
+    }
+    private onAddRle(): void {
+        this.helper.getLinkPreview(this.addRleLink).subscribe(lp => {
+            var rle = new ReadingListElementEntity();
+            var rlee = new ReadingListElementExtras();
+            if (lp != null) {
+                rlee.image = lp.image;
+                rlee.title = lp.title;
+                rlee.url = lp.url;
+                rlee.description = lp.description;
+
+                rle.name = lp.title;
+                rle.description = lp.description;
+                rle.listIds = [this.listId];
+            }
+            else {
+                rle.name = this.addRleLink;
+                rle.description = "empty description";
+            }
+
+            rle.userId = this.userId;
+            rle.link = this.addRleLink;
+
+            this.serviceApi.postReadingListElement(rle).subscribe(rleId => {
+                if (lp != null) {
+                    this.lso.updateRleExtras(rle.id, rlee);
+                }
+
+                rle.id = rleId;
+                this.lso.updateReadingListElement(rle);
+
+                var rleIds = [rleId];
+                this.serviceApi.addReadingListElementToReadingList(this.userId, this.listId, rleIds).subscribe(() => {
+                    this.readingList.readingListElementIds.push(this.listId);
+                });
+            }
+        });
     }
 
     private onDeleteList(): void {
