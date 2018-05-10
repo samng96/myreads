@@ -10,7 +10,6 @@ import { UsersComponent } from './users/users.component';
 import { ReadingListsComponent } from './readinglists/readinglists.component';
 import { TagsComponent } from './tags/tags.component';
 import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
-import { AddListElementComponent } from './create/addlistelement.component';
 
 import { LoggerService } from './logger.service';
 import { ServiceApi } from './serviceapi.service';
@@ -29,7 +28,6 @@ import { ExtrasHelpers } from './entityextras';
         ReadingListsComponent,
         TagsComponent,
         ReadingListElementsComponent,
-        AddListElementComponent,
         DebugComponent,
         NavComponent
     ],

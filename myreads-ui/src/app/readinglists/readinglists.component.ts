@@ -223,7 +223,7 @@ export class ReadingListsComponent implements OnInit {
                 this.serviceApi.addReadingListElementToReadingList(this.userId, this.listId, rleIds).subscribe(() => {
                     this.readingList.readingListElementIds.push(this.listId);
                 });
-            }
+            });
         });
     }
 

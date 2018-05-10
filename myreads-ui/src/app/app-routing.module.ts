@@ -6,7 +6,6 @@ import { UsersComponent } from './users/users.component';
 import { ReadingListsComponent } from './readinglists/readinglists.component';
 import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
 import { TagsComponent } from './tags/tags.component';
-import { AddListElementComponent } from './create/addlistelement.component';
 
 const routes: Routes = [
     // Basic service routes.
@@ -17,9 +16,6 @@ const routes: Routes = [
     //{ path: 'followedlists/:listId', component: FollowedListsComponent },
     { path: 'tags/:tagId', component: TagsComponent },
     { path: 'tags', component: TagsComponent },
-
-    // Creation routes.
-    { path: 'addlistelement', component: AddListElementComponent },
 
     { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

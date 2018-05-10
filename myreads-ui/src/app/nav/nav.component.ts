@@ -102,9 +102,6 @@ export class NavComponent implements OnInit {
             this.addListName = null;
         });
     }
-    private onAddRLE(): void {
-        this.router.navigate(['addlistelement']);
-    }
     private onToggleRls(): void {
         this.toggleRls = !this.toggleRls;
     }
