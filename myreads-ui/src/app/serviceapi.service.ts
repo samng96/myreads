@@ -130,6 +130,15 @@ export class ServiceApi {
             );
     }
 
+    putReadingList(listEntity: ReadingListEntity): Observable<any> {
+        var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists/${listEntity.id}`;
+        return this.http.put(url, listEntity)
+            .pipe(
+                tap(_ => this.log(`putReadingList(${listEntity})`)),
+                catchError(this.handleError("putReadingList", null))
+            );
+    }
+
     deleteFollowedList(userId: number, followedListId: number): Observable<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
         return this.http.delete(url)

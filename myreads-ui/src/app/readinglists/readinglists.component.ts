@@ -22,10 +22,19 @@ export class ReadingListsComponent implements OnInit {
 
     ownList: boolean;
     followingList: boolean;
-    isGridView: boolean = true;
-    addTagName: string; // Bound to the form.
     readingList: ReadingListEntity; // This is for the display.
+
+    isGridView: boolean = true;
+
+    isAddTag: boolean = false;
+    addTagName: string; // Bound to the form.
+
     addRleLink: string; // Bound to the form.
+
+    isEdit: boolean = false;
+    isEditDescription: boolean = false;
+    editListName: string;
+    editListDescription: string;
 
     constructor(
         private http: HttpClient,
@@ -54,6 +63,8 @@ export class ReadingListsComponent implements OnInit {
             this.lso.updateReadingList(readingList);
             this.ownList = this.isViewingCurrentUser(readingList.userId);
             this.readingList = readingList;
+            this.editListName = readingList.name;
+            this.editListDescription = readingList.description;
 
             // Now load up all the RLEs for the list.
             var promises = [];
@@ -222,6 +233,29 @@ export class ReadingListsComponent implements OnInit {
             });
         });
     }
+    private onDeleteList(): void {
+        this.serviceApi.deleteReadingList(this.lso.getMyUserId(), this.listId).subscribe(() => {
+            this.lso.deleteReadingList(this.readingList);
+            this.router.navigate(['/users', this.lso.getMyUserId()]);
+        });
+    }
+    private onEditList(): void {
+        this.readingList.name = this.editListName;
+        this.readingList.description = this.editListDescription;
+        this.serviceApi.putReadingList(this.readingList).subscribe(() => {
+            this.lso.updateReadingList(this.readingList);
+            this.isEdit = false;
+        });
+    }
+    private onToggleEdit(): void {
+        this.isEdit = !this.isEdit;
+    }
+    private onToggleView(): void {
+        this.isGridView = !this.isGridView;
+    }
+    private onToggleAddTag(): void {
+        this.isAddTag = !this.isAddTag;
+    }
 
     private cleanTitle(title: string): string {
         var index = title.indexOf("Amazon.com: ", 0);
@@ -233,21 +267,6 @@ export class ReadingListsComponent implements OnInit {
         }
         return title;
     }
-
-    private onDeleteList(): void {
-        this.serviceApi.deleteReadingList(this.lso.getMyUserId(), this.listId).subscribe(() => {
-            this.lso.deleteReadingList(this.readingList);
-            this.router.navigate(['/users', this.lso.getMyUserId()]);
-        });
-    }
-    private onEditList(): void {
-        // TODO: switch the title to put it in an input box for updating the title of the RL.
-        // TODO: do reading lists need descriptions?
-    }
-    private onToggleView(): void {
-        this.isGridView = !this.isGridView;
-    }
-
     private isFollowingList(listId: number): boolean {
         return (this.lso.getMyFollowedLists().indexOf(listId) != -1);
     }

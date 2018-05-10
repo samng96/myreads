@@ -22,17 +22,29 @@
 
     <table class="item-header">
         <tr>
-            <td>{{ readingList.name }}</td>
+            <td>
+                <span *ngIf="!isEdit" class="item-header-label">{{ readingList.name }}</span>
+                <span *ngIf="isEdit">
+                    <div class="input-group">
+                        <input class="form-control form-rounded" [(ngModel)]="editListName" (keyup.enter)="onEditList()" (keyup.esc)="onToggleEdit()"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-success" type="button" (click)="onEditList()"><span class="fas fa-check"></span></button>
+                        </div>
+                    </div>
+                </span>
+                <span *ngIf="!isEdit"><br>{{ readingList.description }}</span>
+                <span *ngIf="isEdit"><textarea class="form-control form-rounded" style="width:100%" [(ngModel)]="editListDescription">{{ readingList.description }}</textarea></span>
+            </td>
             <td class="item-header-properties">
-                <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-th-large"></i></span>
-                <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
-                <span *ngIf="ownList" (click)="onEditList()"><i class="accent fas fa-pen-square"></i></span>
+                <span *ngIf="ownList" (click)="onToggleAddTag()"><i class="accent fas fa-tag"></i></span>
+                <span *ngIf="ownList" (click)="onToggleEdit()"><i class="accent fas fa-pen-square"></i></span>
                 <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="accent fas fa-times"></i></span>
                 <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
                 <button *ngIf="followingList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
             </td>
         </tr>
     </table>
+
     <table width="100%"> <!-- so we can right-align adding -->
         <tr>
             <td>
@@ -51,12 +63,30 @@
                     </tr>
                 </table>
             </td>
-            <td *ngIf="ownList" class="tagsadd">
-                <input class="form-control form-rounded" [(ngModel)]="addTagName" (keyup.enter)="onAddTag()" placeholder="add tag"/>
+            <td *ngIf="ownList && isAddTag" class="tagsadd">
+                <div class="input-group">
+                    <input class="form-control form-rounded" [(ngModel)]="addTagName" (keyup.enter)="onAddTag()" (keyup.esc)="onToggleAddTag()" placeholder="add tag"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success" type="button" (click)="onAddTag()"><span class="fas fa-plus"></span></button>
+                    </div>
+                </div>
             </td>
         </tr>
     </table>
-    <input class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
+    <hr width="90%">
+    <table width="100%"><tr>
+        <td>
+            <div class="input-group">
+                <input *ngIf="ownList" class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" type="button" (click)="onAddRle()"><span class="fas fa-plus"></span></button>
+                </div>
+            </div>
+        </td>
+        <td class="item-header-properties">
+        <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="accent fas fa-th-large"></i></span>
+        <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="accent fas fa-list-ul"></i></span>
+    </td></tr></table>
     <p></p>
 
     <!-- the list form of the elements -->

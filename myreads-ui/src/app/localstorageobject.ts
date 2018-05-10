@@ -70,7 +70,6 @@ export class LocalStorageObject {
     }
 }
 
-// TODO: Ensure uniqueness in each of these lists.
 @Injectable()
 export class LocalStorageObjectService {
     @Output() changeLogin: EventEmitter<string> = new EventEmitter();

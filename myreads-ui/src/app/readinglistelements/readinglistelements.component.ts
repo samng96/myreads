@@ -105,7 +105,6 @@ export class ReadingListElementsComponent implements OnInit {
             });
     }
     private onDeleteReadingListElement(): void {
-        // TODO: Should verify the user meant to do this... ;)
         this.serviceApi.deleteReadingListElement(this.userId, this.rleId).subscribe(() => {
             this.lso.deleteReadingListElement(this.rleId);
             for (let commentId of this.readingListElement.commentIds) {
