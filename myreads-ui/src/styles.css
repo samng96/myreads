@@ -69,6 +69,7 @@ body {
 .item-header-properties {
     text-align: right;
     font-size: 14px;
+    vertical-align: top;
 }
 .item-header-properties span:hover {
     cursor: pointer;

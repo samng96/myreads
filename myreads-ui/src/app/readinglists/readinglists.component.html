@@ -40,7 +40,7 @@
                 <span *ngIf="ownList" (click)="onToggleEdit()"><i class="text-secondary fas fa-pen-square"></i></span>
                 <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-times"></i></span>
                 <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
-                <button *ngIf="followingList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
+                <button *ngIf="followingList && !ownList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
             </td>
         </tr>
     </table>
