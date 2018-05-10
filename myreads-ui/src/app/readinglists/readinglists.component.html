@@ -38,7 +38,7 @@
             <td class="item-header-properties">
                 <span *ngIf="ownList" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this list"></i></span>
                 <span *ngIf="ownList" (click)="onToggleEdit()"><i class="text-secondary fas fa-pen-square" title="Edit this list"></i></span>
-                <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-times" title="Delete this list"></i></span>
+                <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-trash-alt" title="Delete this list"></i></span>
                 <button *ngIf="!followingList && !ownList" class="btn btn-danger btn-sm" (click)="onFollowList()">follow</button>
                 <button *ngIf="followingList && !ownList" class="btn btn-danger btn-sm" (click)="onUnfollowList()">unfollow</button>
             </td>
