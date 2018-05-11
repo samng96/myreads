@@ -1,6 +1,10 @@
+html {
+    height: 100%;
+}
 body {
-    font-family: 'Helvetica Neue', Helvetica, Arial;
-    font-size: 15px;
+    font-family: Helvetica, Arial;
+    font-size: 14px;
+    height: 100%;
 }
 
 .highlight {
@@ -8,10 +12,8 @@ body {
 }
 
 .nav-header {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
-    margin: 10px 10px 10px;
-    text-transform: uppercase;
 }
 
 /* Nav stuff */
@@ -63,13 +65,11 @@ body {
     font-weight: 500;
     font-size: 28px;
 }
-.item-header td {
-    padding-top: 25px;
-}
 .item-header-properties {
     text-align: right;
     font-size: 14px;
     vertical-align: top;
+    padding-top: 8px;
 }
 .item-header-properties span:hover {
     cursor: pointer;

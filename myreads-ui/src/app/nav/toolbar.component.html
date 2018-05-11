@@ -1,0 +1,7 @@
+<nav class="navbar navbar-dark bg-dark text-white">
+    <div class="container">
+        <div *ngIf="isVisible" class="nav-header">
+            {{ lso.getUsers()[lso.getMyUserId()].name }}
+        </div>
+    </div>
+</nav>

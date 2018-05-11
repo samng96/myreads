@@ -25,7 +25,7 @@
             <td>
                 <span *ngIf="!isEdit" class="item-header-label">{{ readingList.name }}</span>
                 <span *ngIf="isEdit">
-                    <div class="input-group">
+                    <div class="input-group input-group-sm">
                         <input class="form-control form-rounded" [(ngModel)]="editListName" (keyup.enter)="onEditList()" (keyup.esc)="onToggleEdit()"/>
                         <div class="input-group-append">
                             <button class="btn btn-outline-success" type="button" (click)="onEditList()"><span class="fas fa-check"></span></button>
@@ -64,7 +64,7 @@
                 </table>
             </td>
             <td *ngIf="ownList && isAddTag" class="tagsadd">
-                <div class="input-group">
+                <div class="input-group input-group-sm">
                     <input class="form-control form-rounded" [(ngModel)]="addTagName" (keyup.enter)="onAddTag()" (keyup.esc)="onToggleAddTag()" placeholder="add tag"/>
                     <div class="input-group-append">
                         <button class="btn btn-outline-success" type="button" (click)="onAddTag()"><span class="fas fa-plus"></span></button>
@@ -73,10 +73,9 @@
             </td>
         </tr>
     </table>
-    <hr width="90%">
     <table width="100%"><tr>
         <td>
-            <div class="input-group">
+            <div class="input-group input-group-sm">
                 <input *ngIf="ownList" class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
                 <div class="input-group-append">
                     <button class="btn btn-outline-success" type="button" (click)="onAddRle()"><span class="fas fa-plus"></span></button>
@@ -90,13 +89,14 @@
     <p></p>
 
     <!-- the list form of the elements -->
-    <table *ngIf="(readingList.readingListElementIds != null) && !isGridView" class="rles">
+    <table *ngIf="(readingList.readingListElementIds != null) && !isGridView" width="100%"
+        style="border: 1px solid #dee2e6">
         <tr *ngFor="let rleId of readingList.readingListElementIds" class="rle">
             <td class="rle-image-cell">
                 <img class="rle-image" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}"
                     (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
             </td>
-            <td class="rle-content">
+            <td class="bg-white" style="padding-left:5px">
                 <div class="rle-content-title" (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
                     {{ helper.pickTitle(lso.getReadingListElement(rleId)) }}
                 </div>

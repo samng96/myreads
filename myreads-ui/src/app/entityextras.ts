@@ -50,6 +50,7 @@ export class ExtrasHelpers {
             );
     }
     public pickDescription(rle: ReadingListElementEntity, truncate: boolean = true): string {
+        if (rle == null) { return ""; }
         var desc;
         if (this.lso.getRleExtras()[rle.id] != null) {
             desc = this.lso.getRleExtras()[rle.id].description;
@@ -63,6 +64,7 @@ export class ExtrasHelpers {
         return desc;
     }
     public pickTitle(rle: ReadingListElementEntity, truncate: boolean = true): string {
+        if (rle == null) { return ""; }
         if (this.lso.getRleExtras()[rle.id] != null) {
             var title = this.lso.getRleExtras()[rle.id].title;
             if (truncate && (title.length > this.maxTitleLength)) {
@@ -73,6 +75,7 @@ export class ExtrasHelpers {
         return rle.name;
     }
     public getImageUrl(rle: ReadingListElementEntity): string {
+        if (rle == null) { return ""; }
         if (this.extractRootDomain(rle.link) == "amazon.com") {
             var productId = this.extractAmazonProductId(rle.link);
 
@@ -86,6 +89,7 @@ export class ExtrasHelpers {
         return "";
     }
     public getLink(rle: ReadingListElementEntity): string {
+        if (rle == null) { return ""; }
         if (this.extractRootDomain(rle.link) == "amazon.com") {
             var productId = this.extractAmazonProductId(rle.link);
 

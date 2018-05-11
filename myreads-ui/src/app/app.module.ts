@@ -15,6 +15,7 @@ import { LoggerService } from './logger.service';
 import { ServiceApi } from './serviceapi.service';
 import { DebugComponent } from './debug/debug.component';
 import { NavComponent } from './nav/nav.component';
+import { ToolbarComponent } from './nav/toolbar.component';
 import { LocalStorageObjectService } from './localstorageobject';
 
 import { ExtrasHelpers } from './entityextras';
@@ -29,7 +30,8 @@ import { ExtrasHelpers } from './entityextras';
         TagsComponent,
         ReadingListElementsComponent,
         DebugComponent,
-        NavComponent
+        NavComponent,
+        ToolbarComponent
     ],
     imports: [
         BrowserModule,

@@ -1,6 +1,4 @@
 <div *ngIf="isVisible">
-    <div class="nav-header">{{ userEntity.name }}</div>
-
     <table class="nav-table" *ngIf="lso.getMyReadingLists()">
         <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
@@ -37,7 +35,7 @@
         <tr>
             <td>
                 <br>
-                <div class="input-group">
+                <div class="input-group input-group-sm">
                     <input class="form-control form-rounded" [(ngModel)]="addListName" (keyup.enter)="onAddList()" placeholder="add list"/>
                     <div class="input-group-append">
                         <button class="btn btn-outline-success" (click)="onAddList()" type="button"><span class="fas fa-plus"></span></button>

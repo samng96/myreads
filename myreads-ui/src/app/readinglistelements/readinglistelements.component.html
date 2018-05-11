@@ -48,7 +48,7 @@
                 </table>
             </td>
             <td *ngIf="ownRle && isAddTag" class="tagsadd">
-                <div class="input-group">
+                <div class="input-group input-group-sm">
                     <input class="form-control form-rounded" [(ngModel)]="addTagName" (keyup.enter)="onAddTag()" (keyup.esc)="onToggleAddTag()" placeholder="add tag"/>
                     <div class="input-group-append">
                         <button class="btn btn-outline-success" type="button" (click)="onAddTag()"><span class="fas fa-plus"></span></button>
@@ -57,10 +57,10 @@
             </td>
         </tr>
     </table>
-    <p></p><br>
+    <p></p>
 
-    <div class="container">
-        <div class="row">
+    <div class="container bg-white" style="border: 1px solid #dee2e6">
+        <div class="row" style="padding: 10px 10px 10px 10px">
             <div class="col-3">
                 <img src="{{ helper.getImageUrl(readingListElement) }}" width="100%">
             </div>
@@ -71,50 +71,64 @@
         </div>
     </div>
 
-    <hr width="95%">
-
-    <h6>This item is in these lists:</h6>
-    <table> <!-- so we can have a space between tags -->
-        <tr *ngIf="readingListElement.listIds">
-            <td *ngFor="let listId of readingListElement.listIds">
-                <table *ngIf="lso.getReadingLists()[listId]" class="tags {{ helper.getTagStyle(listId) }}"><tr><td>
-                    <table><tr>
-                        <td class="tagitem" (click)="onSelectList(lso.getReadingLists()[listId])">{{ lso.getReadingLists()[listId].name }}</td>
-                        <td class="tagspace" *ngIf="ownRle"></td>
-                        <td class="tagitem" *ngIf="ownRle" (click)="onRemoveRleFromList(listId)">x</td>
-                    </tr></table>
-                </td><td width="5px">
-                </td></tr></table>
-            </td>
-        </tr>
-    </table>
     <br>
-    <div class="input-group" *ngIf="ownRle">
-        <select class="custom-select" (change)="onSelectChange($event)">
-            <option selected>Select list to add to...</option>
-            <option *ngFor="let list of getListsThatRleIsNotIn()" [value]="list.id">{{ list.name }}</option>
-        </select>
-        <div class="input-group-append">
-            <button class="btn btn-outline-success" (click)="onAddRleToList()" type="button">add to list</button>
+    <div class="container bg-white" style="border: 1px solid #dee2e6">
+        <div class="row" style="padding: 10px 10px 0px 10px">
+            <h6>This item is in these lists:</h6>
+        </div>
+        <div class="row" style="padding: 0px 10px 10px 10px">
+            <table> <!-- so we can have a space between tags -->
+                <tr *ngIf="readingListElement.listIds">
+                    <td *ngFor="let listId of readingListElement.listIds">
+                        <table *ngIf="lso.getReadingLists()[listId]" class="tags {{ helper.getTagStyle(listId) }}"><tr><td>
+                            <table><tr>
+                                <td class="tagitem" (click)="onSelectList(lso.getReadingLists()[listId])">{{ lso.getReadingLists()[listId].name }}</td>
+                                <td class="tagspace" *ngIf="ownRle"></td>
+                                <td class="tagitem" *ngIf="ownRle" (click)="onRemoveRleFromList(listId)">x</td>
+                            </tr></table>
+                        </td><td width="5px">
+                        </td></tr></table>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row" style="padding: 0px 10px 10px 10px">
+            <div class="input-group input-group-sm" *ngIf="ownRle">
+                <select class="custom-select" (change)="onSelectChange($event)">
+                    <option selected>Select list to add to...</option>
+                    <option *ngFor="let list of getListsThatRleIsNotIn()" [value]="list.id">{{ list.name }}</option>
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" (click)="onAddRleToList()" type="button">add to list</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <br>
-    <h6>Notes</h6>
-    <p *ngIf="comments" class="comments">
-        <span *ngFor="let comment of comments">
-            <span class="highlight">{{ getDate(comment.lastModified) }}</span>
-            <span (click)="onDeleteComment(comment)">
-                <i class="text-danger fas fa-trash-alt" style="cursor:pointer"></i>
-            </span>
-            <div style="white-space:pre-wrap">{{ comment.commentText }}</div>
-            <br>
-        </span>
-    </p>
-    <div class="input-group" *ngIf="ownRle">
-        <textarea class="form-control form-rounded" style="resize:none" rows=5 [(ngModel)]="addComment" placeholder="note..."></textarea>
-        <div class="input-group-append">
-            <button class="btn btn-outline-success" (click)="onAddComment()">add note</button>
+    <div class="container bg-white" style="border: 1px solid #dee2e6">
+        <div class="row" style="padding: 10px 10px 0px 10px">
+            <h6>Notes</h6>
+        </div>
+        <div class="row" style="padding: 0px 10px 0px 10px">
+            <p *ngIf="comments" class="comments">
+                <span *ngFor="let comment of comments">
+                    <span class="highlight">{{ getDate(comment.lastModified) }}</span>
+                    <span (click)="onDeleteComment(comment)">
+                        <i class="text-danger fas fa-trash-alt" style="cursor:pointer"></i>
+                    </span>
+                    <div style="white-space:pre-wrap">{{ comment.commentText }}</div>
+                    <br>
+                </span>
+            </p>
+        </div>
+        <div class="row" style="padding: 0px 10px 10px 10px">
+            <div class="input-group input-group-sm" *ngIf="ownRle">
+                <textarea class="form-control form-rounded" style="resize:none" rows=5 [(ngModel)]="addComment" placeholder="note..."></textarea>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-success" (click)="onAddComment()">add note</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
