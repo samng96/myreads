@@ -1,5 +1,5 @@
 <div class="g-signin2" data-onsuccess="onSignIn" style="display:none"></div>
-<nav class="navbar navbar-dark bg-dark text-white">
+<nav class="navbar navbar-dark bg-dark text-white" *ngIf="isVisible">
     <div class="container">
         <div *ngIf="isVisible" class="text-large text-bold dropdown">
             <table><tr><td>

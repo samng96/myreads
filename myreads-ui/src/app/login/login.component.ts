@@ -65,9 +65,9 @@ export class LoginComponent implements OnInit {
     ngAfterViewInit() {
         gapi.signin2.render('my-signin2', {
             'scope': 'profile email',
-            'width': 240,
+            'width': 150,
             'height': 50,
-            'longtitle': true,
+            'longtitle': false,
             'theme': 'light',
             'onsuccess': param => this.onSignIn(param)
         });
