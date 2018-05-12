@@ -10,6 +10,7 @@ import { TagsComponent } from './tags/tags.component';
 const routes: Routes = [
     // Basic service routes.
     { path: 'login', component: LoginComponent },
+    { path: 'users', component: UsersComponent },
     { path: 'users/:userId', component: UsersComponent },
     { path: 'users/:userId/readinglists/:listId', component: ReadingListsComponent },
     { path: 'users/:userId/readinglistelements/:elementId', component: ReadingListElementsComponent },

@@ -79,6 +79,9 @@ export class NavComponent implements OnInit {
         });
     }
 
+    private goTo(url: string): void {
+        this.router.navigate([url]);
+    }
     private onAddList(): void {
         if (this.addListName == null || this.addListName == "") {
             return;

@@ -73,10 +73,10 @@
             </td>
         </tr>
     </table>
-    <table width="100%"><tr>
+    <table width="100%" *ngIf="ownList"><tr>
         <td>
             <div class="input-group input-group-sm">
-                <input *ngIf="ownList" class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
+                <input class="form-control form-rounded" [(ngModel)]="addRleLink" (keyup.enter)="onAddRle()" placeholder="url of item to add"/>
                 <div class="input-group-append">
                     <button class="btn btn-outline-success" type="button" (click)="onAddRle()"><span class="fas fa-plus"></span></button>
                 </div>
