@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NgZone } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { ServiceApi } from '../serviceapi.service';
 import { LoggerService } from '../logger.service';
 import { LocalStorageObjectService } from '../localstorageobject';
+
+declare var gapi: any;
 
 @Component({
     selector: 'app-login',
@@ -16,8 +19,10 @@ export class LoginComponent implements OnInit {
     hardcodedUserId: number = 5732452450435072;
 
     constructor(
+        private ngZone: NgZone,
         private lso: LocalStorageObjectService,
         private router: Router,
+        private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private logger: LoggerService
     ) { }
@@ -26,30 +31,46 @@ export class LoginComponent implements OnInit {
         this.checkLogin();
     }
 
-    checkLogin(): void {
-        // If we've logged in, we'll have a myLoginToken. Eventually, we'll
-        // want to use that token with auth to our API, but for now we'll just
-        // set it to 1 when we've logged in.
-        var myLoginToken = this.lso.getMyLoginToken();
-        this.log(`checkLogin got token ${myLoginToken}`);
-        if (myLoginToken != null) {
-            this.router.navigate(['users', this.lso.getMyUserId()]);
+    private checkLogin(): void {
+        if (this.lso.isLoggedIn()) {
+            this.log(`checkLogin is logged in`);
+
+            this.ngZone.run(() => {
+                this.router.navigate(['users', this.lso.getMyUserId()]);
+            });
         }
     }
 
-    login(): void {
+    public onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+
+        // TODO: We need to make a call to the API to get the user associated with
+        // TODO: the currently logged in user instead of getting the hard coded user.
         this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
             {
                 this.lso.updateUser(user);
 
-                // For now we don't have a login API, so just assume it all works out and
-                // hard code the login tokens, then get the user object.
-                this.lso.setMyUserId(this.hardcodedUserId);
-                this.lso.setMyLoginToken("1");
+                this.lso.setMyLoginInfo(
+                    "1",
+                    this.hardcodedUserId,
+                    profile.getImageUrl(),
+                    profile.getGivenName()
+                );
 
                 this.log(`successful login for user ${user.name}`)
                 this.checkLogin();
             });
+    };
+
+    ngAfterViewInit() {
+        gapi.signin2.render('my-signin2', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'light',
+            'onsuccess': param => this.onSignIn(param)
+        });
     }
 
     private log(message: string) { this.logger.log(`[Login]: ${message}`); }

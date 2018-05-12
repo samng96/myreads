@@ -1,7 +1,17 @@
+<div class="g-signin2" data-onsuccess="onSignIn" style="display:none"></div>
 <nav class="navbar navbar-dark bg-dark text-white">
     <div class="container">
-        <div *ngIf="isVisible" class="nav-header">
-            {{ lso.getUsers()[lso.getMyUserId()].name }}
+        <div *ngIf="isVisible" class="text-large text-bold dropdown">
+            <table><tr><td>
+                <img src="{{ lso.getMyLoginImage() }}" width="25" height="25"
+                    class="dropdown-toggle rounded pointer"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div class="dropdown-menu">
+                    <a class="dropdown-item pointer text-normal" (click)="onSignOut()">Sign out</a>
+                </div>
+            </td><td style="padding: 3px 0px 0px 5px">
+                {{ lso.getMyUserName() }}
+            </td></tr></table>
         </div>
     </div>
 </nav>

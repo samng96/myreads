@@ -7,13 +7,22 @@ body {
     height: 100%;
 }
 
-.highlight {
-    color: #6da9db;
+.pointer {
+    cursor: pointer;
+}
+.text-normal {
+    font-size: 14px;
+}
+.text-large {
+    font-size: 17px;
+}
+.text-bold {
+    font-weight: 500;
 }
 
-.nav-header {
-    font-size: 17px;
-    font-weight: 500;
+
+.highlight {
+    color: #6da9db;
 }
 
 /* Nav stuff */

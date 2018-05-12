@@ -31,13 +31,13 @@ export class NavComponent implements OnInit {
         this.toggleFls = true;
 
         // Check if the nav should be visible.
-        this.isVisible = (this.lso.getMyLoginToken() != null);
+        this.isVisible = this.lso.isLoggedIn();
         if (this.isVisible) {
             this.loadUser();
         }
 
-        this.lso.changeLogin.subscribe(myLoginToken => {
-            this.isVisible = (myLoginToken != null);
+        this.lso.changeLogin.subscribe(userId => {
+            this.isVisible = this.lso.isLoggedIn();
 
             if (this.isVisible) {
                 this.loadUser();

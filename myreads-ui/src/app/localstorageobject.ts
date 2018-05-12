@@ -4,7 +4,9 @@ import { ReadingListElementExtras } from './entityextras';
 
 export class LocalStorageObject {
     public myUserId: number; // The current user's Id
-    public myLoginToken: string; // TODO: This will eventually do some auth thing.
+    public myLoginToken: string = null;
+    public myLoginImage: string = null;
+    public myUserName: string = null;
 
     public myFollowedLists: number[];
     public myReadingLists: number[];
@@ -25,9 +27,11 @@ export class LocalStorageObject {
         var loadedObject = JSON.parse(localStorage.getItem("LocalStorageObject"));
         if (loadedObject != null) {
             this.myUserId = loadedObject.myUserId;
-            this.myLoginToken = loadedObject.myLoginToken;
             this.myFollowedLists = loadedObject.myFollowedLists;
             this.myReadingLists = loadedObject.myReadingLists;
+            this.myLoginToken = loadedObject.myLoginToken;
+            this.myLoginImage = loadedObject.myLoginImage;
+            this.myUserName = loadedObject.myUserName;
 
             this.users = this.makeMap(loadedObject.users);
             this.readingLists = this.makeMap(loadedObject.readingLists);
@@ -41,9 +45,11 @@ export class LocalStorageObject {
         }
         else {
             this.myUserId = -1;
-            this.myLoginToken = null;
             this.myFollowedLists = [];
             this.myReadingLists = [];
+            this.myLoginToken = null;
+            this.myLoginImage = null;
+            this.myUserName = null;
 
             this.users = new Map<number, UserEntity>();
             this.readingLists = new Map<number, ReadingListEntity>();
@@ -72,7 +78,7 @@ export class LocalStorageObject {
 
 @Injectable()
 export class LocalStorageObjectService {
-    @Output() changeLogin: EventEmitter<string> = new EventEmitter();
+    @Output() changeLogin: EventEmitter<number> = new EventEmitter();
     @Output() changeListAdd: EventEmitter<ReadingListEntity> = new EventEmitter();
     lso: LocalStorageObject;
 
@@ -80,19 +86,30 @@ export class LocalStorageObjectService {
         this.lso = new LocalStorageObject();
     }
 
-    public setMyUserId(userId: number): void {
+    public setMyLoginInfo(loginToken: string, userId: number, loginImage: string, userName: string): void {
         this.lso.myUserId = userId;
-        this.lso.save();
-    }
-    public setMyLoginToken(myLoginToken: string): void {
-        this.lso.myLoginToken = myLoginToken;
+        this.lso.myLoginToken = loginToken;
+        this.lso.myLoginImage = loginImage;
+        this.lso.myUserName = userName;
         this.lso.save();
 
-        this.changeLogin.emit(this.lso.myLoginToken);
+        this.changeLogin.emit(userId);
     }
+    public setLoggedOut(): void {
+        this.lso.myUserId = -1;
+        this.lso.myLoginToken = null;
+        this.lso.myLoginImage = null;
+        this.lso.myUserName = null;
+        this.lso.save();
 
+        this.changeLogin.emit(-1);
+    }
+    public getMyLoginToken(): any { return this.lso.myLoginToken; }
     public getMyUserId(): number { return this.lso.myUserId; }
-    public getMyLoginToken(): string { return this.lso.myLoginToken; }
+    public getMyUserName(): string { return this.lso.myUserName; }
+    public getMyLoginImage(): string { return this.lso.myLoginImage; }
+    public isLoggedIn(): boolean { return this.lso.myLoginToken != null; }
+
     public getMyFollowedLists(): number[] { return this.lso.myFollowedLists; }
     public getMyReadingLists(): number[] { return this.lso.myReadingLists; }
 

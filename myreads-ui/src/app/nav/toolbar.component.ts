@@ -1,10 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ServiceApi } from '../serviceapi.service';
 import { UserEntity, ReadingListEntity, FollowedListEntity } from '../entities';
 import { LocalStorageObjectService } from '../localstorageobject';
 
+declare var gapi: any;
 @Component({
     selector: 'app-toolbar',
     templateUrl: './toolbar.component.html',
@@ -15,12 +17,27 @@ export class ToolbarComponent implements OnInit {
     // Display binding variables.
 
     constructor(
+        private ngZone: NgZone,
         private serviceApi: ServiceApi,
         private lso: LocalStorageObjectService,
-        private router: Router,
+        private router: Router
     ) { }
 
     ngOnInit() {
-        this.isVisible = (this.lso.getMyLoginToken() != null);
+        this.isVisible = this.lso.isLoggedIn();
+
+        this.lso.changeLogin.subscribe(loginToken => {
+            this.isVisible = this.lso.isLoggedIn();
+        });
+    }
+
+    onSignOut(): void {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(() => {
+            this.lso.setLoggedOut();
+            this.ngZone.run(() => {
+                this.router.navigate(['login']);
+            });
+        });
     }
 }

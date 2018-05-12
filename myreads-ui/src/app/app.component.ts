@@ -17,8 +17,7 @@ export class AppComponent {
     ) {}
 
     ngOnInit(): void {
-        this.isLoggedIn = (this.lso.getMyLoginToken() != null);
-        if (!this.isLoggedIn) {
+        if (!this.lso.isLoggedIn()) {
             this.router.navigate(['/login']);
         }
 

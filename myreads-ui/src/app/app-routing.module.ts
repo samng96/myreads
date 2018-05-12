@@ -13,7 +13,6 @@ const routes: Routes = [
     { path: 'users/:userId', component: UsersComponent },
     { path: 'users/:userId/readinglists/:listId', component: ReadingListsComponent },
     { path: 'users/:userId/readinglistelements/:elementId', component: ReadingListElementsComponent },
-    //{ path: 'followedlists/:listId', component: FollowedListsComponent },
     { path: 'tags/:tagId', component: TagsComponent },
     { path: 'tags', component: TagsComponent },
 

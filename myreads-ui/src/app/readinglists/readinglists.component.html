@@ -127,7 +127,7 @@
 
     <!-- the card form of the elements -->
     <div *ngIf="(readingList.readingListElementIds != null) && isGridView" class="card-columns">
-        <div *ngFor="let rleId of readingList.readingListElementIds" class="card" style="cursor:pointer"
+        <div *ngFor="let rleId of readingList.readingListElementIds" class="card pointer"
             (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
             <div style="max-height:200px;overflow:hidden;" class="mx-auto">
                 <img class="card-img-top" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}">
