@@ -80,6 +80,14 @@ export class ServiceApi {
                 catchError(this.handleError("getTagByName", null))
             );
     }
+    getTagsByUser(userId: number): Observable<TagEntity> {
+        var url = `${ServiceApi.baseUrl}/tagsByUser/${userId}`;
+        return this.http.get<TagEntity>(url)
+            .pipe(
+                tap(_ => this.log(`getTagsByUser(${userId})`)),
+                catchError(this.handleError("getTagsByUser", null))
+            );
+    }
     getComment(userId: number, rleId: number, commentId: number): Observable<CommentEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
         return this.http.get<CommentEntity>(url)

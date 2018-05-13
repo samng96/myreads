@@ -125,4 +125,32 @@ public class TagRoute {
             .putHeader("content-type", "text/plain")
             .end(Json.encode(tagEntity));
     }
+
+    // GET /tagsByUser/{userId}
+    public void getTagsByUser(RoutingContext routingContext) {
+        long userId;
+        try {
+            userId = Long.decode(routingContext.request().getParam("userId"));
+        } catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request parameters");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        List<TagEntity> tagEntities = DatastoreHelpers.getTagsByUser(datastore, userId);
+        if (tagEntities == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(tagEntities.toArray()));
+    }
 }

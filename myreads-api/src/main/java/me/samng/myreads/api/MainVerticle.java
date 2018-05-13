@@ -94,6 +94,7 @@ public class MainVerticle extends AbstractVerticle {
 
         router.get("/tags/:tagId").handler(routingContext -> { tagRoute.getTag(routingContext); });
         router.get("/tagByName/:tagName").handler(routingContext -> { tagRoute.getTagByName(routingContext); });
+        router.get("/tagsByUser/:userId").handler(routingContext -> { tagRoute.getTagsByUser(routingContext); });
 
         router.get("/tags").handler(routingContext -> { tagRoute.getAllTags(routingContext); });
         router.post("/tags").handler(routingContext -> { tagRoute.postTag(routingContext); });

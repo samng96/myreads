@@ -12,6 +12,7 @@ import me.samng.myreads.api.entities.indexes.TagToReadingListEntity;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class DatastoreHelpers {
@@ -417,6 +418,29 @@ public class DatastoreHelpers {
             return TagEntity.fromEntity(queryresult.next());
         }
         return null;
+    }
+
+    public static List<TagEntity> getTagsByUser(Datastore datastore, long userId) {
+        // We have two tables to get from - we have a tagToRL table and a tagToRLE table; get all the
+        // RL and RLE Ids associated with the user, then merge the tags into one unique list, then resolve the tags
+        // and return them.
+        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId);
+        List<ReadingListEntity> rls = DatastoreHelpers.getAllReadingListsForUser(datastore, userId);
+
+        HashSet<Long> tagIds = new HashSet<Long>();
+        rles.forEach(rle -> tagIds.addAll(rle.tagIds));
+        rls.forEach(rl -> tagIds.addAll(rl.tagIds));
+
+        // Since datastore thoroughly sucks and doesn't have any OR filters or GQL OR operators, we have
+        // to do this manually by getting all the tags and checking containment on our set.
+        List<TagEntity> tags = DatastoreHelpers.getAllTags(datastore);
+        List<TagEntity> result = new ArrayList<TagEntity>();
+        for (TagEntity tag : tags) {
+            if (tagIds.contains(tag.id)) {
+                result.add(tag);
+            }
+        }
+        return result;
     }
 
     public static boolean updateUser(Datastore datastore, UserEntity userEntity, boolean updateForDelete) {

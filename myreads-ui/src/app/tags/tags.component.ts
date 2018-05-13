@@ -32,7 +32,7 @@ export class TagsComponent implements OnInit {
         var tagId = +this.route.snapshot.paramMap.get('tagId');
         if (tagId == 0) {
             // No Id means we just load up all tags and display em.
-            this.serviceApi.getTags().subscribe(tags => {
+            this.serviceApi.getTagsByUser(this.lso.getMyUserId()).subscribe(tags => {
                 this.lso.updateTags(tags);
                 this.tags = tags;
             });
