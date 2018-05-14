@@ -1,7 +1,7 @@
-import { Component, OnInit, Injectable } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { UserEntity, ReadingListEntity, FollowedListEntity } from '../utilities/entities';
+import { TagEntity, ReadingListElementEntity } from '../utilities/entities';
 import { LocalStorageObjectService } from '../utilities/localstorageobject';
 import { ExtrasHelpers } from '../utilities/entityextras';
 
@@ -15,7 +15,7 @@ export class ListOfElementsCommunicationObject {
     templateUrl: './listofelements.component.html',
     styleUrls: ['./listofelements.component.css']
 })
-export class ListOfElementsComponent implements OnInit {
+export class ListOfElementsComponent {
     public isGridView: boolean = false;
 
     constructor(
