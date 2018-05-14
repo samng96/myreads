@@ -1,17 +1,29 @@
 <div class="g-signin2" data-onsuccess="onSignIn" style="display:none"></div>
 <nav class="navbar navbar-dark bg-dark text-white" *ngIf="isVisible">
-    <div class="container">
-        <div *ngIf="isVisible" class="text-large text-bold dropdown">
-            <table><tr><td>
-                <img src="{{ lso.getMyLoginImage() }}" width="25" height="25"
-                    class="dropdown-toggle rounded pointer"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div class="dropdown-menu">
-                    <a class="dropdown-item pointer text-normal" (click)="onSignOut()">Sign out</a>
+    <div class="container" style="padding-right:0px">
+        <div class="row w-100">
+            <div class="col">
+                <div *ngIf="isVisible" class="text-large text-bold dropdown">
+                    <table><tr><td>
+                        <img src="{{ lso.getMyLoginImage() }}" width="25" height="25"
+                            class="dropdown-toggle rounded pointer"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item pointer text-normal" (click)="onSignOut()">Sign out</a>
+                        </div>
+                    </td><td style="padding: 3px 0px 0px 5px">
+                        {{ lso.getMyUserName() }}
+                    </td></tr></table>
                 </div>
-            </td><td style="padding: 3px 0px 0px 5px">
-                {{ lso.getMyUserName() }}
-            </td></tr></table>
+            </div>
+            <div class="col-2" style="padding-right:0px">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control form-rounded" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" placeholder="Search"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-success" (click)="onSearch()" type="button"><span class="fas fa-search"></span></button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </nav>

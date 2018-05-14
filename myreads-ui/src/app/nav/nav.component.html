@@ -1,4 +1,27 @@
 <div *ngIf="isVisible">
+    <table class="nav-table">
+        <tr (click)="goTo('home')">
+            <td>
+                <i class="text-danger fas fa-home"></i> Home
+            </td>
+        </tr>
+        <tr (click)="goTo('tags')">
+            <td>
+                <i class="text-secondary fas fa-tag"></i> Tags
+            </td>
+        </tr>
+        <tr (click)="goTo('unread')">
+            <td>
+                <i class="text-success fas fa-spinner"></i> Unread
+            </td>
+        </tr>
+        <tr (click)="goTo('favorites')">
+            <td>
+                <i class="text-warning far fa-star"></i> Favorites
+            </td>
+        </tr>
+    </table>
+
     <table class="nav-table" *ngIf="lso.getMyReadingLists()">
         <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
@@ -30,19 +53,6 @@
         </tr>
     </table>
     <table><tr><td class="nav-table-bottom"></td></tr></table>
-
-    <table class="nav-table">
-        <tr class="nav-table-header" (click)="goTo('tags')">
-            <td>
-                <i class="highlight fas fa-tag"></i> Tags
-            </td>
-        </tr>
-        <tr (click)="goTo('users')">
-            <td>
-                <i class="highlight far fa-user"></i> Users
-            </td>
-        </tr>
-    </table>
 
     <table class="nav-additems">
         <tr>
