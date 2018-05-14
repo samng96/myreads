@@ -148,8 +148,6 @@ export class ReadingListElementsComponent implements OnInit {
                     });
                 }
                 else {
-                    var tagEntity = new TagEntity();
-                    tagEntity.tagName = this.addTagName;
                     let tagIds: number[] = [tag.id];
 
                     // Make sure our tag isn't already added.
@@ -157,7 +155,7 @@ export class ReadingListElementsComponent implements OnInit {
                         return;
                     }
                     this.serviceApi.addTagToReadingListElement(this.userId, this.rleId, tagIds).subscribe(x => {
-                        this.readingListElement.tagIds.push(tagEntity.id);
+                        this.readingListElement.tagIds.push(tag.id);
                         this.lso.updateReadingListElement(this.readingListElement);
                     });
                 }

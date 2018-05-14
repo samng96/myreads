@@ -164,15 +164,11 @@ export class ReadingListsComponent implements OnInit {
                     });
                 }
                 else {
-                    var tagEntity = new TagEntity();
-                    tagEntity.tagName = this.addTagName;
                     let tagIds: number[] = [tag.id];
 
                     // Make sure our tag isn't already added.
-                    for (let currentTag of this.readingList.tagIds) {
-                        if (currentTag == tag.id) {
-                            return;
-                        }
+                    if (this.readingList.tagIds.indexOf(tag.id) != -1) {
+                        return;
                     }
                     this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
                         this.readingList.tagIds.push(tag.id);

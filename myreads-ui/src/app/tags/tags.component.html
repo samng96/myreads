@@ -1,13 +1,46 @@
 <div *ngIf="tags">
-    <h1>Tags</h1>
+    <table class="item-header">
+        <tr>
+            <td>
+                <span class="item-header-label">Tags</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                This is the collection of tags that you've used across all your content.
+            </td>
+        </tr>
+    </table>
 
-    <ul *ngIf="tags" class="tags">
-        <li *ngFor="let tag of tags"
-            (click)="onSelectTag(tag)">{{ tag.tagName }}</li>
-    </ul>
+    <table> <!-- so we can have a space between tags -->
+        <tr>
+            <td *ngFor="let tag of tags">
+                <table class="tags {{ helper.getTagStyle(tag.id) }}"><tr><td>
+                    <table><tr>
+                        <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
+                    </tr></table>
+                </td><td width="5px">
+                </td></tr></table>
+            </td>
+        </tr>
+    </table>
 </div>
 <div *ngIf="tag">
-    <h1>Tag</h1>
-
-    {{ tag.tagName }}
+    <table class="item-header"><tr><td>
+        <span class="item-header-label">{{ tag.tagName }}</span>
+    </td></tr></table>
+    <table class="table table-striped table-hover table-sm" *ngIf="readingLists || readingListElements">
+        <tr class="pointer" *ngFor="let rl of readingLists" (click)="onSelectRl(rl)">
+            <td style="padding-left:10px;">
+                <i class="highlight fas fa-list-ul"></i>
+                {{ rl.name }}
+            </td>
+        </tr>
+        <tr class="pointer" *ngFor="let rle of readingListElements" (click)="onSelectRle(rle)">
+            <td style="padding-left:10px;">
+                <i class="highlight far fa-file"></i>
+                {{ rle.name }}<br>
+            </td>
+        </tr>
+    </table>
 </div>

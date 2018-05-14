@@ -23,7 +23,7 @@
     <table class="item-header">
         <tr>
             <td class="item-header-label">{{ readingListElement.name }}</td>
-            <td class="item-header-properties">
+            <td class="item-header-properties" width="50px">
                 <span *ngIf="ownRle" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this item"></i></span>
                 <span *ngIf="ownRle" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-trash-alt" title="Delete this item"></i></span>
             </td>

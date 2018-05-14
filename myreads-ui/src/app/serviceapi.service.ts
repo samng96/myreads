@@ -40,12 +40,28 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingList", null))
             );
     }
+    getReadingListsByTag(userId: number, tagId: number): Observable<ReadingListEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListsByTag`;
+        return this.http.post<ReadingListEntity[]>(url, tagId)
+            .pipe(
+                tap(_ => this.log(`getReadingListsByTag(${userId}, ${tagId})`)),
+                catchError(this.handleError("getReadingListsByTag", null))
+            );
+    }
     getReadingListElement(userId: number, rleId: number): Observable<ReadingListElementEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         return this.http.get<ReadingListElementEntity>(url)
             .pipe(
                 tap(_ => this.log(`getReadingListElement(${userId}, ${rleId})`)),
                 catchError(this.handleError("getReadingListElement", null))
+            );
+    }
+    getReadingListElementsByTag(userId: number, tagId: number): Observable<ReadingListElementEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElementsByTag`;
+        return this.http.post<ReadingListEntity[]>(url, tagId)
+            .pipe(
+                tap(_ => this.log(`getReadingListElementsByTag(${userId}, ${tagId})`)),
+                catchError(this.handleError("getReadingListElementsByTag", null))
             );
     }
     getFollowedLists(userId: number): Observable<FollowedListEntity[]> {
@@ -80,9 +96,9 @@ export class ServiceApi {
                 catchError(this.handleError("getTagByName", null))
             );
     }
-    getTagsByUser(userId: number): Observable<TagEntity> {
+    getTagsByUser(userId: number): Observable<TagEntity[]> {
         var url = `${ServiceApi.baseUrl}/tagsByUser/${userId}`;
-        return this.http.get<TagEntity>(url)
+        return this.http.get<TagEntity[]>(url)
             .pipe(
                 tap(_ => this.log(`getTagsByUser(${userId})`)),
                 catchError(this.handleError("getTagsByUser", null))
