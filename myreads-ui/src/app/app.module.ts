@@ -4,21 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
-import { UsersComponent } from './users/users.component';
-import { ReadingListsComponent } from './readinglists/readinglists.component';
-import { TagsComponent } from './tags/tags.component';
-import { ReadingListElementsComponent } from './readinglistelements/readinglistelements.component';
 
-import { LoggerService } from './logger.service';
-import { ServiceApi } from './serviceapi.service';
+import { LoginComponent } from './routes/login/login.component';
+import { UsersComponent } from './routes/users/users.component';
+import { ReadingListsComponent } from './routes/readinglists/readinglists.component';
+import { TagsComponent } from './routes/tags/tags.component';
+import { ReadingListElementsComponent } from './routes/readinglistelements/readinglistelements.component';
+
+import { LoggerService } from './utilities/logger.service';
+import { ServiceApi } from './utilities/serviceapi.service';
+import { LocalStorageObjectService } from './utilities/localstorageobject';
+import { ExtrasHelpers } from './utilities/entityextras';
+
 import { DebugComponent } from './debug/debug.component';
 import { NavComponent } from './nav/nav.component';
 import { ToolbarComponent } from './nav/toolbar.component';
-import { LocalStorageObjectService } from './localstorageobject';
-
-import { ExtrasHelpers } from './entityextras';
 
 
 @NgModule({

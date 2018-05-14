@@ -3,11 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-import { ServiceApi } from '../serviceapi.service';
-import { TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
-import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../localstorageobject';
-import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../entityextras';
+import { ServiceApi } from '../../utilities/serviceapi.service';
+import { TagEntity, UserEntity, ReadingListEntity, CommentEntity, FollowedListEntity, ReadingListElementEntity } from '../../utilities/entities';
+import { LoggerService } from '../../utilities/logger.service';
+import { LocalStorageObjectService } from '../../utilities/localstorageobject';
+import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../../utilities/entityextras';
 
 @Component({
     selector: 'app-readinglistelements',

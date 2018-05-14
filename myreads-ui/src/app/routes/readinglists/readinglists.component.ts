@@ -5,11 +5,11 @@ import { catchError, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
-import { ServiceApi } from '../serviceapi.service';
-import { TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../entities';
-import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../localstorageobject';
-import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../entityextras';
+import { ServiceApi } from '../../utilities/serviceapi.service';
+import { TagEntity, UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEntity } from '../../utilities/entities';
+import { LoggerService } from '../../utilities/logger.service';
+import { LocalStorageObjectService } from '../../utilities/localstorageobject';
+import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../../utilities/entityextras';
 
 @Component({
     selector: 'app-readinglists',

@@ -3,10 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/mergeMap';
 
-import { ServiceApi } from '../serviceapi.service';
-import { UserEntity, ReadingListEntity, FollowedListEntity } from '../entities';
-import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../localstorageobject';
+import { ServiceApi } from '../../utilities/serviceapi.service';
+import { UserEntity, ReadingListEntity, FollowedListEntity } from '../../utilities/entities';
+import { LoggerService } from '../../utilities/logger.service';
+import { LocalStorageObjectService } from '../../utilities/localstorageobject';
 
 @Component({
     selector: 'app-users',

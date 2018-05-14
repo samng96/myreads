@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { ServiceApi } from '../serviceapi.service';
-import { LoggerService } from '../logger.service';
-import { LocalStorageObjectService } from '../localstorageobject';
+import { ServiceApi } from '../../utilities/serviceapi.service';
+import { LoggerService } from '../../utilities/logger.service';
+import { LocalStorageObjectService } from '../../utilities/localstorageobject';
 
 declare var gapi: any;
 
