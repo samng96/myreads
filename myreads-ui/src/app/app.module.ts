@@ -21,6 +21,8 @@ import { DebugComponent } from './debug/debug.component';
 import { NavComponent } from './nav/nav.component';
 import { ToolbarComponent } from './nav/toolbar.component';
 
+import { ListOfElementsComponent, ListOfElementsCommunicationObject } from './components/listofelements.component';
+
 
 @NgModule({
     declarations: [
@@ -32,7 +34,8 @@ import { ToolbarComponent } from './nav/toolbar.component';
         ReadingListElementsComponent,
         DebugComponent,
         NavComponent,
-        ToolbarComponent
+        ToolbarComponent,
+        ListOfElementsComponent
     ],
     imports: [
         BrowserModule,
@@ -40,7 +43,7 @@ import { ToolbarComponent } from './nav/toolbar.component';
         FormsModule,
         HttpClientModule
     ],
-    providers: [ LoggerService, ServiceApi, LocalStorageObjectService, ExtrasHelpers ],
+    providers: [ LoggerService, ServiceApi, LocalStorageObjectService, ExtrasHelpers, ListOfElementsCommunicationObject ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }

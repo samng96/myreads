@@ -14,8 +14,6 @@ declare var gapi: any;
 export class ToolbarComponent implements OnInit {
     public isVisible: boolean;
 
-    // Display binding variables.
-
     constructor(
         private ngZone: NgZone,
         private serviceApi: ServiceApi,

@@ -82,60 +82,8 @@
                 </div>
             </div>
         </td>
-        <td class="item-header-properties">
-        <span *ngIf="ownList && !isGridView" (click)="onToggleView()"><i class="text-secondary fas fa-th-large" title="Show grid view"></i></span>
-        <span *ngIf="ownList && isGridView" (click)="onToggleView()"><i class="text-secondary fas fa-list-ul" title="Show list view"></i></span>
-    </td></tr></table>
+    </tr></table>
     <p></p>
 
-    <!-- the list form of the elements -->
-    <table *ngIf="(readingList.readingListElementIds != null) && !isGridView" width="100%"
-        style="border: 1px solid #dee2e6">
-        <tr *ngFor="let rleId of readingList.readingListElementIds" class="rle">
-            <td class="rle-image-cell">
-                <img class="rle-image" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}"
-                    (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
-            </td>
-            <td class="bg-white" style="padding-left:5px">
-                <div class="rle-content-title" (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
-                    {{ helper.pickTitle(lso.getReadingListElement(rleId)) }}
-                </div>
-                <table><tr>
-                    <td class="rle-content-link">
-                        <a href="{{ helper.getLink(lso.getReadingListElement(rleId)) }}">
-                            {{ helper.extractRootDomain(lso.getReadingListElement(rleId).link) }}
-                        </a>
-                    </td>
-                    <td>
-                        <table> <!-- so we can have a space between tags -->
-                            <tr *ngIf="lso.getReadingListElement(rleId).tagIds">
-                                <td *ngFor="let tagId of lso.getReadingListElement(rleId).tagIds">
-                                    <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
-                                        <table><tr>
-                                            <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>
-                                        </tr></table>
-                                    </td><td width="5px">
-                                    </td></tr></table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr></table>
-            </td>
-        </tr>
-    </table>
-
-    <!-- the card form of the elements -->
-    <div *ngIf="(readingList.readingListElementIds != null) && isGridView" class="card-columns">
-        <div *ngFor="let rleId of readingList.readingListElementIds" class="card pointer"
-            (click)="onSelectReadingListElement(lso.getReadingListElement(rleId))">
-            <div style="max-height:200px;overflow:hidden;" class="mx-auto">
-                <img class="card-img-top" src="{{ helper.getImageUrl(lso.getReadingListElement(rleId)) }}">
-            </div>
-            <div class="card-body">
-                <h6 class="card-title">{{ helper.pickTitle(lso.getReadingListElement(rleId)) }}</h6>
-                <p class="small">{{ helper.pickDescription(lso.getReadingListElement(rleId)) }}</p>
-            </div>
-        </div>
-    </div>
+    <app-listofelements></app-listofelements>
 </div>

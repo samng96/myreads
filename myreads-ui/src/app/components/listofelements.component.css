@@ -1,6 +1,3 @@
-.rles {
-    width: 100%;
-}
 .rle {
     border-top: 1px solid #f0f0f0;
     border-bottom: 1px solid #f0f0f0;
@@ -13,9 +10,6 @@
 .rle-image{
     width: 100px;
     cursor: pointer;
-}
-.rle-content {
-    padding-left: 25px;
 }
 .rle-content-title {
     font-weight: 500;

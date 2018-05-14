@@ -11,10 +11,11 @@ import { LoggerService } from '../../utilities/logger.service';
 import { LocalStorageObjectService } from '../../utilities/localstorageobject';
 import { ExtrasHelpers, ReadingListElementExtras, LinkPreviewResultObject } from '../../utilities/entityextras';
 
+import { ListOfElementsComponent, ListOfElementsCommunicationObject } from '../../components/listofelements.component';
+
 @Component({
     selector: 'app-readinglists',
     templateUrl: './readinglists.component.html',
-    styleUrls: ['./readinglists.component.css']
 })
 export class ReadingListsComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.
@@ -23,8 +24,6 @@ export class ReadingListsComponent implements OnInit {
     ownList: boolean;
     followingList: boolean;
     readingList: ReadingListEntity; // This is for the display.
-
-    isGridView: boolean = true;
 
     isAddTag: boolean = false;
     addTagName: string; // Bound to the form.
@@ -42,6 +41,7 @@ export class ReadingListsComponent implements OnInit {
         private helper: ExtrasHelpers,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
+        private listOfElements: ListOfElementsCommunicationObject,
         private router: Router,
         private logger: LoggerService
     ) { }
@@ -65,6 +65,8 @@ export class ReadingListsComponent implements OnInit {
             this.readingList = readingList;
             this.editListName = readingList.name;
             this.editListDescription = readingList.description;
+
+            this.updateChildListOfElements();
 
             // Now load up all the RLEs for the list.
             var promises = [];
@@ -121,6 +123,10 @@ export class ReadingListsComponent implements OnInit {
                 this.followingList = this.isFollowingList(readingList.id);
             });
         });
+    }
+
+    private updateChildListOfElements(): void {
+        this.listOfElements.listOfElementIds = this.readingList.readingListElementIds;
     }
 
     private onFollowList(): void {
@@ -225,6 +231,7 @@ export class ReadingListsComponent implements OnInit {
                 this.serviceApi.addReadingListElementToReadingList(this.userId, this.listId, rleIds).subscribe(() => {
                     this.readingList.readingListElementIds.push(rleId);
                     this.lso.updateReadingList(this.readingList);
+                    this.updateChildListOfElements();
                 });
             });
         });
@@ -245,9 +252,6 @@ export class ReadingListsComponent implements OnInit {
     }
     private onToggleEdit(): void {
         this.isEdit = !this.isEdit;
-    }
-    private onToggleView(): void {
-        this.isGridView = !this.isGridView;
     }
     private onToggleAddTag(): void {
         this.isAddTag = !this.isAddTag;
