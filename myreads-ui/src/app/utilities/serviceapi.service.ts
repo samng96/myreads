@@ -64,6 +64,14 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingListElementsByTag", null))
             );
     }
+    getReadingListElements(userId: number, filter: string): Observable<ReadingListElementEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/?${filter}`;
+        return this.http.get<ReadingListElementEntity>(url)
+            .pipe(
+                tap(_ => this.log(`getReadingListElements(${userId}, ${filter})`)),
+                catchError(this.handleError("getReadingListElements", null))
+            );
+    }
     getFollowedLists(userId: number): Observable<FollowedListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
         return this.http.get<FollowedListEntity[]>(url)

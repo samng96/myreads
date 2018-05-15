@@ -7,7 +7,9 @@ import { ExtrasHelpers } from '../utilities/entityextras';
 
 @Injectable()
 export class ListOfElementsCommunicationObject {
+    public displayById: boolean;
     public listOfElementIds: number[];
+    public listOfElements: ReadingListElementEntity[];
 }
 
 @Component({
@@ -25,6 +27,28 @@ export class ListOfElementsComponent {
         private router: Router
     ) { }
 
+    private listToDisplay(): ReadingListElementEntity[] {
+        if (this.elements.displayById && (this.elements.listOfElementIds != null)) {
+            var rles = [];
+            this.elements.listOfElementIds.forEach(rleId => rles.push(this.lso.getReadingListElement(rleId)));
+            return rles;
+        }
+        if (!this.elements.displayById && (this.elements.listOfElements != null)) {
+            return this.elements.listOfElements;
+        }
+
+        return null;
+    }
+    private isDisplaying(): boolean {
+        if (this.elements.displayById && (this.elements.listOfElementIds != null)) {
+            return true;
+        }
+        if (!this.elements.displayById && (this.elements.listOfElements != null)) {
+            return true;
+        }
+
+        return false;
+    }
     private onToggleView(): void {
         this.isGridView = !this.isGridView;
     }

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
@@ -36,7 +34,6 @@ export class ReadingListsComponent implements OnInit {
     editListDescription: string;
 
     constructor(
-        private http: HttpClient,
         private lso: LocalStorageObjectService,
         private helper: ExtrasHelpers,
         private route: ActivatedRoute,
@@ -60,6 +57,8 @@ export class ReadingListsComponent implements OnInit {
         var tagIds = [];
         this.serviceApi.getReadingList(this.userId, this.listId).subscribe(readingList =>
         {
+            if (readingList == null) { return; }
+
             this.lso.updateReadingList(readingList);
             this.ownList = this.isViewingCurrentUser(readingList.userId);
             this.readingList = readingList;
@@ -126,7 +125,9 @@ export class ReadingListsComponent implements OnInit {
     }
 
     private updateChildListOfElements(): void {
+        this.listOfElements.displayById = true;
         this.listOfElements.listOfElementIds = this.readingList.readingListElementIds;
+        this.listOfElements.listOfElements = null;
     }
 
     private onFollowList(): void {

@@ -6,6 +6,7 @@ import { UsersComponent } from './routes/users/users.component';
 import { ReadingListsComponent } from './routes/readinglists/readinglists.component';
 import { ReadingListElementsComponent } from './routes/readinglistelements/readinglistelements.component';
 import { TagsComponent } from './routes/tags/tags.component';
+import { SearchComponent } from './routes/search/search.component';
 
 const routes: Routes = [
     // Basic service routes.
@@ -16,8 +17,8 @@ const routes: Routes = [
     { path: 'users/:userId/readinglistelements/:elementId', component: ReadingListElementsComponent },
     { path: 'tags/:tagId', component: TagsComponent },
     { path: 'tags', component: TagsComponent },
-    { path: 'unread', component: ReadingListsComponent },
-    { path: 'favorites', component: ReadingListsComponent },
+    { path: 'unread', component: SearchComponent },
+    { path: 'favorites', component: SearchComponent },
 
     { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

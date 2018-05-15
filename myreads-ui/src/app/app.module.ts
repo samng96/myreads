@@ -11,6 +11,7 @@ import { UsersComponent } from './routes/users/users.component';
 import { ReadingListsComponent } from './routes/readinglists/readinglists.component';
 import { TagsComponent } from './routes/tags/tags.component';
 import { ReadingListElementsComponent } from './routes/readinglistelements/readinglistelements.component';
+import { SearchComponent } from './routes/search/search.component';
 
 import { LoggerService } from './utilities/logger.service';
 import { ServiceApi } from './utilities/serviceapi.service';
@@ -35,7 +36,8 @@ import { ListOfElementsComponent, ListOfElementsCommunicationObject } from './co
         DebugComponent,
         NavComponent,
         ToolbarComponent,
-        ListOfElementsComponent
+        ListOfElementsComponent,
+        SearchComponent
     ],
     imports: [
         BrowserModule,

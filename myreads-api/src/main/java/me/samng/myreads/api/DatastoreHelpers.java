@@ -328,8 +328,12 @@ public class DatastoreHelpers {
     }
 
     public static UserEntity getUser(Datastore datastore, long userId) {
-        Key key = DatastoreHelpers.newUserKey(userId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newUserKey(userId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
         if (entity == null) {
             return null;
         }
@@ -341,8 +345,12 @@ public class DatastoreHelpers {
     }
 
     public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
-        Key key = DatastoreHelpers.newReadingListKey(readingListId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newReadingListKey(readingListId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
 
         if (entity == null) {
             return null;
@@ -355,8 +363,13 @@ public class DatastoreHelpers {
     }
 
     public static ReadingListElementEntity getReadingListElement(Datastore datastore, long readingListElementId) {
-        Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newReadingListElementKey(readingListElementId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
+
         if (entity == null) {
             return null;
         }
@@ -368,8 +381,13 @@ public class DatastoreHelpers {
     }
 
     public static FollowedListEntity getFollowedList(Datastore datastore, long listId) {
-        Key key = DatastoreHelpers.newFollowedListKey(listId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newFollowedListKey(listId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
+
         if (entity == null) {
             return null;
         }
@@ -381,8 +399,13 @@ public class DatastoreHelpers {
     }
 
     public static CommentEntity getComment(Datastore datastore, long commentId) {
-        Key key = DatastoreHelpers.newCommentKey(commentId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newCommentKey(commentId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
+
         if (entity == null) {
             return null;
         }
@@ -394,8 +417,13 @@ public class DatastoreHelpers {
     }
 
     public static TagEntity getTag(Datastore datastore, long tagId) {
-        Key key = DatastoreHelpers.newTagKey(tagId);
-        Entity entity = datastore.get(key);
+        Entity entity = null;
+        try {
+            Key key = DatastoreHelpers.newTagKey(tagId);
+            entity = datastore.get(key);
+        }
+        catch (IllegalArgumentException e) { }
+
         if (entity == null) {
             return null;
         }

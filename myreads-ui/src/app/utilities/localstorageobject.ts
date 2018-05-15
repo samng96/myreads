@@ -137,21 +137,26 @@ export class LocalStorageObjectService {
     }
 
     public updateTags(tags: TagEntity[]): void {
-        for (let tag of tags) {
-            this.updateTag(tag);
-        }
-        this.lso.save();
+        if (tags == null) { return; }
+
+        tags.forEach(tag => this.updateTag(tag));
     }
     public updateTag(tag: TagEntity): void {
+        if (tag == null) { return; }
+
         this.lso.tags[tag.id] = tag;
         this.lso.tagsByName[tag.tagName] = tag;
         this.lso.save();
     }
     public updateUser(userEntity: UserEntity): void {
+        if (userEntity == null) { return; }
+
         this.lso.users[userEntity.id] = userEntity;
         this.lso.save();
     }
     public updateReadingList(listEntity: ReadingListEntity): void {
+        if (listEntity == null) { return; }
+
         this.lso.readingLists[listEntity.id] = listEntity;
 
         if (listEntity.userId == this.lso.myUserId) {
@@ -163,15 +168,26 @@ export class LocalStorageObjectService {
         this.lso.save();
     }
     public updateFollowedList(listEntity: FollowedListEntity): void {
+        if (listEntity == null) { return; }
+
         this.lso.followedLists[listEntity.id] = listEntity;
         this.lso.save();
     }
     public updateReadingListElement(rle: ReadingListElementEntity): void {
+        if (rle == null) { return; }
+
         this.lso.readingListElements[rle.id] = rle;
         this.lso.save();
     }
+    public updateReadingListElements(rles: ReadingListElementEntity[]): void {
+        if (rles == null) { return; }
+
+        rles.forEach(rle => this.updateReadingListElement(rle));
+    }
 
     public addReadingList(listEntity: ReadingListEntity): void {
+        if (listEntity == null) { return; }
+
         this.lso.readingLists[listEntity.id] = listEntity;
         this.lso.save();
 
