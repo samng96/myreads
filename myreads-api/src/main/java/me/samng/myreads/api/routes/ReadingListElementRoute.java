@@ -16,8 +16,13 @@ public class ReadingListElementRoute {
     // GET /users/{userId}/readingListElements
     public void getAllReadingListElements(RoutingContext routingContext) {
         long userId;
+        boolean unreadFilter = false;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
+
+            // Get the various filters.
+            String unreadParam = routingContext.request().getParam("unread");
+            unreadFilter = unreadParam != null ? Boolean.valueOf(unreadParam) : false;
         }
         catch (Exception e) {
             routingContext.response()
@@ -28,7 +33,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        List<ReadingListElementEntity> results = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId);
+        List<ReadingListElementEntity> results = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, unreadFilter);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")

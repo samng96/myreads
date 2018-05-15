@@ -180,7 +180,7 @@ public class MainVerticle extends AbstractVerticle {
         router.put("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.putReadingListElement(routingContext); });
         router.delete("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.deleteReadingListElement(routingContext); });
 
-        router.get("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
+        router.get("/:userId/readingListElements/*").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
         router.post("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.postReadingListElement(routingContext); });
 
         router.post("/:userId/readingListElementsByTag").handler(routingContext -> { readingListElementRoute.getAllReadingListElementsByTag(routingContext); });

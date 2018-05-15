@@ -15,6 +15,8 @@ import { ListOfElementsComponent, ListOfElementsCommunicationObject } from '../.
     templateUrl: './search.component.html',
 })
 export class SearchComponent implements OnInit {
+    public searchTitle: string;
+
     constructor(
         private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
@@ -37,9 +39,11 @@ export class SearchComponent implements OnInit {
 
         var path = this.route.snapshot.routeConfig.path;
         if (path == "unread") {
+            this.searchTitle = "Displaying unread items";
             this.loadUnreadElements();
         }
         else if (path == "favorites") {
+            this.searchTitle = "Displaying favorite items";
             this.loadFavoriteElements();
         }
     }

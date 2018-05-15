@@ -18,7 +18,7 @@ public class EntityManager {
         // matters here.
 
         // Clean up the reading list elements.
-        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId);
+        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, false);
         for (ReadingListElementEntity e : rles) {
             if (!EntityManager.DeleteReadingListElement(datastore, e.id)) {
                 return false;

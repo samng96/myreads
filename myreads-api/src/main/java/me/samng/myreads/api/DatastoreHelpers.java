@@ -258,7 +258,7 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId) {
+    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId, boolean unreadFilter) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListElementKind)
             .setFilter(CompositeFilter.and(
@@ -269,7 +269,17 @@ public class DatastoreHelpers {
 
         // Iterate through the results to actually fetch them, then serialize them and return.
         ArrayList<ReadingListElementEntity> results = new ArrayList<>();
-        queryresult.forEachRemaining(list -> results.add(ReadingListElementEntity.fromEntity(list)));
+        queryresult.forEachRemaining(list -> {
+            ReadingListElementEntity rle = ReadingListElementEntity.fromEntity(list);
+            if (unreadFilter) {
+                if (!rle.isRead) {
+                    results.add(rle);
+                }
+            }
+            else {
+                results.add(rle);
+            }
+        });
 
         return results;
     }
@@ -452,7 +462,7 @@ public class DatastoreHelpers {
         // We have two tables to get from - we have a tagToRL table and a tagToRLE table; get all the
         // RL and RLE Ids associated with the user, then merge the tags into one unique list, then resolve the tags
         // and return them.
-        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId);
+        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, false);
         List<ReadingListEntity> rls = DatastoreHelpers.getAllReadingListsForUser(datastore, userId);
 
         HashSet<Long> tagIds = new HashSet<Long>();

@@ -43,7 +43,7 @@
 
 <!-- the card form of the elements -->
 <div *ngIf="isDisplaying() && isGridView" class="card-columns">
-    <div *ngFor="let rleId of elements.listOfElementIds" class="card pointer"
+    <div *ngFor="let rle of listToDisplay()" class="card pointer"
         (click)="onSelectReadingListElement(rle)">
         <div style="max-height:200px;overflow:hidden;" class="mx-auto">
             <img class="card-img-top" src="{{ helper.getImageUrl(rle) }}">
