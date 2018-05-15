@@ -5,14 +5,13 @@
 </table>
 
 <!-- the list form of the elements -->
-<table *ngIf="isDisplaying() && !isGridView" width="100%"
-    style="border: 1px solid #dee2e6">
+<table *ngIf="isDisplaying() && !isGridView" width="100%" style="border-collapse: unset;">
     <tr *ngFor="let rle of listToDisplay()" class="rle">
         <td class="rle-image-cell">
-            <img class="rle-image" src="{{ helper.getImageUrl(rle) }}"
-                (click)="onSelectReadingListElement(rle)">
+            <img class="rle-image" src="{{ helper.getImageUrl(rle) }}" (click)="onSelectReadingListElement(rle)">
         </td>
-        <td class="bg-white" style="padding-left:5px">
+        <td class="bg-white" style="padding-left:5px"
+             [class.unread-flat]="!rle.isRead">
             <div class="rle-content-title" (click)="onSelectReadingListElement(rle)">
                 {{ helper.pickTitle(rle) }}
             </div>
@@ -44,7 +43,9 @@
 <!-- the card form of the elements -->
 <div *ngIf="isDisplaying() && isGridView" class="card-columns">
     <div *ngFor="let rle of listToDisplay()" class="card pointer"
-        (click)="onSelectReadingListElement(rle)">
+        (click)="onSelectReadingListElement(rle)"
+             [class.unread-image]="!rle.isRead && helper.getImageUrl(rle)"
+             [class.unread-noimage]="!rle.isRead && !helper.getImageUrl(rle)">
         <div style="max-height:200px;overflow:hidden;" class="mx-auto">
             <img class="card-img-top" src="{{ helper.getImageUrl(rle) }}">
         </div>

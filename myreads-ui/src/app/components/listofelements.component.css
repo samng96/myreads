@@ -21,3 +21,15 @@
     color: #a0a0a0;
     padding-right: 15px;
 }
+
+.unread-image {
+    border-right: 5px solid blue;
+    border-radius: 6px 12px 6px 0px;
+}
+.unread-noimage {
+    border-right: 5px solid blue;
+    border-radius: 0px 6px 6px 0px;
+}
+.unread-flat {
+    border-right: 5px solid blue;
+}
