@@ -72,6 +72,12 @@ export class ReadingListElementsComponent implements OnInit {
         });
     }
 
+    private onToggleIsRead(): void {
+        this.readingListElement.isRead = !this.readingListElement.isRead;
+        this.serviceApi.putReadingListElement(this.readingListElement).subscribe(() => {
+            this.lso.updateReadingListElement(this.readingListElement);
+        });
+    }
     private onSelectChange(value): void {
         this.selectedRlidForAdd = value.target.selectedOptions[0].value;
     }

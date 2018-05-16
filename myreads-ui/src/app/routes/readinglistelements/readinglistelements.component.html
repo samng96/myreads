@@ -74,7 +74,15 @@
     <br>
     <div class="container bg-white" style="border: 1px solid #dee2e6">
         <div class="row" style="padding: 10px 10px 0px 10px">
-            <h6>This item is in these lists:</h6>
+            <table><tr><td>This item is marked as </td><td>
+                <table class="tags tagcolor0"><tr><td>
+                    <table><tr>
+                        <td class="tagitem" (click)="onToggleIsRead()">
+                            {{ readingListElement.isRead }}
+                        </td>
+                    </tr></table>
+                </td></tr></table>
+            </td><td> and is in these lists:</td></tr></table>
         </div>
         <div class="row" style="padding: 0px 10px 10px 10px">
             <table> <!-- so we can have a space between tags -->

@@ -27,6 +27,7 @@ export class ReadingListElementEntity {
     userId: number;
     listIds: number[];
     name: string;
+    isRead: boolean;
     description: string;
     link: string;
     tagIds: number[];
