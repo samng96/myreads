@@ -48,8 +48,6 @@ export class LoginComponent implements OnInit {
         // TODO: the currently logged in user instead of getting the hard coded user.
         this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
             {
-                this.lso.updateUser(user);
-
                 this.lso.setMyLoginInfo(
                     "1",
                     this.hardcodedUserId,

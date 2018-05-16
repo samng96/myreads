@@ -1,4 +1,4 @@
-<div *ngIf="readingListElement">
+<div *ngIf="getRle()">
     <!-- Modal for deleting the rle -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -10,7 +10,7 @@
             </button>
           </div>
           <div class="modal-body">
-            Are you sure you want to delete the item '{{ readingListElement.name }}'?
+            Are you sure you want to delete the item '{{ getRle().name }}'?
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" (click)="onDeleteReadingListElement()" data-dismiss="modal">Delete</button>
@@ -22,14 +22,14 @@
 
     <table class="item-header">
         <tr>
-            <td class="item-header-label">{{ readingListElement.name }}</td>
+            <td class="item-header-label">{{ getRle().name }}</td>
             <td class="item-header-properties" width="75px">
                 <span *ngIf="ownRle" (click)="onToggleFavorite()"
-                    [class.text-secondary]="!readingListElement.favorite"
-                    [class.text-warning]="readingListElement.favorite">
+                    [class.text-secondary]="!getRle().favorite"
+                    [class.text-warning]="getRle().favorite">
                     <i class="fa-star"
-                        [class.far]="!readingListElement.favorite"
-                        [class.fas]="readingListElement.favorite"
+                        [class.far]="!getRle().favorite"
+                        [class.fas]="getRle().favorite"
                         title="Mark as favorite"></i>
                 </span>
                 <span *ngIf="ownRle" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this item"></i></span>
@@ -41,8 +41,8 @@
         <tr>
             <td>
                 <table> <!-- so we can have a space between tags -->
-                    <tr *ngIf="readingListElement.tagIds">
-                        <td *ngFor="let tagId of readingListElement.tagIds">
+                    <tr *ngIf="getRle().tagIds">
+                        <td *ngFor="let tagId of getRle().tagIds">
                             <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
                                 <table><tr>
                                     <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>
@@ -70,11 +70,11 @@
     <div class="container bg-white" style="border: 1px solid #dee2e6">
         <div class="row" style="padding: 10px 10px 10px 10px">
             <div class="col-3">
-                <img src="{{ helper.getImageUrl(readingListElement) }}" width="100%">
+                <img src="{{ helper.getImageUrl(getRle()) }}" width="100%">
             </div>
             <div class="col">
-                <h4>{{ helper.pickTitle(readingListElement, false) }}</h4>
-                <p>{{ helper.pickDescription(readingListElement, false) }}</p>
+                <h4>{{ helper.pickTitle(getRle(), false) }}</h4>
+                <p>{{ helper.pickDescription(getRle(), false) }}</p>
             </div>
         </div>
     </div>
@@ -86,7 +86,7 @@
                 <table class="tags tagcolor0"><tr><td>
                     <table><tr>
                         <td class="tagitem" (click)="onToggleIsRead()">
-                            {{ readingListElement.read ? "read" : "unread" }}
+                            {{ getRle().read ? "read" : "unread" }}
                         </td>
                     </tr></table>
                 </td></tr></table>
@@ -94,8 +94,8 @@
         </div>
         <div class="row" style="padding: 0px 10px 10px 10px">
             <table> <!-- so we can have a space between tags -->
-                <tr *ngIf="readingListElement.listIds">
-                    <td *ngFor="let listId of readingListElement.listIds">
+                <tr *ngIf="getRle().listIds">
+                    <td *ngFor="let listId of getRle().listIds">
                         <table *ngIf="lso.getReadingLists()[listId]" class="tags {{ helper.getTagStyle(listId) }}"><tr><td>
                             <table><tr>
                                 <td class="tagitem" (click)="onSelectList(lso.getReadingLists()[listId])">{{ lso.getReadingLists()[listId].name }}</td>

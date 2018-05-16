@@ -43,13 +43,11 @@ export class TagsComponent implements OnInit {
         if (tagId == 0) {
             // No Id means we just load up all tags and display em.
             this.serviceApi.getTagsByUser(this.lso.getMyUserId()).subscribe(tags => {
-                this.lso.updateTags(tags);
                 this.tags = tags.sort((a, b) => +(a.tagName > b.tagName));
             });
         }
         else {
             this.serviceApi.getTag(tagId).subscribe(tag => {
-                this.lso.updateTag(tag);
                 this.tag = tag;
 
                 var promises = [];

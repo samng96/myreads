@@ -114,6 +114,7 @@ export class LocalStorageObjectService {
     public getMyReadingLists(): number[] { return this.lso.myReadingLists; }
 
     public getReadingLists(): Map<number, ReadingListEntity> { return this.lso.readingLists; }
+    public getReadingList(listId: number): ReadingListEntity { return this.lso.readingLists[listId]; }
     public getReadingListElements(): Map<number, ReadingListElementEntity> { return this.lso.readingListElements; }
     public getReadingListElement(rleId: number): ReadingListElementEntity { return this.lso.readingListElements[rleId]; }
     public getUsers(): Map<number, UserEntity> { return this.lso.users; }
@@ -122,15 +123,6 @@ export class LocalStorageObjectService {
     public getComments(): Map<number, CommentEntity> { return this.lso.comments; }
     public getFollowedLists(): Map<number, FollowedListEntity> { return this.lso.followedLists; }
 
-    public updateMyFollowedLists(listId: number): void {
-        if (this.lso.myFollowedLists.indexOf(listId, 0) == -1) {
-            this.lso.myFollowedLists.push(listId);
-
-            this.lso.myFollowedLists = this.lso.myFollowedLists.sort(
-                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
-            this.lso.save();
-        }
-    }
     public deleteMyFollowedList(listId: number): void {
         var index = this.lso.myFollowedLists.indexOf(listId, 0);
         if (index != -1) {
@@ -162,13 +154,12 @@ export class LocalStorageObjectService {
 
         this.lso.readingLists[listEntity.id] = listEntity;
 
-        if (listEntity.userId == this.lso.myUserId) {
-            var index = this.lso.myReadingLists.indexOf(listEntity.id, 0);
-            if (index == -1) {
-                this.lso.myReadingLists.push(listEntity.id);
-                this.lso.myReadingLists = this.lso.myReadingLists.sort(
-                    (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
-            }
+        if ((listEntity.userId == this.lso.myUserId) &&
+            (this.lso.myReadingLists.indexOf(listEntity.id, 0) == -1)) {
+            this.lso.myReadingLists.push(listEntity.id);
+
+            this.lso.myReadingLists = this.lso.myReadingLists.sort(
+                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
         }
         this.lso.save();
     }
@@ -176,6 +167,13 @@ export class LocalStorageObjectService {
         if (listEntity == null) { return; }
 
         this.lso.followedLists[listEntity.id] = listEntity;
+
+        if ((listEntity.userId == this.lso.myUserId) && (this.lso.myFollowedLists.indexOf(listEntity.listId, 0) == -1)) {
+            this.lso.myFollowedLists.push(listEntity.listId);
+
+            this.lso.myFollowedLists = this.lso.myFollowedLists.sort(
+                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
+        }
         this.lso.save();
     }
     public updateReadingListElement(rle: ReadingListElementEntity): void {
@@ -207,10 +205,10 @@ export class LocalStorageObjectService {
         this.lso.comments.delete(commentId);
         this.lso.save();
     }
-    public deleteReadingList(list: ReadingListEntity): void {
-        this.lso.readingLists.delete(list.id);
+    public deleteReadingList(listId: number): void {
+        this.lso.readingLists.delete(listId);
 
-        var index = this.lso.myReadingLists.indexOf(list.id, 0);
+        var index = this.lso.myReadingLists.indexOf(listId, 0);
         if (index != -1) {
             this.lso.myReadingLists.splice(index, 1);
         }

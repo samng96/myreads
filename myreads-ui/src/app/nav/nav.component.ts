@@ -48,30 +48,16 @@ export class NavComponent implements OnInit {
     private loadUser() {
         // Load up everything we know about the user.
         this.userEntity = this.lso.getUsers()[this.lso.getMyUserId()];
-        this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
-            if (readingLists == null) { return; }
-
-            for (let list of readingLists) {
-                this.lso.updateReadingList(list);
-            }
-        });
+        this.serviceApi.getReadingLists(this.userEntity.id);
 
         this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
             if (followedLists == null) { return; }
 
             for (let fl of followedLists) {
-                this.lso.updateFollowedList(fl);
-                this.lso.updateMyFollowedLists(fl.listId);
                 if (this.lso.getReadingLists()[fl.listId] == null) {
                     this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
-                        this.log(`got list ${readingList.name} for followed user Id ${fl.ownerId}`);
-                        this.lso.updateReadingList(readingList);
-
                         if (this.lso.getUsers()[fl.ownerId] == null) {
-                            this.serviceApi.getUser(fl.ownerId).subscribe(user => {
-                                this.log(`got user ${user.name}`);
-                                this.lso.updateUser(user);
-                            })
+                            this.serviceApi.getUser(fl.ownerId);
                         }
                     });
                 }
@@ -93,12 +79,9 @@ export class NavComponent implements OnInit {
         rl.description = "empty description";
         rl.tagIds = [];
         rl.readingListElementIds = [];
-        this.serviceApi.postReadingList(rl).subscribe(addedListId => {
-            rl.id = addedListId;
-            this.lso.updateReadingList(rl);
 
-            this.addListName = null;
-        });
+        this.addListName = null;
+        this.serviceApi.postReadingList(rl);
     }
     private onToggleRls(): void {
         this.toggleRls = !this.toggleRls;

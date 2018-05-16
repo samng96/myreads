@@ -1,4 +1,4 @@
-<div *ngIf="readingList">
+<div *ngIf="getRl()">
     <!-- Modal for deleting a list -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -10,7 +10,7 @@
             </button>
           </div>
           <div class="modal-body">
-            Are you sure you want to delete the list '{{ readingList.name }}'?
+            Are you sure you want to delete the list '{{ getRl().name }}'?
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" (click)="onDeleteList()" data-dismiss="modal">Delete</button>
@@ -23,7 +23,7 @@
     <table class="item-header">
         <tr>
             <td>
-                <span *ngIf="!isEdit" class="item-header-label">{{ readingList.name }}</span>
+                <span *ngIf="!isEdit" class="item-header-label">{{ getRl().name }}</span>
                 <span *ngIf="isEdit">
                     <div class="input-group input-group-sm">
                         <input class="form-control form-rounded" [(ngModel)]="editListName" (keyup.enter)="onEditList()" (keyup.esc)="onToggleEdit()"/>
@@ -32,8 +32,8 @@
                         </div>
                     </div>
                 </span>
-                <span *ngIf="!isEdit"><br>{{ readingList.description }}</span>
-                <span *ngIf="isEdit"><textarea class="form-control form-rounded" style="width:100%" [(ngModel)]="editListDescription">{{ readingList.description }}</textarea></span>
+                <span *ngIf="!isEdit"><br>{{ getRl().description }}</span>
+                <span *ngIf="isEdit"><textarea class="form-control form-rounded" style="width:100%" [(ngModel)]="editListDescription">{{ getRl().description }}</textarea></span>
             </td>
             <td class="item-header-properties">
                 <span *ngIf="ownList" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this list"></i></span>
@@ -49,8 +49,8 @@
         <tr>
             <td>
                 <table> <!-- so we can have a space between tags -->
-                    <tr *ngIf="readingList.tagIds">
-                        <td *ngFor="let tagId of readingList.tagIds">
+                    <tr *ngIf="getRl().tagIds">
+                        <td *ngFor="let tagId of getRl().tagIds">
                             <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
                                 <table><tr>
                                     <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>

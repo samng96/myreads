@@ -52,7 +52,6 @@ export class SearchComponent implements OnInit {
         this.serviceApi.getReadingListElements(this.lso.getMyUserId(), "unread=true").subscribe(rles => {
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
-            this.lso.updateReadingListElements(rles);
         });
     }
 
@@ -60,7 +59,6 @@ export class SearchComponent implements OnInit {
         this.serviceApi.getReadingListElements(this.lso.getMyUserId(), "favorite=true").subscribe(rles => {
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
-            this.lso.updateReadingListElements(rles);
         });
     }
 

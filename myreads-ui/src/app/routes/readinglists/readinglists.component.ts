@@ -21,7 +21,6 @@ export class ReadingListsComponent implements OnInit {
 
     ownList: boolean;
     followingList: boolean;
-    readingList: ReadingListEntity; // This is for the display.
 
     isAddTag: boolean = false;
     addTagName: string; // Bound to the form.
@@ -43,6 +42,10 @@ export class ReadingListsComponent implements OnInit {
         private logger: LoggerService
     ) { }
 
+    private getRl(): ReadingListEntity {
+        return this.lso.getReadingList(this.listId);
+    }
+
     ngOnInit() {
         this.route.params.subscribe(params => {
             this.onInitializeComponent();
@@ -59,9 +62,7 @@ export class ReadingListsComponent implements OnInit {
         {
             if (readingList == null) { return; }
 
-            this.lso.updateReadingList(readingList);
             this.ownList = this.isViewingCurrentUser(readingList.userId);
-            this.readingList = readingList;
             this.editListName = readingList.name;
             this.editListDescription = readingList.description;
 
@@ -72,7 +73,6 @@ export class ReadingListsComponent implements OnInit {
             for (let rleId of readingList.readingListElementIds) {
                 var promise = new Promise(resolve => {
                     this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
-                        this.lso.updateReadingListElement(rle);
 
                         // Ensure that every RLE's tags are loaded.
                         for (let tagId of rle.tagIds) {
@@ -106,19 +106,13 @@ export class ReadingListsComponent implements OnInit {
                 }
                 for (let tagId of tagIds) {
                     if (this.lso.getTags()[tagId] == null) {
-                        this.serviceApi.getTag(tagId).subscribe(tag => {
-                            this.lso.updateTag(tag);
-                        })
+                        this.serviceApi.getTag(tagId);
                     }
                 }
             });
 
             // Now get all the lists that the user is following.
             this.serviceApi.getFollowedLists(this.lso.getMyUserId()).subscribe(fles => {
-                for (let fle of fles) {
-                    this.lso.updateFollowedList(fle);
-                    this.lso.updateMyFollowedLists(fle.listId);
-                }
                 this.followingList = this.isFollowingList(readingList.id);
             });
         });
@@ -126,30 +120,24 @@ export class ReadingListsComponent implements OnInit {
 
     private updateChildListOfElements(): void {
         this.listOfElements.displayById = true;
-        this.listOfElements.listOfElementIds = this.readingList.readingListElementIds;
+        this.listOfElements.listOfElementIds = this.getRl().readingListElementIds;
         this.listOfElements.listOfElements = null;
     }
 
     private onFollowList(): void {
+        this.followingList = true;
+
         var fle = new FollowedListEntity();
         fle.userId = this.lso.getMyUserId();
-        fle.ownerId = this.readingList.userId;
-        fle.listId = this.readingList.id;
-        this.serviceApi.postFollowedList(fle).subscribe(fleId => {
-            if (fleId != null) {
-                fle.id = fleId;
-                this.lso.updateFollowedList(fle);
-                this.lso.updateMyFollowedLists(fle.listId);
-                this.followingList = true;
-            }
-        });
+        fle.ownerId = this.getRl().userId;
+        fle.listId = this.getRl().id;
+        this.serviceApi.postFollowedList(fle);
     }
     private onUnfollowList(): void {
+        this.followingList = false;
+
         var fleId = this.lso.getMyFollowedLists()[this.listId];
-        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fleId).subscribe(x => {
-            this.lso.deleteMyFollowedList(this.listId);
-            this.followingList = false;
-        });
+        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fleId);
     }
 
     private onAddTag(): void {
@@ -160,37 +148,25 @@ export class ReadingListsComponent implements OnInit {
                     var tagEntity = new TagEntity();
                     tagEntity.tagName = this.addTagName;
                     this.serviceApi.postTag(tagEntity).subscribe(tagId => {
-                        tagEntity.id = tagId;
-                        this.lso.updateTag(tagEntity);
 
                         let tagIds: number[] = [tagId];
-                        this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(() => {
-                            this.readingList.tagIds.push(tagEntity.id);
-                            this.lso.updateReadingList(this.readingList);
-                        });
+                        this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds);
                     });
                 }
                 else {
                     let tagIds: number[] = [tag.id];
 
                     // Make sure our tag isn't already added.
-                    if (this.readingList.tagIds.indexOf(tag.id) != -1) {
+                    if (this.getRl().tagIds.indexOf(tag.id) != -1) {
                         return;
                     }
-                    this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds).subscribe(x => {
-                        this.readingList.tagIds.push(tag.id);
-                        this.lso.updateReadingList(this.readingList);
-                    });
+                    this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds);
                 }
             });
         }
     }
     private onRemoveTag(tag: TagEntity): void {
-        this.serviceApi.removeTagFromReadingList(this.userId, this.listId, tag.id).subscribe(x => {
-            var index = this.readingList.tagIds.indexOf(tag.id, 0);
-            this.readingList.tagIds.splice(index, 1);
-            this.lso.updateReadingList(this.readingList);
-        })
+        this.serviceApi.removeTagFromReadingList(this.userId, this.listId, tag.id);
     }
     private onSelectTag(tag: TagEntity): void {
         this.router.navigate(['tags', tag.id]);
@@ -222,16 +198,12 @@ export class ReadingListsComponent implements OnInit {
             rle.link = this.addRleLink;
 
             this.serviceApi.postReadingListElement(rle).subscribe(rleId => {
-                rle.id = rleId;
-                this.lso.updateReadingListElement(rle);
                 if (lp != null) {
-                    this.lso.updateRleExtras(rle.id, rlee);
+                    this.lso.updateRleExtras(rleId, rlee);
                 }
 
                 var rleIds = [rleId];
                 this.serviceApi.addReadingListElementToReadingList(this.userId, this.listId, rleIds).subscribe(() => {
-                    this.readingList.readingListElementIds.push(rleId);
-                    this.lso.updateReadingList(this.readingList);
                     this.updateChildListOfElements();
                 });
             });
@@ -239,15 +211,14 @@ export class ReadingListsComponent implements OnInit {
     }
     private onDeleteList(): void {
         this.serviceApi.deleteReadingList(this.lso.getMyUserId(), this.listId).subscribe(() => {
-            this.lso.deleteReadingList(this.readingList);
             this.router.navigate(['/users', this.lso.getMyUserId()]);
         });
     }
     private onEditList(): void {
-        this.readingList.name = this.editListName;
-        this.readingList.description = this.editListDescription;
-        this.serviceApi.putReadingList(this.readingList).subscribe(() => {
-            this.lso.updateReadingList(this.readingList);
+        var rl = this.getRl();
+        rl.name = this.editListName;
+        rl.description = this.editListDescription;
+        this.serviceApi.putReadingList(rl).subscribe(() => {
             this.isEdit = false;
         });
     }

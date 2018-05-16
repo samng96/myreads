@@ -34,39 +34,25 @@ export class UsersComponent implements OnInit {
         this.readingLists = [];
 
         this.serviceApi.getUser(this.userId).subscribe(user => {
-            this.lso.updateUser(user);
             this.userEntity = user;
             this.canEdit = this.isViewingCurrentUser(user.id);
-            this.log(`got user ${user.name}, editing permissions ${this.canEdit}`);
 
             this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
                 if (readingLists == null) { return; }
 
-                this.log(`got ${readingLists.length} lists for user ${this.userEntity.name}`);
                 this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
-                for (let list of readingLists) {
-                    this.lso.updateReadingList(list);
-                }
             });
 
             this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
                 if (followedLists == null) { return; }
 
-                this.log(`got ${followedLists.length} followed lists for user ${this.userEntity.name}`);
                 for (let fl of followedLists) {
-                    this.lso.updateFollowedList(fl);
                     if (this.lso.getReadingLists()[fl.listId] == null) {
                         this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
-                            this.log(`got list ${readingList.name} for followed user Id ${fl.ownerId}`);
-                            this.lso.updateReadingList(readingList);
-
                             this.followedLists.push(readingList);
                             this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                             if (this.lso.getUsers()[fl.ownerId] == null) {
-                                this.serviceApi.getUser(fl.ownerId).subscribe(user => {
-                                    this.log(`got user ${user.name}`);
-                                    this.lso.updateUser(user);
-                                })
+                                this.serviceApi.getUser(fl.ownerId);
                             }
                         });
                     }

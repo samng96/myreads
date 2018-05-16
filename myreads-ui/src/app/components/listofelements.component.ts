@@ -52,13 +52,11 @@ export class ListOfElementsComponent {
         return false;
     }
     private ownRle(rle: ReadingListElementEntity): boolean {
-        return rle.userId == this.lso.getMyUserId();
+        return rle != null && rle.userId == this.lso.getMyUserId();
     }
     private onToggleFavorite(rle: ReadingListElementEntity): void {
         rle.favorite = !rle.favorite;
-        this.serviceApi.putReadingListElement(rle).subscribe(() => {
-            this.lso.updateReadingListElement(rle);
-        });
+        this.serviceApi.putReadingListElement(rle);
     }
     private onToggleView(): void {
         this.isGridView = !this.isGridView;
