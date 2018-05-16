@@ -1,6 +1,7 @@
 import { Component, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { ServiceApi } from '../utilities/serviceapi.service';
 import { TagEntity, ReadingListElementEntity } from '../utilities/entities';
 import { LocalStorageObjectService } from '../utilities/localstorageobject';
 import { ExtrasHelpers } from '../utilities/entityextras';
@@ -23,6 +24,7 @@ export class ListOfElementsComponent {
     constructor(
         private lso: LocalStorageObjectService,
         private elements: ListOfElementsCommunicationObject,
+        private serviceApi: ServiceApi,
         private helper: ExtrasHelpers,
         private router: Router
     ) { }
@@ -48,6 +50,15 @@ export class ListOfElementsComponent {
         }
 
         return false;
+    }
+    private ownRle(rle: ReadingListElementEntity): boolean {
+        return rle.userId == this.lso.getMyUserId();
+    }
+    private onToggleFavorite(rle: ReadingListElementEntity): void {
+        rle.favorite = !rle.favorite;
+        this.serviceApi.putReadingListElement(rle).subscribe(() => {
+            this.lso.updateReadingListElement(rle);
+        });
     }
     private onToggleView(): void {
         this.isGridView = !this.isGridView;

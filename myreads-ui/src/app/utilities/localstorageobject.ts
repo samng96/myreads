@@ -125,6 +125,9 @@ export class LocalStorageObjectService {
     public updateMyFollowedLists(listId: number): void {
         if (this.lso.myFollowedLists.indexOf(listId, 0) == -1) {
             this.lso.myFollowedLists.push(listId);
+
+            this.lso.myFollowedLists = this.lso.myFollowedLists.sort(
+                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
             this.lso.save();
         }
     }
@@ -163,6 +166,8 @@ export class LocalStorageObjectService {
             var index = this.lso.myReadingLists.indexOf(listEntity.id, 0);
             if (index == -1) {
                 this.lso.myReadingLists.push(listEntity.id);
+                this.lso.myReadingLists = this.lso.myReadingLists.sort(
+                    (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
             }
         }
         this.lso.save();

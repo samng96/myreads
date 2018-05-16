@@ -10,12 +10,21 @@
         <td class="rle-image-cell">
             <img class="rle-image" src="{{ helper.getImageUrl(rle) }}" (click)="onSelectReadingListElement(rle)">
         </td>
-        <td class="bg-white" style="padding-left:5px"
-             [class.unread-flat]="!rle.isRead">
+        <td class="bg-white" style="padding-left:5px" [class.unread-flat]="ownRle(rle) && !rle.read">
             <div class="rle-content-title" (click)="onSelectReadingListElement(rle)">
                 {{ helper.pickTitle(rle) }}
             </div>
             <table><tr>
+                <td>
+                    <span *ngIf="ownRle(rle)" (click)="onToggleFavorite(rle)"
+                        [class.text-secondary]="!rle.favorite"
+                        [class.text-warning]="rle.favorite">
+                        <i class="fa-star pointer"
+                            [class.far]="!rle.favorite"
+                            [class.fas]="rle.favorite"
+                            title="Mark as favorite"></i>
+                    </span>
+                </td>
                 <td class="rle-content-link">
                     <a href="{{ helper.getLink(rle) }}">
                         {{ helper.extractRootDomain(rle.link) }}
@@ -42,16 +51,35 @@
 
 <!-- the card form of the elements -->
 <div *ngIf="isDisplaying() && isGridView" class="card-columns">
-    <div *ngFor="let rle of listToDisplay()" class="card pointer"
-        (click)="onSelectReadingListElement(rle)"
-             [class.unread-image]="!rle.isRead && helper.getImageUrl(rle)"
-             [class.unread-noimage]="!rle.isRead && !helper.getImageUrl(rle)">
-        <div style="max-height:200px;overflow:hidden;" class="mx-auto">
+    <div *ngFor="let rle of listToDisplay()" class="card"
+             [class.unread-image]="ownRle(rle) && !rle.read && helper.getImageUrl(rle)"
+             [class.unread-noimage]="ownRle(rle) && !rle.read && !helper.getImageUrl(rle)">
+        <div style="max-height:200px;overflow:hidden;" class="mx-auto pointer"
+            (click)="onSelectReadingListElement(rle)">
             <img class="card-img-top" src="{{ helper.getImageUrl(rle) }}">
         </div>
-        <div class="card-body">
+        <div class="card-body pointer" (click)="onSelectReadingListElement(rle)">
             <h6 class="card-title">{{ helper.pickTitle(rle) }}</h6>
             <p class="small">{{ helper.pickDescription(rle) }}</p>
+        </div>
+        <div class="card-footer text-muted">
+            <table><tr>
+                <td>
+                    <span *ngIf="ownRle(rle)" (click)="onToggleFavorite(rle)"
+                        [class.text-secondary]="!rle.favorite"
+                        [class.text-warning]="rle.favorite">
+                        <i class="fa-star pointer"
+                            [class.far]="!rle.favorite"
+                            [class.fas]="rle.favorite"
+                            title="Mark as favorite"></i>
+                    </span>
+                </td>
+                <td class="rle-content-link">
+                    <a href="{{ helper.getLink(rle) }}">
+                        {{ helper.extractRootDomain(rle.link) }}
+                    </a>
+                </td>
+            </tr></table>
         </div>
     </div>
 </div>

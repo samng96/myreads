@@ -72,8 +72,14 @@ export class ReadingListElementsComponent implements OnInit {
         });
     }
 
+    private onToggleFavorite(): void {
+        this.readingListElement.favorite = !this.readingListElement.favorite;
+        this.serviceApi.putReadingListElement(this.readingListElement).subscribe(() => {
+            this.lso.updateReadingListElement(this.readingListElement);
+        });
+    }
     private onToggleIsRead(): void {
-        this.readingListElement.isRead = !this.readingListElement.isRead;
+        this.readingListElement.read = !this.readingListElement.read;
         this.serviceApi.putReadingListElement(this.readingListElement).subscribe(() => {
             this.lso.updateReadingListElement(this.readingListElement);
         });

@@ -258,7 +258,11 @@ public class DatastoreHelpers {
         return results;
     }
 
-    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(Datastore datastore, long userId, boolean unreadFilter) {
+    public static List<ReadingListElementEntity> getAllReadingListElementsForUser(
+        Datastore datastore,
+        long userId,
+        boolean unreadFilter,
+        boolean favoriteFilter) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.readingListElementKind)
             .setFilter(CompositeFilter.and(
@@ -271,17 +275,22 @@ public class DatastoreHelpers {
         ArrayList<ReadingListElementEntity> results = new ArrayList<>();
         queryresult.forEachRemaining(list -> {
             ReadingListElementEntity rle = ReadingListElementEntity.fromEntity(list);
-            if (unreadFilter) {
-                if (!rle.isRead) {
-                    results.add(rle);
-                }
-            }
-            else {
+            if (!isFilteredOut(rle, unreadFilter, favoriteFilter)) {
                 results.add(rle);
             }
         });
 
         return results;
+    }
+
+    private static boolean isFilteredOut(ReadingListElementEntity rle, boolean unreadFilter, boolean favoriteFilter) {
+        if (unreadFilter && rle.read) {
+            return true;
+        }
+        if (favoriteFilter && !rle.favorite) {
+            return true;
+        }
+        return false;
     }
 
     public static List<ReadingListElementEntity> getAllReadingListElementsForUserWithTag(Datastore datastore, long userId, long tagId) {
@@ -462,7 +471,7 @@ public class DatastoreHelpers {
         // We have two tables to get from - we have a tagToRL table and a tagToRLE table; get all the
         // RL and RLE Ids associated with the user, then merge the tags into one unique list, then resolve the tags
         // and return them.
-        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, false);
+        List<ReadingListElementEntity> rles = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, false, false);
         List<ReadingListEntity> rls = DatastoreHelpers.getAllReadingListsForUser(datastore, userId);
 
         HashSet<Long> tagIds = new HashSet<Long>();
@@ -527,6 +536,8 @@ public class DatastoreHelpers {
             .set("tagIds", ImmutableList.copyOf(readingListElementEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("listIds", ImmutableList.copyOf(readingListElementEntity.listIds().stream().map(LongValue::new).iterator()))
             .set("commentIds", ImmutableList.copyOf(readingListElementEntity.commentIds().stream().map(LongValue::new).iterator()))
+            .set("read", readingListElementEntity.read())
+            .set("favorite", readingListElementEntity.favorite())
             .set("deleted", updateForDelete);
         Entity newEntity = builder.build();
         try {

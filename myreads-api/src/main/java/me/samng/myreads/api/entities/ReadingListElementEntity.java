@@ -42,8 +42,11 @@ public class ReadingListElementEntity {
     @JsonProperty("commentIds")
     public List<Long> commentIds;
 
-    @JsonProperty("isRead")
-    public boolean isRead;
+    @JsonProperty("read")
+    public boolean read;
+
+    @JsonProperty("favorite")
+    public boolean favorite;
 
     @JsonProperty("deleted")
     public boolean deleted;

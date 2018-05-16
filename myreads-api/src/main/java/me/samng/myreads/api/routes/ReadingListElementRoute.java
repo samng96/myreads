@@ -17,12 +17,16 @@ public class ReadingListElementRoute {
     public void getAllReadingListElements(RoutingContext routingContext) {
         long userId;
         boolean unreadFilter = false;
+        boolean favoriteFilter = false;
         try {
             userId = Long.decode(routingContext.request().getParam("userId"));
 
             // Get the various filters.
             String unreadParam = routingContext.request().getParam("unread");
             unreadFilter = unreadParam != null ? Boolean.valueOf(unreadParam) : false;
+
+            String favoriteParam = routingContext.request().getParam("favorite");
+            favoriteFilter = favoriteParam != null ? Boolean.valueOf(favoriteParam) : false;
         }
         catch (Exception e) {
             routingContext.response()
@@ -33,7 +37,7 @@ public class ReadingListElementRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        List<ReadingListElementEntity> results = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, unreadFilter);
+        List<ReadingListElementEntity> results = DatastoreHelpers.getAllReadingListElementsForUser(datastore, userId, unreadFilter, favoriteFilter);
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
