@@ -238,6 +238,11 @@ export class ReadingListsComponent implements OnInit {
     private onToggleAddTag(): void {
         this.isAddTag = !this.isAddTag;
     }
+    private onTogglePublic(): void {
+        var rl = this.getRl();
+        rl.visible = !rl.visible;
+        this.serviceApi.putReadingList(rl);
+    }
 
     private cleanTitle(title: string): string {
         var index = title.indexOf("Amazon.com: ", 0);

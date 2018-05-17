@@ -10,6 +10,7 @@ export class ReadingListEntity {
     userId: number;
     name: string;
     description: string;
+    visible: boolean;
     tagIds: number[];
     readingListElementIds: number[];
 }

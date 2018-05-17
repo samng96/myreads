@@ -36,6 +36,13 @@
                 <span *ngIf="isEdit"><textarea class="form-control form-rounded" style="width:100%" [(ngModel)]="editListDescription">{{ getRl().description }}</textarea></span>
             </td>
             <td class="item-header-properties">
+                <span *ngIf="ownList" (click)="onTogglePublic()">
+                    <i class="far pointer" [class.text-secondary]="!getRl().visible"
+                        [class.text-warning]="getRl().visible"
+                        [class.fa-eye-slash]="!getRl().visible"
+                        [class.fa-eye]="getRl().visible"
+                        title="Make this list public/private"></i>
+                </span>
                 <span *ngIf="ownList" (click)="onToggleAddTag()"><i class="text-secondary fas fa-tag" title="Add a tag to this list"></i></span>
                 <span *ngIf="ownList" (click)="onToggleEdit()"><i class="text-secondary fas fa-pen-square" title="Edit this list"></i></span>
                 <span *ngIf="ownList" data-toggle="modal" data-target="#deleteModal"><i class="text-danger fas fa-trash-alt" title="Delete this list"></i></span>

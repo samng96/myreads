@@ -515,6 +515,7 @@ public class DatastoreHelpers {
             .set("userId", readingListEntity.userId())
             .set("tagIds", ImmutableList.copyOf(readingListEntity.tagIds().stream().map(LongValue::new).iterator()))
             .set("readingListElementIds", ImmutableList.copyOf(readingListEntity.readingListElementIds().stream().map(LongValue::new).iterator()))
+            .set("visible", readingListEntity.visible())
             .set("deleted", updateForDelete);
 
         Entity newEntity = builder.build();

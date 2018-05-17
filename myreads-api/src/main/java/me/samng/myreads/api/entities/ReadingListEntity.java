@@ -35,6 +35,9 @@ public class ReadingListEntity {
     @JsonProperty("readingListElementIds")
     public List<Long> readingListElementIds;
 
+    @JsonProperty("visible")
+    public boolean visible;
+
     @JsonProperty("deleted")
     public boolean deleted;
 
