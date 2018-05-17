@@ -42,7 +42,7 @@ export class UsersComponent implements OnInit {
             this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
                 if (readingLists == null) { return; }
 
-                this.readingLists = readingLists.sort((a, b) => +(a.name > b.name));
+                this.readingLists = readingLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
             });
 
             this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
@@ -52,9 +52,9 @@ export class UsersComponent implements OnInit {
                     if (this.lso.getReadingLists()[fl.listId] == null) {
                         this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
                             if (readingList == null) { return; }
-                            
+
                             this.followedLists.push(readingList);
-                            this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
+                            this.followedLists = this.followedLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
                             if (this.lso.getUsers()[fl.ownerId] == null) {
                                 this.serviceApi.getUser(fl.ownerId);
                             }
@@ -62,7 +62,7 @@ export class UsersComponent implements OnInit {
                     }
                     else {
                         this.followedLists.push(this.lso.getReadingLists()[fl.listId]);
-                        this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
+                        this.followedLists = this.followedLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
                     }
                 }
             });

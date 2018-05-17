@@ -159,7 +159,7 @@ export class LocalStorageObjectService {
             this.lso.myReadingLists.push(listEntity.id);
 
             this.lso.myReadingLists = this.lso.myReadingLists.sort(
-                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
+                (a, b) => this.lso.readingLists[a].name < this.lso.readingLists[b].name ? -1 : +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
         }
         this.lso.save();
     }
@@ -172,7 +172,7 @@ export class LocalStorageObjectService {
             this.lso.myFollowedLists.push(listEntity.listId);
 
             this.lso.myFollowedLists = this.lso.myFollowedLists.sort(
-                (a, b) => +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
+                (a, b) => this.lso.readingLists[a].name < this.lso.readingLists[b].name ? -1 : +(this.lso.readingLists[a].name > this.lso.readingLists[b].name));
         }
         this.lso.save();
     }

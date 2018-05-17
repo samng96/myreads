@@ -45,7 +45,7 @@ export class TagsComponent implements OnInit {
             this.serviceApi.getTagsByUser(this.lso.getMyUserId()).subscribe(tags => {
                 if (tags == null) { return; }
 
-                this.tags = tags.sort((a, b) => +(a.tagName > b.tagName));
+                this.tags = tags.sort((a, b) => a.tagName < b.tagName ? -1 : +(a.tagName > b.tagName));
             });
         }
         else {
