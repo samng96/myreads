@@ -73,6 +73,7 @@ export class ReadingListsComponent implements OnInit {
             for (let rleId of readingList.readingListElementIds) {
                 var promise = new Promise(resolve => {
                     this.serviceApi.getReadingListElement(this.userId, rleId).subscribe(rle => {
+                        if (rle == null) { return; }
 
                         // Ensure that every RLE's tags are loaded.
                         for (let tagId of rle.tagIds) {
@@ -80,8 +81,11 @@ export class ReadingListsComponent implements OnInit {
                         }
                         resolve();
 
-                        // Now asynchronously load up the link previews.
-                        if (this.lso.getRleExtras()[rle.id] == null) {
+                        // Now asynchronously load up the link previews if we've never loaded them
+                        // before. We check this by checking the description - if there is one, we must
+                        // have loaded it from the link preview, so don't bother reloading. If there isn't
+                        // one, try to load up the link preview and update it.
+                        if (this.lso.getRleExtras()[rle.id] == null && rle.description == "") {
                             this.helper.getLinkPreview(rle.link).subscribe(lp => {
                                 if (lp != null) {
                                     var rlee = new ReadingListElementExtras();
@@ -90,7 +94,10 @@ export class ReadingListsComponent implements OnInit {
                                     rlee.url = lp.url;
                                     rlee.description = lp.description;
 
+                                    rle.name = lp.title;
+                                    rle.description = lp.description;
                                     this.lso.updateRleExtras(rle.id, rlee);
+                                    this.serviceApi.putReadingListElement(rle);
                                 }
                             });
                         }
@@ -113,6 +120,8 @@ export class ReadingListsComponent implements OnInit {
 
             // Now get all the lists that the user is following.
             this.serviceApi.getFollowedLists(this.lso.getMyUserId()).subscribe(fles => {
+                if (fles == null) { return; }
+
                 this.followingList = this.isFollowingList(readingList.id);
             });
         });
@@ -148,6 +157,7 @@ export class ReadingListsComponent implements OnInit {
                     var tagEntity = new TagEntity();
                     tagEntity.tagName = this.addTagName;
                     this.serviceApi.postTag(tagEntity).subscribe(tagId => {
+                        if (tagId == -1) { return; }
 
                         let tagIds: number[] = [tagId];
                         this.serviceApi.addTagToReadingList(this.userId, this.listId, tagIds);
@@ -187,13 +197,13 @@ export class ReadingListsComponent implements OnInit {
 
                 rle.name = lp.title;
                 rle.description = lp.description;
-                rle.listIds = [this.listId];
             }
             else {
                 rle.name = this.addRleLink;
-                rle.description = "empty description";
+                rle.description = "";
             }
 
+            rle.listIds = [this.listId];
             rle.userId = this.userId;
             rle.link = this.addRleLink;
 

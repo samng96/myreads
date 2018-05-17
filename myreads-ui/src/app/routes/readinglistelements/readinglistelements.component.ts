@@ -45,6 +45,8 @@ export class ReadingListElementsComponent implements OnInit {
         this.comments = [];
 
         this.serviceApi.getReadingListElement(this.userId, this.rleId).subscribe(rle => {
+            if (rle == null) { return; }
+
             // Now get the tags.
             for (let tagId of this.getRle().tagIds) {
                 if (this.lso.getTags()[tagId] == null) {
@@ -55,6 +57,8 @@ export class ReadingListElementsComponent implements OnInit {
             // Get all the comments
             for (let commentId of this.getRle().commentIds) {
                 this.serviceApi.getComment(this.userId, this.rleId, commentId).subscribe(comment => {
+                    if (comment == null) { return; }
+
                     this.comments.push(comment);
                 });
             }
@@ -143,6 +147,8 @@ export class ReadingListElementsComponent implements OnInit {
             ce.commentText = this.addComment;
             ce.lastModified = new Date();
             this.serviceApi.postComment(ce).subscribe(commentId => {
+                if (commentId == null) { return; }
+
                 ce.id = commentId;
                 this.comments.push(ce);
             });

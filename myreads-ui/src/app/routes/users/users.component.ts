@@ -34,6 +34,8 @@ export class UsersComponent implements OnInit {
         this.readingLists = [];
 
         this.serviceApi.getUser(this.userId).subscribe(user => {
+            if (user == null) { return; }
+
             this.userEntity = user;
             this.canEdit = this.isViewingCurrentUser(user.id);
 
@@ -49,6 +51,8 @@ export class UsersComponent implements OnInit {
                 for (let fl of followedLists) {
                     if (this.lso.getReadingLists()[fl.listId] == null) {
                         this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
+                            if (readingList == null) { return; }
+                            
                             this.followedLists.push(readingList);
                             this.followedLists = this.followedLists.sort((a,b) => +(a.name > b.name));
                             if (this.lso.getUsers()[fl.ownerId] == null) {

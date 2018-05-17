@@ -55,11 +55,10 @@ export class NavComponent implements OnInit {
 
             for (let fl of followedLists) {
                 if (this.lso.getReadingLists()[fl.listId] == null) {
-                    this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
-                        if (this.lso.getUsers()[fl.ownerId] == null) {
-                            this.serviceApi.getUser(fl.ownerId);
-                        }
-                    });
+                    this.serviceApi.getReadingList(fl.ownerId, fl.listId);
+                }
+                if (this.lso.getUsers()[fl.ownerId] == null) {
+                    this.serviceApi.getUser(fl.ownerId);
                 }
             }
         });

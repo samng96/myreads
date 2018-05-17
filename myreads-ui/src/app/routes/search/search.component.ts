@@ -27,7 +27,7 @@ export class SearchComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.route.params.subscribe(params => {
+        this.route.params.subscribe(() => {
             this.onInitializeComponent();
         });
     }
@@ -50,6 +50,8 @@ export class SearchComponent implements OnInit {
 
     private loadUnreadElements(): void {
         this.serviceApi.getReadingListElements(this.lso.getMyUserId(), "unread=true").subscribe(rles => {
+            if (rles == null) { return; }
+
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
         });
@@ -57,6 +59,8 @@ export class SearchComponent implements OnInit {
 
     private loadFavoriteElements(): void {
         this.serviceApi.getReadingListElements(this.lso.getMyUserId(), "favorite=true").subscribe(rles => {
+            if (rles == null) { return; }
+
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
         });
