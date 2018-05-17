@@ -19,7 +19,7 @@ export class ServiceApi {
         private logger: LoggerService
     ) { }
 
-    getUser(userId: number): Observable<UserEntity> {
+    getUser(userId: number): Subject<UserEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}`;
         var result = this.http.get<UserEntity>(url)
             .pipe(
@@ -27,10 +27,12 @@ export class ServiceApi {
                 catchError(this.handleError("getUser", null))
             );
 
-        result.subscribe(user => this.lso.updateUser(user));
-        return result;
+        var subject = new Subject<UserEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(user => this.lso.updateUser(user));
+        return subject;
     }
-    getReadingLists(userId: number): Observable<ReadingListEntity[]> {
+    getReadingLists(userId: number): Subject<ReadingListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists`;
         var result = this.http.get<ReadingListEntity[]>(url)
             .pipe(
@@ -38,14 +40,16 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingLists", null))
             );
 
-        result.subscribe(rls => {
+        var subject = new Subject<ReadingListEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rls => {
             for (let rl of rls) {
                 this.lso.updateReadingList(rl);
             }
         });
-        return result;
+        return subject;
     }
-    getReadingList(userId: number, listId: number): Observable<ReadingListEntity> {
+    getReadingList(userId: number, listId: number): Subject<ReadingListEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}`;
         var result = this.http.get<ReadingListEntity>(url)
             .pipe(
@@ -53,10 +57,12 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingList", null))
             );
 
-        result.subscribe(rl => this.lso.updateReadingList(rl));
-        return result;
+        var subject = new Subject<ReadingListEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rl => this.lso.updateReadingList(rl));
+        return subject;
     }
-    getReadingListsByTag(userId: number, tagId: number): Observable<ReadingListEntity[]> {
+    getReadingListsByTag(userId: number, tagId: number): Subject<ReadingListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListsByTag`;
         var result = this.http.post<ReadingListEntity[]>(url, tagId)
             .pipe(
@@ -64,14 +70,16 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingListsByTag", null))
             );
 
-        result.subscribe(rls => {
+        var subject = new Subject<ReadingListEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rls => {
             for (let rl of rls) {
                 this.lso.updateReadingList(rl);
             }
         });
-        return result;
+        return subject;
     }
-    getReadingListElement(userId: number, rleId: number): Observable<ReadingListElementEntity> {
+    getReadingListElement(userId: number, rleId: number): Subject<ReadingListElementEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         var result = this.http.get<ReadingListElementEntity>(url)
             .pipe(
@@ -79,10 +87,12 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingListElement", null))
             );
 
-        result.subscribe(rle => this.lso.updateReadingListElement(rle));
-        return result;
+        var subject = new Subject<ReadingListElementEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rle => this.lso.updateReadingListElement(rle));
+        return subject;
     }
-    getReadingListElementsByTag(userId: number, tagId: number): Observable<ReadingListElementEntity[]> {
+    getReadingListElementsByTag(userId: number, tagId: number): Subject<ReadingListElementEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElementsByTag`;
         var result = this.http.post<ReadingListEntity[]>(url, tagId)
             .pipe(
@@ -90,14 +100,16 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingListElementsByTag", null))
             );
 
-        result.subscribe(rles => {
+        var subject = new Subject<ReadingListElementEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rles => {
             for (let rle of rles) {
                 this.lso.updateReadingListElement(rle);
             }
         });
-        return result;
+        return subject;
     }
-    getReadingListElements(userId: number, filter: string): Observable<ReadingListElementEntity[]> {
+    getReadingListElements(userId: number, filter: string): Subject<ReadingListElementEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/?${filter}`;
         var result = this.http.get<ReadingListElementEntity>(url)
             .pipe(
@@ -105,14 +117,16 @@ export class ServiceApi {
                 catchError(this.handleError("getReadingListElements", null))
             );
 
-        result.subscribe(rles => {
+        var subject = new Subject<ReadingListElementEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rles => {
             for (let rle of rles) {
                 this.lso.updateReadingListElement(rle);
             }
         });
-        return result;
+        return subject;
     }
-    getFollowedLists(userId: number): Observable<FollowedListEntity[]> {
+    getFollowedLists(userId: number): Subject<FollowedListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists`;
         var result = this.http.get<FollowedListEntity[]>(url)
             .pipe(
@@ -120,14 +134,16 @@ export class ServiceApi {
                 catchError(this.handleError("getFollowedLists", null))
             );
 
-        result.subscribe(fls => {
+        var subject = new Subject<FollowedListEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(fls => {
             for (let fl of fls) {
                 this.lso.updateFollowedList(fl);
             }
         });
-        return result;
+        return subject;
     }
-    getTags(): Observable<TagEntity[]> {
+    getTags(): Subject<TagEntity[]> {
         var url = `${ServiceApi.baseUrl}/tags`;
         var result = this.http.get<TagEntity[]>(url)
             .pipe(
@@ -135,14 +151,16 @@ export class ServiceApi {
                 catchError(this.handleError("getTags", null))
             );
 
-        result.subscribe(tags => {
+        var subject = new Subject<TagEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(tags => {
             for (let tag of tags) {
                 this.lso.updateTag(tag);
             }
         });
-        return result;
+        return subject;
     }
-    getTag(tagId: number): Observable<TagEntity> {
+    getTag(tagId: number): Subject<TagEntity> {
         var url = `${ServiceApi.baseUrl}/tags/${tagId}`;
         var result = this.http.get<TagEntity>(url)
             .pipe(
@@ -150,10 +168,12 @@ export class ServiceApi {
                 catchError(this.handleError("getTag", null))
             );
 
-        result.subscribe(tag => this.lso.updateTag(tag));
-        return result;
+        var subject = new Subject<TagEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(tag => this.lso.updateTag(tag));
+        return subject;
     }
-    getTagByName(tagName: string): Observable<TagEntity> {
+    getTagByName(tagName: string): Subject<TagEntity> {
         var url = `${ServiceApi.baseUrl}/tagByName/${tagName}`;
         var result = this.http.get<TagEntity>(url)
             .pipe(
@@ -161,10 +181,12 @@ export class ServiceApi {
                 catchError(this.handleError("getTagByName", null))
             );
 
-        result.subscribe(tag => this.lso.updateTag(tag));
-        return result;
+        var subject = new Subject<TagEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(tag => this.lso.updateTag(tag));
+        return subject;
     }
-    getTagsByUser(userId: number): Observable<TagEntity[]> {
+    getTagsByUser(userId: number): Subject<TagEntity[]> {
         var url = `${ServiceApi.baseUrl}/tagsByUser/${userId}`;
         var result = this.http.get<TagEntity[]>(url)
             .pipe(
@@ -172,12 +194,14 @@ export class ServiceApi {
                 catchError(this.handleError("getTagsByUser", null))
             );
 
-        result.subscribe(tags => {
+        var subject = new Subject<TagEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(tags => {
             for (let tag of tags) {
                 this.lso.updateTag(tag);
             }
         });
-        return result;
+        return subject;
     }
     getComment(userId: number, rleId: number, commentId: number): Observable<CommentEntity> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
@@ -188,7 +212,7 @@ export class ServiceApi {
             );
     }
 
-    postFollowedList(followedListEntity: FollowedListEntity): Observable<any> {
+    postFollowedList(followedListEntity: FollowedListEntity): Subject<number> {
         var url = `${ServiceApi.baseUrl}/users/${followedListEntity.userId}/followedLists`;
         var result = this.http.post(url, followedListEntity)
             .pipe(
@@ -196,11 +220,13 @@ export class ServiceApi {
                 catchError(this.handleError("postFollowedList", null))
             );
 
-        result.subscribe(flId => {
+        var subject = new Subject<number>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(flId => {
             followedListEntity.id = flId;
             this.lso.updateFollowedList(followedListEntity);
         });
-        return result;
+        return subject;
     }
     postTag(tagEntity: TagEntity): Subject<number> {
         var url = `${ServiceApi.baseUrl}/tags`;
@@ -227,7 +253,7 @@ export class ServiceApi {
                 catchError(this.handleError("postComment", null))
             );
     }
-    postReadingList(listEntity: ReadingListEntity): Observable<any> {
+    postReadingList(listEntity: ReadingListEntity): Subject<number> {
         var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists`;
         var result = this.http.post(url, listEntity)
             .pipe(
@@ -235,13 +261,15 @@ export class ServiceApi {
                 catchError(this.handleError("postReadingList", null))
             );
 
-        result.subscribe(rlId => {
+        var subject = new Subject<number>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rlId => {
             listEntity.id = rlId;
             this.lso.updateReadingList(listEntity);
         });
-        return result;
+        return subject;
     }
-    postReadingListElement(rleEntity: ReadingListElementEntity): Observable<any> {
+    postReadingListElement(rleEntity: ReadingListElementEntity): Subject<number> {
         var url = `${ServiceApi.baseUrl}/users/${rleEntity.userId}/readingListElements`;
         var result = this.http.post(url, rleEntity)
             .pipe(
@@ -249,14 +277,16 @@ export class ServiceApi {
                 catchError(this.handleError("postReadingListElement", null))
             );
 
-        result.subscribe(rleId => {
+        var subject = new Subject<number>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(rleId => {
             rleEntity.id = rleId;
             this.lso.updateReadingListElement(rleEntity);
         });
-        return result;
+        return subject;
     }
 
-    putReadingList(listEntity: ReadingListEntity): Observable<any> {
+    putReadingList(listEntity: ReadingListEntity): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${listEntity.userId}/readingLists/${listEntity.id}`;
         var result = this.http.put(url, listEntity)
             .pipe(
@@ -264,10 +294,12 @@ export class ServiceApi {
                 catchError(this.handleError("putReadingList", null))
             );
 
-        result.subscribe(() => this.lso.updateReadingList(listEntity));
-        return result;
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => this.lso.updateReadingList(listEntity));
+        return subject;
     }
-    putReadingListElement(rleEntity: ReadingListElementEntity): Observable<any> {
+    putReadingListElement(rleEntity: ReadingListElementEntity): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${rleEntity.userId}/readingListElements/${rleEntity.id}`;
         var result = this.http.put(url, rleEntity)
             .pipe(
@@ -275,11 +307,13 @@ export class ServiceApi {
                 catchError(this.handleError("putReadingListElement", null))
             );
 
-        result.subscribe(() => this.lso.updateReadingListElement(rleEntity));
-        return result;
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => this.lso.updateReadingListElement(rleEntity));
+        return subject;
     }
 
-    deleteFollowedList(userId: number, followedListId: number): Observable<any> {
+    deleteFollowedList(userId: number, followedListId: number): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -287,10 +321,12 @@ export class ServiceApi {
                 catchError(this.handleError("deleteFollowedList", null))
             );
 
-        result.subscribe(() => this.lso.deleteMyFollowedList(followedListId));
-        return result;
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => this.lso.deleteMyFollowedList(followedListId));
+        return subject;
     }
-    deleteReadingListElement(userId: number, rleId: number): Observable<any>{
+    deleteReadingListElement(userId: number, rleId: number): Subject<any>{
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -298,7 +334,9 @@ export class ServiceApi {
                 catchError(this.handleError("deleteReadingListElement", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             var rle = this.lso.getReadingListElements()[rleId];
             this.lso.deleteReadingListElement(rleId);
             for (let commentId of rle.commentIds) {
@@ -312,9 +350,9 @@ export class ServiceApi {
                 this.lso.updateReadingList(this.lso.getReadingLists()[listId]);
             }
         });
-        return result;
+        return subject;
     }
-    deleteReadingList(userId: number, readingListId: number): Observable<any> {
+    deleteReadingList(userId: number, readingListId: number): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${readingListId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -322,8 +360,10 @@ export class ServiceApi {
                 catchError(this.handleError("deleteReadingList", null))
             );
 
-        result.subscribe(() => this.lso.deleteReadingList(readingListId));
-        return result;
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => this.lso.deleteReadingList(readingListId));
+        return subject;
     }
     deleteComment(userId: number, rleId: number, commentId: number): Observable<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/comments/${commentId}`;
@@ -334,7 +374,7 @@ export class ServiceApi {
             );
     }
 
-    addTagToReadingList(userId: number, listId: number, tagIds: number[]): Observable<any> {
+    addTagToReadingList(userId: number, listId: number, tagIds: number[]): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addTags`;
         var result = this.http.post(url, tagIds)
             .pipe(
@@ -342,13 +382,15 @@ export class ServiceApi {
                 catchError(this.handleError("addTagToReadingList", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             this.lso.getReadingLists()[listId].tagIds.push(tagIds[0]);
             this.lso.updateReadingList(this.lso.getReadingLists()[listId]);
         });
-        return result;
+        return subject;
     }
-    removeTagFromReadingList(userId: number, listId: number, tagId: number): Observable<any> {
+    removeTagFromReadingList(userId: number, listId: number, tagId: number): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/tags/${tagId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -356,15 +398,17 @@ export class ServiceApi {
                 catchError(this.handleError("removeTagFromReadingList", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             var index = this.lso.getReadingLists()[listId].tagIds.indexOf(tagId, 0);
             this.lso.getReadingLists()[listId].tagIds.splice(index, 1);
             this.lso.updateReadingList(this.lso.getReadingLists()[listId]);
         });
-        return result;
+        return subject;
     }
 
-    addTagToReadingListElement(userId: number, rleId: number, tagIds: number[]): Observable<any> {
+    addTagToReadingListElement(userId: number, rleId: number, tagIds: number[]): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/addTags`;
         var result = this.http.post(url, tagIds)
             .pipe(
@@ -372,13 +416,15 @@ export class ServiceApi {
                 catchError(this.handleError("addTagToReadingListElement", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             this.lso.getReadingListElements()[rleId].tagIds.push(tagIds[0]);
             this.lso.updateReadingListElement(this.lso.getReadingListElements()[rleId]);
         });
-        return result;
+        return subject;
     }
-    removeTagFromReadingListElement(userId: number, rleId: number, tagId: number): Observable<any> {
+    removeTagFromReadingListElement(userId: number, rleId: number, tagId: number): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingListElements/${rleId}/tags/${tagId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -386,15 +432,17 @@ export class ServiceApi {
                 catchError(this.handleError("removeTagFromReadingListElement", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             var index = this.lso.getReadingListElements()[rleId].tagIds.indexOf(tagId, 0);
             this.lso.getReadingListElements()[rleId].tagIds.splice(index, 1);
             this.lso.updateReadingListElement(this.lso.getReadingListElements()[rleId]);
         });
-        return result;
+        return subject;
     }
 
-    addReadingListElementToReadingList(userId: number, listId: number, rleIds: number[]): Observable<any> {
+    addReadingListElementToReadingList(userId: number, listId: number, rleIds: number[]): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/addReadingListElements`;
         var result = this.http.post(url, rleIds)
             .pipe(
@@ -402,7 +450,9 @@ export class ServiceApi {
                 catchError(this.handleError("addReadingListElementToReadingList", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             var rle = this.lso.getReadingListElements()[rleIds[0]];
             var rl = this.lso.getReadingLists()[listId];
 
@@ -412,9 +462,9 @@ export class ServiceApi {
             this.lso.updateReadingListElement(rle);
             this.lso.updateReadingList(rl);
         });
-        return result;
+        return subject;
     }
-    removeReadingListElementFromReadingList(userId: number, listId: number, rleId: number): Observable<any> {
+    removeReadingListElementFromReadingList(userId: number, listId: number, rleId: number): Subject<any> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/${listId}/readingListElements/${rleId}`;
         var result = this.http.delete(url)
             .pipe(
@@ -422,7 +472,9 @@ export class ServiceApi {
                 catchError(this.handleError("removeReadingListElementFromReadingList", null))
             );
 
-        result.subscribe(() => {
+        var subject = new Subject<any>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(() => {
             var rle = this.lso.getReadingListElements()[rleId];
             var rl = this.lso.getReadingLists()[listId];
 
@@ -435,7 +487,7 @@ export class ServiceApi {
             this.lso.updateReadingList(rl);
             this.lso.updateReadingListElement(rle);
         });
-        return result;
+        return subject;
     }
 
     private log(message: string) { this.logger.log(`[ServiceApi]: ${message}`); }
