@@ -12,18 +12,13 @@
         </tr>
     </table>
 
-    <table> <!-- so we can have a space between tags -->
-        <tr>
-            <td *ngFor="let tag of tags">
-                <table class="tags {{ helper.getTagStyle(tag.id) }}"><tr><td>
-                    <table><tr>
-                        <td class="tagitem" (click)="onSelectTag(tag)">{{ tag.tagName }}</td>
-                    </tr></table>
-                </td><td width="5px">
-                </td></tr></table>
-            </td>
-        </tr>
-    </table>
+    <span *ngFor="let tag of tags">
+        <span class="{{ helper.getTagStyle(tag.id) }}">
+            <table class="badge tag pointer"><tr><td (click)="onSelectTag(tag)">
+                {{ tag.tagName }}
+            </td></tr></table>
+        </span>
+    </span>
 </div>
 <div *ngIf="tag">
     <table class="item-header"><tr><td>

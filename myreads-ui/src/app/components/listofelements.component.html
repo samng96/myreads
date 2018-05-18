@@ -15,7 +15,7 @@
                 {{ helper.pickTitle(rle) }}
             </div>
             <table><tr>
-                <td>
+                <td class="rle-content-link">
                     <span *ngIf="ownRle(rle)" (click)="onToggleFavorite(rle)"
                         [class.text-secondary]="!rle.favorite"
                         [class.text-warning]="rle.favorite">
@@ -31,18 +31,13 @@
                     </a>
                 </td>
                 <td>
-                    <table> <!-- so we can have a space between tags -->
-                        <tr *ngIf="rle.tagIds">
-                            <td *ngFor="let tagId of rle.tagIds">
-                                <table *ngIf="lso.getTags()[tagId]" class="tags {{ helper.getTagStyle(tagId) }}"><tr><td>
-                                    <table><tr>
-                                        <td class="tagitem" (click)="onSelectTag(lso.getTags()[tagId])">{{ lso.getTags()[tagId].tagName }}</td>
-                                    </tr></table>
-                                </td><td width="5px">
-                                </td></tr></table>
-                            </td>
-                        </tr>
-                    </table>
+                    <span *ngFor="let tagId of rle.tagIds">
+                        <span class="{{ helper.getTagStyle(tagId) }}">
+                            <table class="badge tag pointer"><tr><td (click)="onSelectTag(lso.getTags()[tagId])">
+                                {{ lso.getTags()[tagId].tagName }}
+                            </td></tr></table>
+                        </span>
+                    </span>
                 </td>
             </tr></table>
         </td>
@@ -64,7 +59,7 @@
         </div>
         <div class="card-footer text-muted">
             <table><tr>
-                <td>
+                <td class="rle-content-link">
                     <span *ngIf="ownRle(rle)" (click)="onToggleFavorite(rle)"
                         [class.text-secondary]="!rle.favorite"
                         [class.text-warning]="rle.favorite">

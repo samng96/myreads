@@ -1,15 +1,32 @@
 <div *ngIf="getUser()">
-    <h1>{{ getUser().name }}</h1>
+    <span class="item-header-label">{{ getUser().name }}</span>
+    <p>
+        We will eventually have some profile information about this user.
+    </p>
 
-    <h2>Reading Lists</h2>
-    <ul *ngIf="getReadingListsForCurrentUser()" class="readingLists">
-        <li *ngFor="let rl of getReadingListsForCurrentUser()"
-            (click)="onSelectReadingList(rl)">{{ rl.name }}</li>
-    </ul>
+    <span class="item-header-label">Reading Lists</span>
+    <p>
+        This is the set of reading lists belonging to {{ getUser().name }}.
+    </p>
+    <table class="table table-striped table-hover table-sm" *ngIf="getReadingListsForCurrentUser()">
+        <tr class="pointer" *ngFor="let rl of getReadingListsForCurrentUser()" (click)="onSelectRl(rl)">
+            <td style="padding-left:10px;">
+                <i class="highlight fas fa-list-ul"></i>
+                {{ rl.name }}
+            </td>
+        </tr>
+    </table>
 
-    <h2>Followed Lists</h2>
-    <ul *ngIf="getFollowedListsForCurrentUser()" class="readingLists">
-        <li *ngFor="let fl of getFollowedListsForCurrentUser()"
-            (click)="onSelectReadingList(fl)">{{ fl.name }}</li>
-    </ul>
+    <span class="item-header-label">Followed Lists</span>
+    <p>
+        This is the set of reading lists that {{ getUser().name }} is following.
+    </p>
+    <table class="table table-striped table-hover table-sm" *ngIf="getFollowedListsForCurrentUser()">
+        <tr class="pointer" *ngFor="let rl of getFollowedListsForCurrentUser()" (click)="onSelectRl(rl)">
+            <td style="padding-left:10px;">
+                <i class="highlight fas fa-list-ul"></i>
+                {{ rl.name }}
+            </td>
+        </tr>
+    </table>
 </div>
