@@ -59,6 +59,24 @@ export class NavComponent implements OnInit {
             this.helper.loadUser(this.userEntity);
         }
     }
+    private getReadingListsForCurrentUser(): ReadingListEntity[] {
+        var rlIds = this.lso.getReadingListsByUser(this.lso.getMyUserId());
+        if (rlIds == null) { return null; }
+
+        var rls = rlIds.map(rlId => this.lso.getReadingList(rlId))
+            .sort((a,b) => a.name < b.name ? -1 : +(a.name > b.name));
+
+        return rls;
+    }
+    private getFollowedListsForCurrentUser(): ReadingListEntity[] {
+        var flIds = this.lso.getFollowedListsByUser(this.lso.getMyUserId());
+        if (flIds == null) { return null; }
+
+        var fls = flIds.map(flId => this.lso.getReadingList(this.lso.getFollowedList(flId).listId))
+            .sort((a,b) => a.name < b.name ? -1 : +(a.name > b.name));
+
+        return fls;
+    }
 
     private goTo(url: string): void {
         this.router.navigate([url]);

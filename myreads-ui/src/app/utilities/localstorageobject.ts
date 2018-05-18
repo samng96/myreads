@@ -118,6 +118,7 @@ export class LocalStorageObjectService {
     public getTags(): Map<number, TagEntity> { return this.lso.tags; }
     public getTagsByName(): Map<string, TagEntity> { return this.lso.tagsByName; }
     public getComments(): Map<number, CommentEntity> { return this.lso.comments; }
+    public getFollowedList(flId: number): FollowedListEntity { return this.lso.followedLists[flId]; }
     public getFollowedLists(): Map<number, FollowedListEntity> { return this.lso.followedLists; }
     public getFollowedListsByUser(userId: number): number[] { return this.lso.followedListsByUser[userId]; }
 
@@ -159,16 +160,16 @@ export class LocalStorageObjectService {
     public updateFollowedList(listEntity: FollowedListEntity): void {
         if (listEntity == null) { return; }
 
-        this.lso.followedLists[listEntity.listId] = listEntity;
+        this.lso.followedLists[listEntity.id] = listEntity;
         var lists = this.lso.followedListsByUser[listEntity.userId];
         var userId = listEntity.userId;
         if (lists == null) {
-            this.lso.followedListsByUser[userId] = [listEntity.listId];
+            this.lso.followedListsByUser[userId] = [listEntity.id];
         }
         else {
-            var index = this.lso.followedListsByUser[userId].indexOf(listEntity.listId, 0);
+            var index = this.lso.followedListsByUser[userId].indexOf(listEntity.id, 0);
             if (index == -1) {
-                this.lso.followedListsByUser[userId].push(listEntity.listId);
+                this.lso.followedListsByUser[userId].push(listEntity.id);
             }
         }
         this.lso.save();
@@ -212,12 +213,12 @@ export class LocalStorageObjectService {
         this.lso.readingListsByUser[rl.userId].splice(index, 1);
         this.lso.save();
     }
-    public deleteFollowedList(listId: number): void {
-        var fl = this.lso.followedLists[listId];
+    public deleteFollowedList(flId: number): void {
+        var fl = this.lso.followedLists[flId];
         if (fl == null) { return; }
 
-        this.lso.followedLists.delete(listId);
-        var index = this.lso.followedListsByUser[fl.userId].indexOf(listId, 0);
+        this.lso.followedLists.delete(flId);
+        var index = this.lso.followedListsByUser[fl.userId].indexOf(flId, 0);
         this.lso.followedListsByUser[fl.userId].splice(index, 1);
         this.lso.save();
     }

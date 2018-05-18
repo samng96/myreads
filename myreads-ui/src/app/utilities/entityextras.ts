@@ -48,7 +48,7 @@ export class ExtrasHelpers {
     }
     public loadUser(userEntity: UserEntity): void {
         // Load up everything we know about the user.
-        this.serviceApi.getReadingLists(userEntity.id);
+        this.serviceApi.getReadingLists(userEntity.id, null);
 
         this.serviceApi.getFollowedLists(userEntity.id).subscribe(followedLists => {
             if (followedLists == null) { return; }

@@ -32,11 +32,11 @@ export class ServiceApi {
         subject.subscribe(user => this.lso.updateUser(user));
         return subject;
     }
-    getReadingLists(userId: number): Subject<ReadingListEntity[]> {
-        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists`;
+    getReadingLists(userId: number, filter: string): Subject<ReadingListEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/?${filter}`;
         var result = this.http.get<ReadingListEntity[]>(url)
             .pipe(
-                tap(_ => this.log(`getReadingLists(${userId})`)),
+                tap(_ => this.log(`getReadingLists(${userId}, ${filter})`)),
                 catchError(this.handleError("getReadingLists", null))
             );
 

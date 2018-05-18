@@ -42,13 +42,22 @@ export class UsersComponent implements OnInit {
         }
     }
     private getReadingListsForCurrentUser(): ReadingListEntity[] {
-        var rls = this.lso.getReadingListsByUser(this.userId).sort(
-            (a,b) => this.lso.getReadingList(a).name < this.lso.getReadingList(b).name ? -1 : this.lso.getReadingList(a).name > this.lso.getReadingList(b));
+        var rlIds = this.lso.getReadingListsByUser(this.userId);
+        if (rlIds == null) { return null; }
+
+        var rls = rlIds.map(rlId => this.lso.getReadingList(rlId))
+            .sort((a,b) => a.name < b.name ? -1 : +(a.name > b.name));
 
         return rls;
     }
     private getFollowedListsForCurrentUser(): ReadingListEntity[] {
-        return null;
+        var flIds = this.lso.getFollowedListsByUser(this.userId);
+        if (flIds == null) { return null; }
+
+        var fls = flIds.map(flId => this.lso.getReadingList(this.lso.getFollowedList(flId).listId))
+            .sort((a,b) => a.name < b.name ? -1 : +(a.name > b.name));
+
+        return fls;
     }
 
     private onSelectReadingList(list: ReadingListEntity): void {

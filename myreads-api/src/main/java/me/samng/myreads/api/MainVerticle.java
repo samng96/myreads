@@ -147,7 +147,7 @@ public class MainVerticle extends AbstractVerticle {
         router.put("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.putReadingList(routingContext); });
         router.delete("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
 
-        router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
+        router.get("/:userId/readingLists/*").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
         router.post("/:userId/readingListsByTag").handler(routingContext -> { readingListRoute.getAllReadingListsByTag(routingContext); });

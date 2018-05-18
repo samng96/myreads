@@ -145,8 +145,18 @@ export class ReadingListsComponent implements OnInit {
     private onUnfollowList(): void {
         this.followingList = false;
 
-        var fl = this.lso.getFollowedList(this.listId);
-        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fl.Id);
+        var flIds = this.lso.getFollowedListsByUser(this.lso.getMyUserId());
+        var result = null;
+        for (let flId of flIds) {
+            var fl = this.lso.getFollowedList(flId);
+            if (fl.listId == this.listId) {
+                result = fl;
+                break;
+            }
+        }
+        if (result != null) {
+            this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), result);
+        }
     }
 
     private onAddTag(): void {

@@ -164,7 +164,8 @@ export class ReadingListElementsComponent implements OnInit {
     }
     private getListsThatRleIsNotIn(): ReadingListEntity[] {
         var lists = [];
-        for (let rl of this.lso.getReadingListsByUser(this.lso.getMyUserId())) {
+        for (let rlId of this.lso.getReadingListsByUser(this.lso.getMyUserId())) {
+            var rl = this.lso.getReadingList(rlId);
             if (rl.readingListElementIds.indexOf(this.rleId, 0) == -1) {
                 lists.push(rl);
             }

@@ -3,13 +3,13 @@
 
     <h2>Reading Lists</h2>
     <ul *ngIf="getReadingListsForCurrentUser()" class="readingLists">
-        <li *ngFor="let rlId of getReadingListsForCurrentUser()"
-            (click)="onSelectReadingList(lso.getReadingList(rlId))">{{ lso.getReadingList(rlId).name }}</li>
+        <li *ngFor="let rl of getReadingListsForCurrentUser()"
+            (click)="onSelectReadingList(rl)">{{ rl.name }}</li>
     </ul>
 
     <h2>Followed Lists</h2>
     <ul *ngIf="getFollowedListsForCurrentUser()" class="readingLists">
-        <li *ngFor="let flId of getFollowedListsForCurrentUser()"
-            (click)="onSelectReadingList(lso.getReadingList(flId))">{{ lso.getReadingList(flId).name }}</li>
+        <li *ngFor="let fl of getFollowedListsForCurrentUser()"
+            (click)="onSelectReadingList(fl)">{{ fl.name }}</li>
     </ul>
 </div>
