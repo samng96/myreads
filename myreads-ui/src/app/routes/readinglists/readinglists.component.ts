@@ -62,7 +62,7 @@ export class ReadingListsComponent implements OnInit {
         {
             if (readingList == null) { return; }
 
-            this.ownList = this.isViewingCurrentUser(readingList.userId);
+            this.ownList = this.helper.isViewingCurrentUser(readingList.userId);
             this.editListName = readingList.name;
             this.editListDescription = readingList.description;
 
@@ -145,8 +145,8 @@ export class ReadingListsComponent implements OnInit {
     private onUnfollowList(): void {
         this.followingList = false;
 
-        var fleId = this.lso.getMyFollowedLists()[this.listId];
-        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fleId);
+        var fl = this.lso.getFollowedList(this.listId);
+        this.serviceApi.deleteFollowedList(this.lso.getMyUserId(), fl.Id);
     }
 
     private onAddTag(): void {
@@ -255,24 +255,7 @@ export class ReadingListsComponent implements OnInit {
         return title;
     }
     private isFollowingList(listId: number): boolean {
-        return (this.lso.getMyFollowedLists().indexOf(listId) != -1);
-    }
-    private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
-        if (currentUser == null) {
-            return false;
-        }
-        var targetUser = this.lso.getUsers()[userId];
-        if (targetUser == null) {
-            return false;
-        }
-        return currentUser.userId == targetUser.userId;
+        return (this.lso.getFollowedListsByUser(this.lso.getMyUserId()).indexOf(listId) != -1);
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
-    private handleError<T>(operation: string, result?:T) {
-        return (error: any): Observable<T> => {
-            this.log(`${operation} failed: ${error.message}`);
-            return of(result as T);
-        }
-    }
 }

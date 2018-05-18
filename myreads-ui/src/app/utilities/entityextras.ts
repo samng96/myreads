@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { LocalStorageObjectService } from './localstorageobject';
-import { ReadingListElementEntity } from './entities';
+import { ReadingListElementEntity, UserEntity } from './entities';
 
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { LoggerService } from './logger.service';
+import { ServiceApi } from './serviceapi.service';
 
 export class ReadingListElementExtras {
     title: string;
@@ -29,16 +30,38 @@ export class ExtrasHelpers {
 
     private maxTitleLength: number = 75;
     private maxDescriptionLength: number = 150;
-    private numTagStyles: number = 6;
+    private numTagStyles: number = 7;
 
     constructor(
         private http: HttpClient,
         private lso: LocalStorageObjectService,
+        private serviceApi: ServiceApi,
         private logger: LoggerService
     ) { }
 
     public getTagStyle(tagId: number): string {
-        return `tagcolor${tagId % this.numTagStyles}`;
+        return `tagcolor${(tagId / 2) % this.numTagStyles}`;
+    }
+
+    public isViewingCurrentUser(userId: number): boolean {
+        return this.lso.getMyUserId() == userId;
+    }
+    public loadUser(userEntity: UserEntity): void {
+        // Load up everything we know about the user.
+        this.serviceApi.getReadingLists(userEntity.id);
+
+        this.serviceApi.getFollowedLists(userEntity.id).subscribe(followedLists => {
+            if (followedLists == null) { return; }
+
+            for (let fl of followedLists) {
+                if (this.lso.getReadingLists()[fl.listId] == null) {
+                    this.serviceApi.getReadingList(fl.ownerId, fl.listId);
+                }
+                if (this.lso.getUsers()[fl.ownerId] == null) {
+                    this.serviceApi.getUser(fl.ownerId);
+                }
+            }
+        });
     }
 
     public getLinkPreview(link: string): Observable<LinkPreviewResultObject> {

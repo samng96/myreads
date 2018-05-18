@@ -40,7 +40,7 @@ export class ReadingListElementsComponent implements OnInit {
     ngOnInit() {
         this.rleId = +this.route.snapshot.paramMap.get('elementId');
         this.userId = +this.route.snapshot.paramMap.get('userId');
-        this.ownRle = this.isViewingCurrentUser(this.userId);
+        this.ownRle = this.helper.isViewingCurrentUser(this.userId);
 
         this.comments = [];
 
@@ -164,24 +164,12 @@ export class ReadingListElementsComponent implements OnInit {
     }
     private getListsThatRleIsNotIn(): ReadingListEntity[] {
         var lists = [];
-        for (let rlid of this.lso.getMyReadingLists()) {
-            let rl = this.lso.getReadingLists()[rlid];
+        for (let rl of this.lso.getReadingListsByUser(this.lso.getMyUserId())) {
             if (rl.readingListElementIds.indexOf(this.rleId, 0) == -1) {
                 lists.push(rl);
             }
         }
         return lists;
-    }
-    private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
-        if (currentUser == null) {
-            return false;
-        }
-        var targetUser = this.lso.getUsers()[userId];
-        if (targetUser == null) {
-            return false;
-        }
-        return currentUser.userId == targetUser.userId;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

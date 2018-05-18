@@ -1,6 +1,6 @@
 <div *ngIf="isVisible">
     <table class="nav-table">
-        <tr (click)="goTo('home')">
+        <tr (click)="goTo('')">
             <td>
                 <i class="text-danger fas fa-home"></i> Home
             </td>
@@ -22,7 +22,7 @@
         </tr>
     </table>
 
-    <table class="nav-table" *ngIf="lso.getMyReadingLists()">
+    <table class="nav-table" *ngIf="lso.getReadingListsByUser(lso.getMyUserId())">
         <tr class="nav-table-header" (click)="onToggleRls()">
             <th scope="row">
                 <i class="highlight far fa-folder"></i> Reading Lists
@@ -32,7 +32,7 @@
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleRls">
-        <tr *ngFor="let rlid of lso.getMyReadingLists()" (click)="onSelectReadingList(lso.getReadingLists()[rlid])">
+        <tr *ngFor="let rlid of lso.getReadingListsByUser(lso.getMyUserId())" (click)="onSelectReadingList(lso.getReadingLists()[rlid])">
             <td style="padding-left:15px;"><i class="highlight fas fa-list-ul"></i> {{ lso.getReadingLists()[rlid].name }}</td>
         </tr>
     </table>
@@ -48,7 +48,7 @@
         </tr>
     </table>
     <table class="nav-table" *ngIf="toggleFls">
-        <tr *ngFor="let flid of lso.getMyFollowedLists()" (click)="onSelectReadingList(lso.getReadingLists()[flid])">
+        <tr *ngFor="let flid of lso.getFollowedListsByUser(lso.getMyUserId())" (click)="onSelectReadingList(lso.getReadingLists()[flid])">
             <td *ngIf="lso.getReadingLists()[flid]" style="padding-left:15px;"><i class="highlight fas fa-list-ul"></i> {{ this.lso.getReadingLists()[flid].name }}</td>
         </tr>
     </table>

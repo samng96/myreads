@@ -5,6 +5,7 @@ import { ServiceApi } from '../utilities/serviceapi.service';
 import { UserEntity, ReadingListEntity, FollowedListEntity } from '../utilities/entities';
 import { LoggerService } from '../utilities/logger.service';
 import { LocalStorageObjectService } from '../utilities/localstorageobject';
+import { ExtrasHelpers } from '../utilities/entityextras';
 
 @Component({
     selector: 'app-nav',
@@ -22,6 +23,7 @@ export class NavComponent implements OnInit {
     constructor(
         private serviceApi: ServiceApi,
         private lso: LocalStorageObjectService,
+        private helper: ExtrasHelpers,
         private router: Router,
         private logger: LoggerService
     ) { }
@@ -45,23 +47,17 @@ export class NavComponent implements OnInit {
         });
     }
 
-    private loadUser() {
-        // Load up everything we know about the user.
-        this.userEntity = this.lso.getUsers()[this.lso.getMyUserId()];
-        this.serviceApi.getReadingLists(this.userEntity.id);
-
-        this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
-            if (followedLists == null) { return; }
-
-            for (let fl of followedLists) {
-                if (this.lso.getReadingLists()[fl.listId] == null) {
-                    this.serviceApi.getReadingList(fl.ownerId, fl.listId);
-                }
-                if (this.lso.getUsers()[fl.ownerId] == null) {
-                    this.serviceApi.getUser(fl.ownerId);
-                }
-            }
-        });
+    private loadUser(): void {
+        this.userEntity = this.lso.getUser(this.lso.getMyUserId());
+        if (this.userEntity == null) {
+            this.serviceApi.getUser(this.lso.getMyUserId()).subscribe(user => {
+                this.userEntity = user;
+                this.helper.loadUser(this.userEntity);
+            });
+        }
+        else {
+            this.helper.loadUser(this.userEntity);
+        }
     }
 
     private goTo(url: string): void {

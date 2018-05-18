@@ -156,6 +156,12 @@ body {
 .tagcolor5 table:hover {
     background-color: #968f12;
 }
+.tagcolor6 table {
+    background-color: #c6c04f;
+}
+.tagcolor6 table:hover {
+    background-color: #968f12;
+}
 
 .comments {
     font-size: 13px;

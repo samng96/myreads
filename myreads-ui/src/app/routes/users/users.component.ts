@@ -7,6 +7,7 @@ import { ServiceApi } from '../../utilities/serviceapi.service';
 import { UserEntity, ReadingListEntity, FollowedListEntity } from '../../utilities/entities';
 import { LoggerService } from '../../utilities/logger.service';
 import { LocalStorageObjectService } from '../../utilities/localstorageobject';
+import { ExtrasHelpers } from '../../utilities/entityextras';
 
 @Component({
     selector: 'app-users',
@@ -14,75 +15,44 @@ import { LocalStorageObjectService } from '../../utilities/localstorageobject';
 })
 export class UsersComponent implements OnInit {
     userId: number; // This is the current user we're trying to view.
-    userEntity: UserEntity; // This is for presentation.
-    readingLists: ReadingListEntity[]; // The reading lists to present on this user.
-    followedLists: ReadingListEntity[]; // The followed lists to present on this user.
-    canEdit: boolean;
+    ownUser: boolean;
 
     constructor(
         private lso: LocalStorageObjectService,
         private route: ActivatedRoute,
         private serviceApi: ServiceApi,
+        private helper: ExtrasHelpers,
         private router: Router,
         private logger: LoggerService
     ) { }
+    private getUser(): UserEntity {
+        return this.lso.getUser(this.userId);
+    }
 
     ngOnInit() {
         // When we load up, we need to get the user in the route.
         this.userId = +this.route.snapshot.paramMap.get('userId');
-        this.followedLists = [];
-        this.readingLists = [];
+        this.ownUser = this.helper.isViewingCurrentUser(this.userId);
 
-        this.serviceApi.getUser(this.userId).subscribe(user => {
-            if (user == null) { return; }
+        if (this.getUser() == null) {
+            this.serviceApi.getUser(this.userId).subscribe(user => this.helper.loadUser(user));
+        }
+        else {
+            this.helper.loadUser(this.getUser());
+        }
+    }
+    private getReadingListsForCurrentUser(): ReadingListEntity[] {
+        var rls = this.lso.getReadingListsByUser(this.userId).sort(
+            (a,b) => this.lso.getReadingList(a).name < this.lso.getReadingList(b).name ? -1 : this.lso.getReadingList(a).name > this.lso.getReadingList(b));
 
-            this.userEntity = user;
-            this.canEdit = this.isViewingCurrentUser(user.id);
-
-            this.serviceApi.getReadingLists(this.userEntity.id).subscribe(readingLists => {
-                if (readingLists == null) { return; }
-
-                this.readingLists = readingLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
-            });
-
-            this.serviceApi.getFollowedLists(this.userEntity.id).subscribe(followedLists => {
-                if (followedLists == null) { return; }
-
-                for (let fl of followedLists) {
-                    if (this.lso.getReadingLists()[fl.listId] == null) {
-                        this.serviceApi.getReadingList(fl.ownerId, fl.listId).subscribe(readingList => {
-                            if (readingList == null) { return; }
-
-                            this.followedLists.push(readingList);
-                            this.followedLists = this.followedLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
-                            if (this.lso.getUsers()[fl.ownerId] == null) {
-                                this.serviceApi.getUser(fl.ownerId);
-                            }
-                        });
-                    }
-                    else {
-                        this.followedLists.push(this.lso.getReadingLists()[fl.listId]);
-                        this.followedLists = this.followedLists.sort((a, b) => a.name < b.name ? -1 : +(a.name > b.name));
-                    }
-                }
-            });
-        });
+        return rls;
+    }
+    private getFollowedListsForCurrentUser(): ReadingListEntity[] {
+        return null;
     }
 
     private onSelectReadingList(list: ReadingListEntity): void {
         this.router.navigate(['users', list.userId, 'readinglists', list.id]);
-    }
-
-    private isViewingCurrentUser(userId: number): boolean {
-        var currentUser = this.lso.getUsers()[this.lso.getMyUserId()];
-        if (currentUser == null) {
-            return false;
-        }
-        var targetUser = this.lso.getUsers()[userId];
-        if (targetUser == null) {
-            return false;
-        }
-        return currentUser.userId == targetUser.userId;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

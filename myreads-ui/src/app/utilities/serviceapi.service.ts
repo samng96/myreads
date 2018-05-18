@@ -313,17 +313,17 @@ export class ServiceApi {
         return subject;
     }
 
-    deleteFollowedList(userId: number, followedListId: number): Subject<any> {
-        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedListId}`;
+    deleteFollowedList(userId: number, followedList: FollowedListEntity): Subject<any> {
+        var url = `${ServiceApi.baseUrl}/users/${userId}/followedLists/${followedList.id}`;
         var result = this.http.delete(url)
             .pipe(
-                tap(_ => this.log(`deleteFollowedList(${userId}, ${followedListId})`)),
+                tap(_ => this.log(`deleteFollowedList(${userId}, ${followedList})`)),
                 catchError(this.handleError("deleteFollowedList", null))
             );
 
         var subject = new Subject<any>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(() => this.lso.deleteMyFollowedList(followedListId));
+        subject.subscribe(() => this.lso.deleteFollowedList(followedList.listId));
         return subject;
     }
     deleteReadingListElement(userId: number, rleId: number): Subject<any>{
