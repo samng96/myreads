@@ -273,6 +273,22 @@ export class ServiceApi {
             );
     }
 
+    postUser(user: UserEntity): Subject<number> {
+        var url = `${ServiceApi.baseUrl}/users`;
+        var result = this.http.postWithoutAuth(url, user)
+            .pipe(
+                tap(_ => this.log(`postUser(${user})`)),
+                catchError(this.handleError("postUser", null))
+            );
+
+        var subject = new Subject<number>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(userId => {
+            user.id = userId;
+            this.lso.updateUser(user);
+        });
+        return subject;
+    }
     postFollowedList(followedListEntity: FollowedListEntity): Subject<number> {
         var url = `${ServiceApi.baseUrl}/users/${followedListEntity.userId}/followedLists`;
         var result = this.http.post(url, followedListEntity)

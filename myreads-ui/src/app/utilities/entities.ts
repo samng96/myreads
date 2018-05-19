@@ -3,6 +3,7 @@ export class UserEntity {
     email: string;
     name: string;
     userId: string;
+    externalId: string;
 }
 
 export class ReadingListEntity {

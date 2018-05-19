@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { UserEntity } from '../../utilities/entities';
 import { ServiceApi } from '../../utilities/serviceapi.service';
 import { LoggerService } from '../../utilities/logger.service';
 import { LocalStorageObjectService } from '../../utilities/localstorageobject';
@@ -15,6 +16,7 @@ declare var gapi: any;
 export class LoginComponent implements OnInit {
     username: string;
     password: string;
+    profile: any;
 
     hardcodedUserId: number = 5732452450435072;
 
@@ -42,25 +44,41 @@ export class LoginComponent implements OnInit {
     }
 
     public onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
+        this.profile = googleUser.getBasicProfile();
 
-        this.serviceApi.getUserByAuthToken(profile.getId()).subscribe(user => {
+        this.serviceApi.getUserByAuthToken(this.profile.getId()).subscribe(user => {
             if (user == null) {
                 // No user here, move us to sign up.
-                this.lso.setLoggedOut();
+                $("#signupModal").modal("show");
             }
-
-            this.lso.setMyLoginInfo(
-                profile.getId(),
-                user.id,
-                profile.getImageUrl(),
-                profile.getGivenName()
-            );
-
-            this.log(`successful login for user ${user.name}`)
-            this.checkLogin();
+            else {
+                this.setLoggedIn(user.id);
+            }
         });
     };
+
+    public onSignUp() {
+        var user = new UserEntity();
+        user.email = this.profile.getEmail();
+        user.name = this.profile.getGivenName();
+        user.userId = this.profile.getName();
+        user.externalId = this.profile.getId();
+        this.serviceApi.postUser(user).subscribe(userId => {
+            this.setLoggedIn(userId);
+        });
+    }
+
+    private setLoggedIn(userId: number) {
+        this.lso.setMyLoginInfo(
+            this.profile.getId(),
+            userId,
+            this.profile.getImageUrl(),
+            this.profile.getGivenName()
+        );
+
+        this.log(`successful login for user ${this.profile.getGivenName()}`)
+        this.checkLogin();
+    }
 
     ngAfterViewInit() {
         gapi.signin2.render('my-signin2', {
