@@ -61,7 +61,7 @@ export class SearchComponent implements OnInit {
 
             this.route.queryParams.subscribe(params => {
                 this.searchTerm = params["searchTerm"];
-                this.performSearch(this.searchTerm);
+                this.performSearch(this.searchTerm.toLowerCase());
             });
         }
     }
@@ -76,7 +76,7 @@ export class SearchComponent implements OnInit {
         this.serviceApi.getUsers().subscribe(users => {
             this.users = [];
             for (let user of users) {
-                if (user.name.includes(searchTerm) || user.userId.includes(searchTerm)) {
+                if (user.name.toLowerCase().includes(searchTerm) || user.userId.includes(searchTerm)) {
                     this.users.push(user);
                 }
             }
