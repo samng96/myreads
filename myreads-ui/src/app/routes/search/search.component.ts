@@ -16,6 +16,12 @@ import { ListOfElementsComponent, ListOfElementsCommunicationObject } from '../.
 })
 export class SearchComponent implements OnInit {
     public searchTitle: string;
+    public isDisplayingList: boolean;
+
+    public searchTerm: string;
+    public isDisplayingSearch: boolean;
+    public isSearchDone: boolean;
+    public users: UserEntity[];
 
     constructor(
         private lso: LocalStorageObjectService,
@@ -36,6 +42,9 @@ export class SearchComponent implements OnInit {
         // First clear out the comms object.
         this.listOfElements.listOfElements = null;
         this.listOfElements.listOfElementIds = null;
+        this.isDisplayingList = false;
+        this.isSearchDone = false;
+        this.users = null;
 
         var path = this.route.snapshot.routeConfig.path;
         if (path == "unread") {
@@ -46,6 +55,33 @@ export class SearchComponent implements OnInit {
             this.searchTitle = "Displaying favorite items";
             this.loadFavoriteElements();
         }
+        else if (path == "search") {
+            this.searchTitle = "Search";
+            this.isDisplayingSearch = true;
+
+            this.route.queryParams.subscribe(params => {
+                this.searchTerm = params["searchTerm"];
+                this.performSearch(this.searchTerm);
+            });
+        }
+    }
+
+    private onSelectUser(user: UserEntity): void {
+        this.router.navigate(['users', user.id]);
+    }
+
+    private performSearch(searchTerm: string) {
+        // Right now, all we search through is users, so load up all the users
+        // and see if any names match the search term.
+        this.serviceApi.getUsers().subscribe(users => {
+            this.users = [];
+            for (let user of users) {
+                if (user.name.includes(searchTerm) || user.userId.includes(searchTerm)) {
+                    this.users.push(user);
+                }
+            }
+            this.isSearchDone = true;
+        });
     }
 
     private loadUnreadElements(): void {
@@ -54,6 +90,8 @@ export class SearchComponent implements OnInit {
 
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
+
+            this.isDisplayingList = true;
         });
     }
 
@@ -63,6 +101,8 @@ export class SearchComponent implements OnInit {
 
             this.listOfElements.displayById = false;
             this.listOfElements.listOfElements = rles;
+
+            this.isDisplayingList = true;
         });
     }
 

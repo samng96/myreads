@@ -9,7 +9,7 @@
         This is the set of reading lists belonging to {{ getUser().name }}.
     </p>
     <table class="table table-striped table-hover table-sm" *ngIf="getReadingListsForCurrentUser()">
-        <tr class="pointer" *ngFor="let rl of getReadingListsForCurrentUser()" (click)="onSelectRl(rl)">
+        <tr class="pointer" *ngFor="let rl of getReadingListsForCurrentUser()" (click)="onSelectReadingList(rl)">
             <td style="padding-left:10px;">
                 <i class="highlight fas fa-list-ul"></i>
                 {{ rl.name }}
@@ -22,7 +22,7 @@
         This is the set of reading lists that {{ getUser().name }} is following.
     </p>
     <table class="table table-striped table-hover table-sm" *ngIf="getFollowedListsForCurrentUser()">
-        <tr class="pointer" *ngFor="let rl of getFollowedListsForCurrentUser()" (click)="onSelectRl(rl)">
+        <tr class="pointer" *ngFor="let rl of getFollowedListsForCurrentUser()" (click)="onSelectReadingList(rl)">
             <td style="padding-left:10px;">
                 <i class="highlight fas fa-list-ul"></i>
                 {{ rl.name }}

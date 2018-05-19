@@ -32,6 +32,23 @@ export class ServiceApi {
         subject.subscribe(user => this.lso.updateUser(user));
         return subject;
     }
+    getUsers(): Subject<UserEntity[]> {
+        var url = `${ServiceApi.baseUrl}/users`;
+        var result = this.http.get<UserEntity>(url)
+            .pipe(
+                tap(_ => this.log(`getUsers`)),
+                catchError(this.handleError("getUsers", null))
+            );
+
+        var subject = new Subject<UserEntity[]>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(users => {
+            for (let user of users) {
+                this.lso.updateUser(user);
+            }
+        });
+        return subject;
+    }
     getReadingLists(userId: number, filter: string): Subject<ReadingListEntity[]> {
         var url = `${ServiceApi.baseUrl}/users/${userId}/readingLists/?${filter}`;
         var result = this.http.get<ReadingListEntity[]>(url)

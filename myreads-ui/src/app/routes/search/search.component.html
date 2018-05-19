@@ -1,3 +1,17 @@
 <span class="item-header-label">{{ searchTitle }}</span>
 
-<app-listofelements></app-listofelements>
+<app-listofelements *ngIf="isDisplayingList"></app-listofelements>
+
+<div *ngIf="isDisplayingSearch">
+    Displaying search results for <i>{{ searchTerm }}</i>:<p></p>
+
+    <table class="table table-striped table-hover table-sm" *ngIf="users">
+        <tr class="pointer" *ngFor="let user of users" (click)="onSelectUser(user)">
+            <td style="padding-left:10px;">
+                <i class="highlight far fa-user"></i>
+                {{ user.name }}
+            </td>
+        </tr>
+    </table>
+    <div *ngIf="isSearchDone && (!users || users.length == 0)">Your search term did not match any results</div>
+</div>

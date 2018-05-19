@@ -265,7 +265,13 @@ export class ReadingListsComponent implements OnInit {
         return title;
     }
     private isFollowingList(listId: number): boolean {
-        return (this.lso.getFollowedListsByUser(this.lso.getMyUserId()).indexOf(listId) != -1);
+        var flIds = this.lso.getFollowedListsByUser(this.lso.getMyUserId());
+        for (let flId of flIds) {
+            if (this.lso.getFollowedList(flId).listId == listId) {
+                return true;
+            }
+        }
+        return false;
     }
     private log(message: string) { this.logger.log(`[Users]: ${message}`); }
 }

@@ -19,6 +19,7 @@ const routes: Routes = [
     { path: 'tags', component: TagsComponent },
     { path: 'unread', component: SearchComponent },
     { path: 'favorites', component: SearchComponent },
+    { path: 'search', component: SearchComponent }
 
     { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

@@ -1,4 +1,5 @@
 <div class="g-signin2" data-onsuccess="onSignIn" style="display:none"></div>
+
 <nav class="navbar navbar-dark bg-dark text-white" *ngIf="isVisible">
     <div class="container" style="padding-right:0px">
         <div class="row w-100">
@@ -18,7 +19,11 @@
             </div>
             <div class="col-2" style="padding-right:0px">
                 <div class="input-group input-group-sm">
-                    <input type="text" class="form-control form-rounded" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" placeholder="Search"/>
+                    <input type="text"
+                        class="form-control form-rounded"
+                        [(ngModel)]="searchTerm"
+                        (keyup.enter)="onSearch()"
+                        placeholder="Search"/>
                     <div class="input-group-append">
                         <button class="btn btn-outline-success" (click)="onSearch()" type="button"><span class="fas fa-search"></span></button>
                     </div>

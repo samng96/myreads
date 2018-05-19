@@ -13,6 +13,7 @@ declare var gapi: any;
 })
 export class ToolbarComponent implements OnInit {
     public isVisible: boolean;
+    public searchTerm: string;
 
     constructor(
         private ngZone: NgZone,
@@ -29,7 +30,7 @@ export class ToolbarComponent implements OnInit {
         });
     }
 
-    onSignOut(): void {
+    private onSignOut(): void {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(() => {
             this.lso.setLoggedOut();
@@ -37,5 +38,9 @@ export class ToolbarComponent implements OnInit {
                 this.router.navigate(['login']);
             });
         });
+    }
+
+    private onSearch(): void {
+        this.router.navigate(['search'], { queryParams: { searchTerm: this.searchTerm } }]);
     }
 }
