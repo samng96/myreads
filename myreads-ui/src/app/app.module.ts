@@ -14,7 +14,7 @@ import { ReadingListElementsComponent } from './routes/readinglistelements/readi
 import { SearchComponent } from './routes/search/search.component';
 
 import { LoggerService } from './utilities/logger.service';
-import { ServiceApi } from './utilities/serviceapi.service';
+import { ServiceApi, HttpWrapperClient } from './utilities/serviceapi.service';
 import { LocalStorageObjectService } from './utilities/localstorageobject';
 import { ExtrasHelpers } from './utilities/entityextras';
 
@@ -45,7 +45,7 @@ import { ListOfElementsComponent, ListOfElementsCommunicationObject } from './co
         FormsModule,
         HttpClientModule
     ],
-    providers: [ LoggerService, ServiceApi, LocalStorageObjectService, ExtrasHelpers, ListOfElementsCommunicationObject ],
+    providers: [ LoggerService, ServiceApi, HttpWrapperClient, LocalStorageObjectService, ExtrasHelpers, ListOfElementsCommunicationObject ],
     bootstrap: [ AppComponent ]
 })
 export class AppModule { }

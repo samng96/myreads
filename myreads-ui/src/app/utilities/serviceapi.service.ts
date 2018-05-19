@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -10,12 +10,39 @@ import { UserEntity, ReadingListEntity, FollowedListEntity, ReadingListElementEn
 import { LocalStorageObjectService } from './localstorageobject';
 
 @Injectable()
+export class HttpWrapperClient {
+    constructor(
+        private lso: LocalStorageObjectService,
+        private http: HttpClient) { }
+
+    private createAuthHeaders(): HttpHeaders {
+        return new HttpHeaders().set("Authorization", this.lso.getMyLoginToken());
+    }
+
+    public get<T>(url: string): Observable<T> {
+        return this.http.get<T>(url, { headers: this.createAuthHeaders() });
+    }
+
+    public post<T>(url: string, payload: any): Observable<T> {
+        return this.http.post<T>(url, payload, { headers: this.createAuthHeaders() });
+    }
+
+    public delete<T>(url: string): Observable<T> {
+        return this.http.delete<T>(url, { headers: this.createAuthHeaders() });
+    }
+
+    public put<T>(url: string, payload: any): Observable<T> {
+        return this.http.put<T>(url, payload, { headers: this.createAuthHeaders() });
+    }
+}
+
+@Injectable()
 export class ServiceApi {
     public static baseUrl = "http://localhost:8080"
 
     constructor(
         private lso: LocalStorageObjectService,
-        private http: HttpClient,
+        private http: HttpWrapperClient,
         private logger: LoggerService
     ) { }
 

@@ -22,6 +22,9 @@ public class UserEntity {
     @JsonProperty("userId")
     public String userId;
 
+    @JsonProperty("externalId")
+    public String externalId;
+
     @JsonProperty("deleted")
     public boolean deleted;
 

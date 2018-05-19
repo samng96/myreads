@@ -48,6 +48,7 @@ public class MainVerticle extends AbstractVerticle {
         allowedHeaders.add("origin");
         allowedHeaders.add("Content-Type");
         allowedHeaders.add("accept");
+        allowedHeaders.add("Authorization");
 
         Set<HttpMethod> allowedMethods = new HashSet<>();
         allowedMethods.add(HttpMethod.GET);

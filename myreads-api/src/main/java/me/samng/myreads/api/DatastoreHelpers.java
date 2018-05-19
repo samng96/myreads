@@ -25,6 +25,7 @@ public class DatastoreHelpers {
     public static String tagKind = "tag";
     public static String tagToReadingListElementKind = "tagToReadingListElement";
     public static String tagToReadingListKind = "tagToReadingList";
+    public static String 
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
     private static String deletedMoniker = "deleted";
 
@@ -128,6 +129,7 @@ public class DatastoreHelpers {
             .set("name", userEntity.name())
             .set("email", userEntity.email())
             .set("userId", userEntity.userId())
+            .set("externalId", userEntity.externalId())
             .set("deleted", false)
             .build();
         Entity entity = datastore.add(insertEntity);

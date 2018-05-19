@@ -41,6 +41,6 @@ export class ToolbarComponent implements OnInit {
     }
 
     private onSearch(): void {
-        this.router.navigate(['search'], { queryParams: { searchTerm: this.searchTerm } }]);
+        this.router.navigate(['search'], { queryParams: { searchTerm: this.searchTerm } });
     }
 }
