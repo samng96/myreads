@@ -44,24 +44,22 @@ export class LoginComponent implements OnInit {
     public onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
 
-        this.lso.setMyLoginInfo(
-            "1",
-            this.hardcodedUserId,
-            profile.getImageUrl(),
-            profile.getGivenName()
-        );
+        this.serviceApi.getUserByAuthToken(profile.getId()).subscribe(user => {
+            if (user == null) {
+                // No user here, move us to sign up.
+                this.lso.setLoggedOut();
+            }
 
-        // TODO: We need to make a call to the API to get the user associated with
-        // TODO: the currently logged in user instead of getting the hard coded user.
-        this.serviceApi.getUser(this.hardcodedUserId).subscribe(user =>
-            {
-                if (user == null) {
-                    this.lso.setLoggedOut();
-                }
+            this.lso.setMyLoginInfo(
+                profile.getId(),
+                user.id,
+                profile.getImageUrl(),
+                profile.getGivenName()
+            );
 
-                this.log(`successful login for user ${user.name}`)
-                this.checkLogin();
-            });
+            this.log(`successful login for user ${user.name}`)
+            this.checkLogin();
+        });
     };
 
     ngAfterViewInit() {

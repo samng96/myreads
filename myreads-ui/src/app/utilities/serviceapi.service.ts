@@ -34,6 +34,10 @@ export class HttpWrapperClient {
     public put<T>(url: string, payload: any): Observable<T> {
         return this.http.put<T>(url, payload, { headers: this.createAuthHeaders() });
     }
+
+    public postWithoutAuth<T>(url: string, payload: any): Observable<T> {
+        return this.http.post<T>(url, payload);
+    }
 }
 
 @Injectable()
@@ -74,6 +78,19 @@ export class ServiceApi {
                 this.lso.updateUser(user);
             }
         });
+        return subject;
+    }
+    getUserByAuthToken(authToken: string): Subject<UserEntity> {
+        var url = `${ServiceApi.baseUrl}/getUserByAuthToken`;
+        var result = this.http.postWithoutAuth<UserEntity>(url, authToken)
+            .pipe(
+                tap(_ => this.log(`getUserByAuthToken(${authToken})`)),
+                catchError(this.handleError("getUserByAuthToken", null))
+            );
+
+        var subject = new Subject<UserEntity>();
+        result.subscribe(x => subject.next(x));
+        subject.subscribe(user => this.lso.updateUser(user));
         return subject;
     }
     getReadingLists(userId: number, filter: string): Subject<ReadingListEntity[]> {

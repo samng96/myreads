@@ -732,9 +732,12 @@ public class DatastoreHelpers {
             .setFilter(PropertyFilter.eq("authToken", authToken))
             .build();
         QueryResults<Entity> queryresult = datastore.run(query);
-        Entity entity = queryresult.next();
 
-        AuthTokenToUserIdEntity authEntity = AuthTokenToUserIdEntity.fromEntity(entity);
-        return authEntity.userId;
+        if (queryresult.hasNext()) {
+            AuthTokenToUserIdEntity authEntity = AuthTokenToUserIdEntity.fromEntity(queryresult.next());
+            return authEntity.userId;
+        }
+
+        return -1;
     }
 }
