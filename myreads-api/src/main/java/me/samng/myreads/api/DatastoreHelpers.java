@@ -7,6 +7,7 @@ import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
 import com.google.cloud.datastore.StructuredQuery.PropertyFilter;
 import com.google.common.collect.ImmutableList;
 import me.samng.myreads.api.entities.*;
+import me.samng.myreads.api.entities.indexes.AuthTokenToUserIdEntity;
 import me.samng.myreads.api.entities.indexes.TagToReadingListElementEntity;
 import me.samng.myreads.api.entities.indexes.TagToReadingListEntity;
 
@@ -25,7 +26,7 @@ public class DatastoreHelpers {
     public static String tagKind = "tag";
     public static String tagToReadingListElementKind = "tagToReadingListElement";
     public static String tagToReadingListKind = "tagToReadingList";
-    public static String 
+    public static String authTokenToUserIdKind = "authTokenToUserId";
     private static KeyFactory keyFactory = new KeyFactory(MainVerticle.AppId);
     private static String deletedMoniker = "deleted";
 
@@ -42,6 +43,16 @@ public class DatastoreHelpers {
         }
 
         return options.getService();
+    }
+
+    private static IncompleteKey newAuthTokenToUserIdKey() {
+        keyFactory.setKind(authTokenToUserIdKind);
+        return keyFactory.newKey();
+    }
+
+    private static Key newAuthTokenToUserIdKey(Long keyId) {
+        keyFactory.setKind(authTokenToUserIdKind);
+        return keyFactory.newKey(keyId);
     }
 
     private static IncompleteKey newUserKey() {
@@ -365,6 +376,10 @@ public class DatastoreHelpers {
         return userEntity;
     }
 
+    public static UserEntity getUserByAuthToken(Datastore datastore, String authToken) {
+        return getUser(datastore, getAuthTokenToUserIdMapping(datastore, authToken));
+    }
+
     public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
         Entity entity = null;
         try {
@@ -681,5 +696,45 @@ public class DatastoreHelpers {
             Key key = DatastoreHelpers.newTagToReadingListKey(e.id);
             datastore.delete(key);
         }
+    }
+
+    // Auth Token to User management
+    public static long addAuthTokenToUserIdMapping(Datastore datastore, String authToken, long userId) {
+        FullEntity<IncompleteKey> insertEntity = Entity.newBuilder(DatastoreHelpers.newAuthTokenToUserIdKey())
+            .set("authToken", authToken)
+            .set("userId", userId)
+            .build();
+        Entity addedEntity = datastore.add(insertEntity);
+        return addedEntity.getKey().getId();
+    }
+
+    public static boolean updateAuthTokenToUserIdMapping(Datastore datastore, String authToken, long userId) {
+        long id = getAuthTokenToUserIdMapping(datastore, authToken);
+
+        Key key = DatastoreHelpers.newAuthTokenToUserIdKey(id);
+        Entity newEntity = Entity.newBuilder(key)
+            .set("authToken", authToken)
+            .set("userId", userId)
+            .build();
+
+        try {
+            datastore.update(newEntity);
+            return true;
+        }
+        catch (DatastoreException e) {
+            return false;
+        }
+    }
+
+    public static long getAuthTokenToUserIdMapping(Datastore datastore, String authToken) {
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind(DatastoreHelpers.authTokenToUserIdKind)
+            .setFilter(PropertyFilter.eq("authToken", authToken))
+            .build();
+        QueryResults<Entity> queryresult = datastore.run(query);
+        Entity entity = queryresult.next();
+
+        AuthTokenToUserIdEntity authEntity = AuthTokenToUserIdEntity.fromEntity(entity);
+        return authEntity.userId;
     }
 }

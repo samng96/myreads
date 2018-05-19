@@ -76,7 +76,7 @@ public class MainVerticle extends AbstractVerticle {
         router.mountSubRouter("/users", setupFollowedLists());
         router.mountSubRouter("/users", setupReadingListElements());
         router.mountSubRouter("/users", setupReadingLists());
-        router.mountSubRouter("/users", setupUsers());
+        router.mountSubRouter("/", setupUsers());
         router.mountSubRouter("/", setupTags());
 
         vertx.createHttpServer().requestHandler(router::accept).listen(MainVerticle.port, result -> {
@@ -123,12 +123,14 @@ public class MainVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
 
-        router.get("/:userId").handler(routingContext -> { userRoute.getUser(routingContext); });
-        router.put("/:userId").handler(routingContext -> { userRoute.putUser(routingContext); });
-        router.delete("/:userId").handler(routingContext -> { userRoute.deleteUser(routingContext); });
+        router.get("/users/:userId").handler(routingContext -> { userRoute.getUser(routingContext); });
+        router.put("/users/:userId").handler(routingContext -> { userRoute.putUser(routingContext); });
+        router.delete("/users/:userId").handler(routingContext -> { userRoute.deleteUser(routingContext); });
 
-        router.get().handler(routingContext -> { userRoute.getAllUsers(routingContext); });
-        router.post().handler(routingContext -> { userRoute.postUser(routingContext); });
+        router.get("/users").handler(routingContext -> { userRoute.getAllUsers(routingContext); });
+        router.post("/users").handler(routingContext -> { userRoute.postUser(routingContext); });
+
+        router.post("/getUserByAuthToken").handler(routingContext -> { userRoute.getUserByAuthToken(routingContext); });
 
         return router;
     }

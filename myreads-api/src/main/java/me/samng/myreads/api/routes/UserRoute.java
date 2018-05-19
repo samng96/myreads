@@ -36,7 +36,7 @@ public class UserRoute {
             return;
         }
         Datastore datastore = DatastoreHelpers.getDatastore();
-        long addedId = DatastoreHelpers.createUser(datastore, userEntity);
+        long addedId = EntityManager.UpsertUser(datastore, userEntity);
 
         routingContext.response()
                 .setStatusCode(HttpResponseStatus.CREATED.code())
@@ -44,7 +44,6 @@ public class UserRoute {
                 .end(Long.toString(addedId));
     }
 
-    // TODO: We need to figure out how to auth everything that isn't just a GET.
     // Get a specific user, /users/{userId}
     public void getUser(RoutingContext routingContext) {
         Key key;
@@ -91,14 +90,12 @@ public class UserRoute {
         }
 
         Datastore datastore = DatastoreHelpers.getDatastore();
-        if (DatastoreHelpers.updateUser(datastore, userEntity, false)) {
-            routingContext.response().setStatusCode(HttpResponseStatus.NO_CONTENT.code());
-        }
-        else {
-            routingContext.response().setStatusCode(HttpResponseStatus.NOT_FOUND.code());
-        }
+        EntityManager.UpsertUser(datastore, userEntity);
 
-        routingContext.response().putHeader("content-type", "text/plain").end();
+        routingContext.response()
+            .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
+            .putHeader("content-type", "text/plain")
+            .end();
     }
 
     // Delete a user, /users/{userId}
@@ -125,5 +122,35 @@ public class UserRoute {
                 .setStatusCode(statusCode)
                 .putHeader("content-type", "text/plain")
                 .end();
+    }
+
+    // Get a user given their auth token, POST /getUserByAuthToken with the auth token in the payload.
+    public void getUserByAuthToken(RoutingContext routingContext) {
+        String authToken;
+        try {
+            authToken = routingContext.getBodyAsString();
+        }
+        catch (Exception e) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+                .putHeader("content-type", "text/plain")
+                .end("Invalid request body");
+            return;
+        }
+
+        Datastore datastore = DatastoreHelpers.getDatastore();
+        UserEntity user = DatastoreHelpers.getUserByAuthToken(datastore, authToken);
+
+        if (user == null) {
+            routingContext.response()
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                .putHeader("content-type", "text/plain")
+                .end();
+            return;
+        }
+
+        routingContext.response()
+            .putHeader("content-type", "text/plain")
+            .end(Json.encode(user));
     }
 }

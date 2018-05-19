@@ -4,12 +4,28 @@ import com.google.cloud.datastore.Datastore;
 import me.samng.myreads.api.entities.FollowedListEntity;
 import me.samng.myreads.api.entities.ReadingListElementEntity;
 import me.samng.myreads.api.entities.ReadingListEntity;
+import me.samng.myreads.api.entities.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityManager {
     public static long singletonDeletedListId = -96;
+
+    public static long UpsertUser(Datastore datastore, UserEntity userEntity) {
+        UserEntity currentUser = DatastoreHelpers.getUser(datastore, userEntity.id);
+        long userId;
+
+        if (currentUser == null) {
+            userId = DatastoreHelpers.createUser(datastore, userEntity);
+            DatastoreHelpers.addAuthTokenToUserIdMapping(datastore, userEntity.externalId, userId);
+        }
+        else {
+            userId = userEntity.id;
+            DatastoreHelpers.updateAuthTokenToUserIdMapping(datastore, userEntity.externalId, userId);
+        }
+        return userId;
+    }
 
     public static boolean DeleteUser(Datastore datastore, long userId) {
         // When we delete a user, we need to clean up all their lists, followed lists, and reading list elements.
