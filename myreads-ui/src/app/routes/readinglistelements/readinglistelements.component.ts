@@ -33,7 +33,7 @@ export class ReadingListElementsComponent implements OnInit {
         private logger: LoggerService
     ) { }
 
-    private getRle(): ReadingListElementEntity {
+    public getRle(): ReadingListElementEntity {
         return this.lso.getReadingListElement(this.rleId);
     }
 

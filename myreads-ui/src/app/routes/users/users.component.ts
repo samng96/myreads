@@ -25,7 +25,7 @@ export class UsersComponent implements OnInit {
         private router: Router,
         private logger: LoggerService
     ) { }
-    private getUser(): UserEntity {
+    public getUser(): UserEntity {
         return this.lso.getUser(this.userId);
     }
 

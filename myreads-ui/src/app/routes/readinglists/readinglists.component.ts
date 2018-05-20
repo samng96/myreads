@@ -42,7 +42,7 @@ export class ReadingListsComponent implements OnInit {
         private logger: LoggerService
     ) { }
 
-    private getRl(): ReadingListEntity {
+    public getRl(): ReadingListEntity {
         return this.lso.getReadingList(this.listId);
     }
 
@@ -267,7 +267,7 @@ export class ReadingListsComponent implements OnInit {
     private isFollowingList(listId: number): boolean {
         var flIds = this.lso.getFollowedListsByUser(this.lso.getMyUserId());
         if (flIds == null) { return false; }
-        
+
         for (let flId of flIds) {
             if (this.lso.getFollowedList(flId).listId == listId) {
                 return true;

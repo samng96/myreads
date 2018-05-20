@@ -1,3 +1,4 @@
+import * as $ from 'jquery';
 import { Component, OnInit } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';

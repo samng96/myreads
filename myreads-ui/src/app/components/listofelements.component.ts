@@ -41,7 +41,7 @@ export class ListOfElementsComponent {
 
         return null;
     }
-    private isDisplaying(): boolean {
+    public isDisplaying(): boolean {
         if (this.elements.displayById && (this.elements.listOfElementIds != null)) {
             return true;
         }
