@@ -1,9 +1,14 @@
-FROM anapsix/alpine-java:8_server-jre_unlimited
+FROM vertx/vertx3
 
-ENV APP_HOME /app
+ENV VERTICLE_NAME me.samng.myreads.api.MainVerticle
+ENV VERTICLE_FILE target/myreads-api-1.0.0-SNAPSHOT-api.jar
 
-COPY app_start $APP_HOME/
-COPY target/*-api.jar $APP_HOME/
+ENV VERTICLE_HOME /usr/verticles
 
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["/app/app_start"]
+EXPOSE 8080
+
+COPY $VERTICLE_FILE $VERTICLE_HOME/
+
+WORKDIR $VERTICLE_HOME
+ENTRYPOINT ["sh", "-c"]
+CMD ["exec vertx run $VERTICLE_NAME -cp $VERTICLE_HOME/*"]
