@@ -16,7 +16,9 @@ export class HttpWrapperClient {
         private http: HttpClient) { }
 
     private createAuthHeaders(): HttpHeaders {
-        return new HttpHeaders().set("Authorization", this.lso.getMyLoginToken());
+        return new HttpHeaders()
+            .set("Authorization", this.lso.getMyLoginToken())
+            .set("Access-Control-Allow-Origin", "*");
     }
 
     public get<T>(url: string): Observable<T> {
@@ -37,13 +39,15 @@ export class HttpWrapperClient {
 
     public postWithoutAuth<T>(url: string, payload: any): Observable<T> {
         return this.http.post<T>(url, payload);
+         //{ headers: new HttpHeaders()
+            //.set("Access-Control-Allow-Origin", "*")});
     }
 }
 
 @Injectable()
 export class ServiceApi {
-    public static baseUrl = "http://localhost:8080";
-    //public static baseUrl = "http://api.myreads.samng.me";
+    //public static baseUrl = "http://localhost:8080";
+    public static baseUrl = "http://api.myreads.samng.me";
 
     constructor(
         private lso: LocalStorageObjectService,

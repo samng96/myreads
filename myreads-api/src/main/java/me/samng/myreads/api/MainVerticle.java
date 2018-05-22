@@ -53,14 +53,9 @@ public class MainVerticle extends AbstractVerticle {
         Set<HttpMethod> allowedMethods = new HashSet<>();
         allowedMethods.add(HttpMethod.GET);
         allowedMethods.add(HttpMethod.POST);
-        allowedMethods.add(HttpMethod.OPTIONS);
-        /*
-         * these methods aren't necessary for this sample,
-         * but you may need them for your projects
-         */
         allowedMethods.add(HttpMethod.DELETE);
-        allowedMethods.add(HttpMethod.PATCH);
         allowedMethods.add(HttpMethod.PUT);
+        allowedMethods.add(HttpMethod.OPTIONS);
 
         router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
 
@@ -151,6 +146,7 @@ public class MainVerticle extends AbstractVerticle {
         router.delete("/:userId/readingLists/:readingListId").handler(routingContext -> { readingListRoute.deleteReadingList(routingContext); });
 
         router.get("/:userId/readingLists/*").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
+        router.get("/:userId/readingLists").handler(routingContext -> { readingListRoute.getAllReadingLists(routingContext); });
         router.post("/:userId/readingLists").handler(routingContext -> { readingListRoute.postReadingList(routingContext); });
 
         router.post("/:userId/readingListsByTag").handler(routingContext -> { readingListRoute.getAllReadingListsByTag(routingContext); });
@@ -184,6 +180,7 @@ public class MainVerticle extends AbstractVerticle {
         router.delete("/:userId/readingListElements/:readingListElementId").handler(routingContext -> { readingListElementRoute.deleteReadingListElement(routingContext); });
 
         router.get("/:userId/readingListElements/*").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
+        router.get("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.getAllReadingListElements(routingContext); });
         router.post("/:userId/readingListElements").handler(routingContext -> { readingListElementRoute.postReadingListElement(routingContext); });
 
         router.post("/:userId/readingListElementsByTag").handler(routingContext -> { readingListElementRoute.getAllReadingListElementsByTag(routingContext); });

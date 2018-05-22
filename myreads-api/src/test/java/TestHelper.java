@@ -52,6 +52,10 @@ public class TestHelper {
         int expectedStatusCode) {
         Future<Long> fut = Future.future();
 
+        if (entity.externalId == null) {
+            entity.externalId = "externalId";
+        }
+
         client.post(port, "localhost", "/users")
             .sendJson(entity,
                 ar -> {
@@ -475,7 +479,7 @@ public class TestHelper {
         int expectedStatusCode) {
         Future fut = Future.future();
 
-        client.get(port, "localhost", "/users/" + userId + "/readingListElements" + rleId + "/comments")
+        client.get(port, "localhost", "/users/" + userId + "/readingListElements/" + rleId + "/comments")
             .send(ar -> {
                 HttpResponse<Buffer> response = ar.result();
 

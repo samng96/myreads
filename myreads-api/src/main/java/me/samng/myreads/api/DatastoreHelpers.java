@@ -377,7 +377,10 @@ public class DatastoreHelpers {
     }
 
     public static UserEntity getUserByAuthToken(Datastore datastore, String authToken) {
-        return getUser(datastore, getAuthTokenToUserIdMapping(datastore, authToken));
+        AuthTokenToUserIdEntity mapping = getAuthTokenToUserIdMapping(datastore, authToken);
+
+        if (mapping == null) { return null; }
+        return getUser(datastore, mapping.userId);
     }
 
     public static ReadingListEntity getReadingList(Datastore datastore, long readingListId) {
@@ -709,9 +712,9 @@ public class DatastoreHelpers {
     }
 
     public static boolean updateAuthTokenToUserIdMapping(Datastore datastore, String authToken, long userId) {
-        long id = getAuthTokenToUserIdMapping(datastore, authToken);
+        AuthTokenToUserIdEntity mapping = getAuthTokenToUserIdMapping(datastore, authToken);
 
-        Key key = DatastoreHelpers.newAuthTokenToUserIdKey(id);
+        Key key = DatastoreHelpers.newAuthTokenToUserIdKey(mapping.id);
         Entity newEntity = Entity.newBuilder(key)
             .set("authToken", authToken)
             .set("userId", userId)
@@ -726,7 +729,7 @@ public class DatastoreHelpers {
         }
     }
 
-    public static long getAuthTokenToUserIdMapping(Datastore datastore, String authToken) {
+    public static AuthTokenToUserIdEntity getAuthTokenToUserIdMapping(Datastore datastore, String authToken) {
         Query<Entity> query = Query.newEntityQueryBuilder()
             .setKind(DatastoreHelpers.authTokenToUserIdKind)
             .setFilter(PropertyFilter.eq("authToken", authToken))
@@ -734,10 +737,9 @@ public class DatastoreHelpers {
         QueryResults<Entity> queryresult = datastore.run(query);
 
         if (queryresult.hasNext()) {
-            AuthTokenToUserIdEntity authEntity = AuthTokenToUserIdEntity.fromEntity(queryresult.next());
-            return authEntity.userId;
+            return AuthTokenToUserIdEntity.fromEntity(queryresult.next());
         }
 
-        return -1;
+        return null;
     }
 }

@@ -23,6 +23,7 @@ public class EntityManager {
         else {
             userId = userEntity.id;
             DatastoreHelpers.updateAuthTokenToUserIdMapping(datastore, userEntity.externalId, userId);
+            DatastoreHelpers.updateUser(datastore, userEntity, false);
         }
         return userId;
     }

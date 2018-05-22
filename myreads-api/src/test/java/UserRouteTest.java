@@ -70,6 +70,7 @@ public class UserRouteTest {
         entity.email = "putUserTest@test.com";
         entity.name = "testuser";
         entity.userId = "testId";
+        entity.externalId = "putUserIdTest";
 
         Future<Long> postFut = TestHelper.postUser(context, client, entity, HttpResponseStatus.CREATED.code());
         Future<Long> putFut = postFut.compose(userId -> {
@@ -78,6 +79,7 @@ public class UserRouteTest {
             putEntity.email = "changePutUserTest@test.com";
             putEntity.name = "changeduser";
             putEntity.userId = "changeid";
+            putEntity.externalId = "putUserIdTest";
 
             return TestHelper.putUser(context, client, putEntity, HttpResponseStatus.NO_CONTENT.code()).map(userId);
         });
