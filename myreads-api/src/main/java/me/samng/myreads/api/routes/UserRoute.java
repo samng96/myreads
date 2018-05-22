@@ -151,7 +151,7 @@ public class UserRoute {
 
         routingContext.response()
             .putHeader("content-type", "text/plain")
-            .putHeader("Access-Control-Allow-Origin", "http://localhost:4200")
+            .putHeader("Access-Control-Allow-Origin", "http://myreads.samng.me")
             .end(Json.encode(user));
     }
 }
