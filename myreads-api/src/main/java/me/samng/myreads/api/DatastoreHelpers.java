@@ -1,6 +1,5 @@
 package me.samng.myreads.api;
 
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.Timestamp;
 import com.google.cloud.datastore.*;
 import com.google.cloud.datastore.StructuredQuery.CompositeFilter;
@@ -11,7 +10,6 @@ import me.samng.myreads.api.entities.indexes.AuthTokenToUserIdEntity;
 import me.samng.myreads.api.entities.indexes.TagToReadingListElementEntity;
 import me.samng.myreads.api.entities.indexes.TagToReadingListEntity;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,10 +31,16 @@ public class DatastoreHelpers {
     public static Datastore getDatastore() {
         DatastoreOptions options = null;
         try {
+            // This is the code for local host
+            /*
             options = DatastoreOptions.newBuilder()
                 .setProjectId(MainVerticle.AppId)
                 .setCredentials(GoogleCredentials.fromStream(
                     new FileInputStream(keyPath))).build();
+                    */
+
+            // This is the code for GCP.
+            options = DatastoreOptions.getDefaultInstance();
         }
         catch (Exception e) {
             assert false;

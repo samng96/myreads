@@ -39,8 +39,6 @@ export class HttpWrapperClient {
 
     public postWithoutAuth<T>(url: string, payload: any): Observable<T> {
         return this.http.post<T>(url, payload);
-         //{ headers: new HttpHeaders()
-            //.set("Access-Control-Allow-Origin", "*")});
     }
 }
 
