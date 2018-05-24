@@ -63,7 +63,10 @@ export class ServiceApi {
 
         var subject = new Subject<UserEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(user => this.lso.updateUser(user));
+        subject.subscribe(user => {
+            if (user == null) { return; }
+            this.lso.updateUser(user);
+        });
         return subject;
     }
     getUsers(): Subject<UserEntity[]> {
@@ -77,6 +80,7 @@ export class ServiceApi {
         var subject = new Subject<UserEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(users => {
+            if (users == null) { return; }
             for (let user of users) {
                 this.lso.updateUser(user);
             }
@@ -93,7 +97,10 @@ export class ServiceApi {
 
         var subject = new Subject<UserEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(user => this.lso.updateUser(user));
+        subject.subscribe(user => {
+            if (user == null) { return; }
+            this.lso.updateUser(user);
+        });
         return subject;
     }
     getReadingLists(userId: number, filter: string): Subject<ReadingListEntity[]> {
@@ -107,6 +114,7 @@ export class ServiceApi {
         var subject = new Subject<ReadingListEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rls => {
+            if (rls == null) { return; }
             for (let rl of rls) {
                 this.lso.updateReadingList(rl);
             }
@@ -123,7 +131,10 @@ export class ServiceApi {
 
         var subject = new Subject<ReadingListEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(rl => this.lso.updateReadingList(rl));
+        subject.subscribe(rl => {
+            if (rl == null) { return; }
+            this.lso.updateReadingList(rl);
+        });
         return subject;
     }
     getReadingListsByTag(userId: number, tagId: number): Subject<ReadingListEntity[]> {
@@ -137,6 +148,7 @@ export class ServiceApi {
         var subject = new Subject<ReadingListEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rls => {
+            if (rls == null) { return; }
             for (let rl of rls) {
                 this.lso.updateReadingList(rl);
             }
@@ -153,7 +165,10 @@ export class ServiceApi {
 
         var subject = new Subject<ReadingListElementEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(rle => this.lso.updateReadingListElement(rle));
+        subject.subscribe(rle => {
+            if (rle == null) { return; }
+            this.lso.updateReadingListElement(rle);
+        });
         return subject;
     }
     getReadingListElementsByTag(userId: number, tagId: number): Subject<ReadingListElementEntity[]> {
@@ -167,6 +182,7 @@ export class ServiceApi {
         var subject = new Subject<ReadingListElementEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rles => {
+            if (rles == null) { return; }
             for (let rle of rles) {
                 this.lso.updateReadingListElement(rle);
             }
@@ -184,6 +200,7 @@ export class ServiceApi {
         var subject = new Subject<ReadingListElementEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rles => {
+            if (rles == null) { return; }
             for (let rle of rles) {
                 this.lso.updateReadingListElement(rle);
             }
@@ -201,6 +218,7 @@ export class ServiceApi {
         var subject = new Subject<FollowedListEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(fls => {
+            if (fls == null) { return; }
             for (let fl of fls) {
                 this.lso.updateFollowedList(fl);
             }
@@ -218,6 +236,7 @@ export class ServiceApi {
         var subject = new Subject<TagEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(tags => {
+            if (tags == null) { return; }
             for (let tag of tags) {
                 this.lso.updateTag(tag);
             }
@@ -234,7 +253,10 @@ export class ServiceApi {
 
         var subject = new Subject<TagEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(tag => this.lso.updateTag(tag));
+        subject.subscribe(tag => {
+            if (tag == null) { return; }
+            this.lso.updateTag(tag);
+        });
         return subject;
     }
     getTagByName(tagName: string): Subject<TagEntity> {
@@ -247,7 +269,10 @@ export class ServiceApi {
 
         var subject = new Subject<TagEntity>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(tag => this.lso.updateTag(tag));
+        subject.subscribe(tag => {
+            if (tag == null) { return; }
+            this.lso.updateTag(tag);
+        });
         return subject;
     }
     getTagsByUser(userId: number): Subject<TagEntity[]> {
@@ -261,6 +286,7 @@ export class ServiceApi {
         var subject = new Subject<TagEntity[]>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(tags => {
+            if (tags == null) { return; }
             for (let tag of tags) {
                 this.lso.updateTag(tag);
             }
@@ -287,6 +313,7 @@ export class ServiceApi {
         var subject = new Subject<number>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(userId => {
+            if (userId == -1) { return; }
             user.id = userId;
             this.lso.updateUser(user);
         });
@@ -303,6 +330,7 @@ export class ServiceApi {
         var subject = new Subject<number>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(flId => {
+            if (flId == -1) { return; }
             followedListEntity.id = flId;
             this.lso.updateFollowedList(followedListEntity);
         });
@@ -320,6 +348,7 @@ export class ServiceApi {
         result.subscribe(tagId => subject.next(tagId));
 
         subject.subscribe(tagId => {
+            if (tagId == -1) { return; }
             tagEntity.id = tagId;
             this.lso.updateTag(tagEntity);
         });
@@ -344,6 +373,7 @@ export class ServiceApi {
         var subject = new Subject<number>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rlId => {
+            if (rlId == -1) { return; }
             listEntity.id = rlId;
             this.lso.updateReadingList(listEntity);
         });
@@ -360,6 +390,7 @@ export class ServiceApi {
         var subject = new Subject<number>();
         result.subscribe(x => subject.next(x));
         subject.subscribe(rleId => {
+            if (rleId == -1) { return; }
             rleEntity.id = rleId;
             this.lso.updateReadingListElement(rleEntity);
         });
@@ -376,7 +407,10 @@ export class ServiceApi {
 
         var subject = new Subject<any>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(() => this.lso.updateReadingList(listEntity));
+        subject.subscribe(() => {
+            if (listEntity == null) { return; }
+            this.lso.updateReadingList(listEntity);
+        });
         return subject;
     }
     putReadingListElement(rleEntity: ReadingListElementEntity): Subject<any> {
@@ -389,7 +423,10 @@ export class ServiceApi {
 
         var subject = new Subject<any>();
         result.subscribe(x => subject.next(x));
-        subject.subscribe(() => this.lso.updateReadingListElement(rleEntity));
+        subject.subscribe(() => {
+            if (rleEntity == null) { return; }
+            this.lso.updateReadingListElement(rleEntity);
+        });
         return subject;
     }
 

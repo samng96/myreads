@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+import { jQuery } from 'jquery';
 import { Component, OnInit } from '@angular/core';
 import { NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
         this.serviceApi.getUserByAuthToken(this.profile.getId()).subscribe(user => {
             if (user == null) {
                 // No user here, move us to sign up.
-                $("#signupModal").modal("show");
+                jQuery("#signupModal").modal("show");
             }
             else {
                 this.setLoggedIn(user.id);
