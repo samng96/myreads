@@ -1,26 +1,6 @@
 <!-- This is here because it forces the gapi object to get loaded properly -->
 <div class="g-signin2" data-onsuccess="onSignIn" style="display:none"></div>
 
-<div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Create an account?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        It looks like you don't have an account yet. Create one?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="onSignUp()" data-dismiss="modal">Yes</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <style>
 .logo {
     padding-top: 100px;
@@ -37,6 +17,10 @@
                     <img src="/assets/books.jpg" style="width:500px;overflow:hidden">
                     <p></p>
                     <div id="my-signin2"></div>
+                    <div style="padding-top:5px;" class="text-small">
+                        <a *ngIf="!isSignup" class="pointer text-primary" (click)="onSignUp()">Sign up</a>
+                        <span *ngIf="isSignup" class="text-primary">Sign in with Google to create an account</span>
+                    </div>
                     <br>
                 </div>
             </td></tr></table>

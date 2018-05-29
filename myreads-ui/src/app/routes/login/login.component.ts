@@ -1,7 +1,7 @@
 import { jQuery } from 'jquery';
 import { Component, OnInit } from '@angular/core';
 import { NgZone } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 import { UserEntity } from '../../utilities/entities';
 import { ServiceApi } from '../../utilities/serviceapi.service';
@@ -15,17 +15,13 @@ declare var gapi: any;
     templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
-    username: string;
-    password: string;
     profile: any;
-
-    hardcodedUserId: number = 5732452450435072;
+    isSignup: boolean = false;
 
     constructor(
         private ngZone: NgZone,
         private lso: LocalStorageObjectService,
         private router: Router,
-        private route: ActivatedRoute,
         private serviceApi: ServiceApi,
         private logger: LoggerService
     ) { }
@@ -49,16 +45,17 @@ export class LoginComponent implements OnInit {
 
         this.serviceApi.getUserByAuthToken(this.profile.getId()).subscribe(user => {
             if (user == null) {
-                // No user here, move us to sign up.
-                jQuery("#signupModal").modal("show");
+                this.log(`user ${this.profile.getId()} not found`)
+                this.doSignUp();
             }
             else {
+                this.log(`found user ${user.id}, logged in`)
                 this.setLoggedIn(user.id);
             }
         });
     };
 
-    public onSignUp() {
+    private doSignUp() {
         var user = new UserEntity();
         user.email = this.profile.getEmail();
         user.name = this.profile.getGivenName();
@@ -67,6 +64,10 @@ export class LoginComponent implements OnInit {
         this.serviceApi.postUser(user).subscribe(userId => {
             this.setLoggedIn(userId);
         });
+    }
+
+    public onSignUp() {
+        this.isSignup = true;
     }
 
     private setLoggedIn(userId: number) {
@@ -84,9 +85,9 @@ export class LoginComponent implements OnInit {
     ngAfterViewInit() {
         gapi.signin2.render('my-signin2', {
             'scope': 'profile email',
-            'width': 150,
-            'height': 50,
-            'longtitle': false,
+            'width': 200,
+            'height': 40,
+            'longtitle': true,
             'theme': 'light',
             'onsuccess': param => this.onSignIn(param)
         });

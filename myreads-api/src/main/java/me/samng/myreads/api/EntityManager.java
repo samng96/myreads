@@ -159,12 +159,16 @@ public class EntityManager {
             if (readingListEntity.readingListElementIds() == null) {
                 readingListEntity.readingListElementIds = new ArrayList<Long>();
             }
-            readingListEntity.readingListElementIds.add(rleId);
+            if (!readingListEntity.readingListElementIds.contains(rleId)) {
+                readingListEntity.readingListElementIds.add(rleId);
+            }
 
             if (rleEntity.listIds() == null) {
                 rleEntity.listIds = new ArrayList<Long>();
             }
-            rleEntity.listIds.add(readingListEntity.id);
+            if (!rleEntity.listIds.contains(readingListEntity.id)) {
+                rleEntity.listIds.add(readingListEntity.id);
+            }
 
             if (DatastoreHelpers.updateReadingList(datastore, readingListEntity, false) &&
                 DatastoreHelpers.updateReadingListElement(datastore, rleEntity, false)) {

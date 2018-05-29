@@ -10,6 +10,9 @@ body {
 .pointer {
     cursor: pointer;
 }
+.text-small {
+    font-size: 12px;
+}
 .text-normal {
     font-size: 14px;
 }

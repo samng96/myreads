@@ -8,16 +8,17 @@ import { LocalStorageObjectService } from './utilities/localstorageobject';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    title = 'MyReads';
     isLoggedIn: boolean;
 
     constructor(
         private lso: LocalStorageObjectService,
+        private route: ActivatedRoute,
         private router: Router
     ) {}
 
     ngOnInit(): void {
-        if (!this.lso.isLoggedIn()) {
+        var path = window.location.pathname;
+        if (!this.lso.isLoggedIn() && !(path == "/login")) {
             this.router.navigate(['/login']);
         }
 
