@@ -44,8 +44,8 @@ export class HttpWrapperClient {
 
 @Injectable()
 export class ServiceApi {
-    public static baseUrl = "http://localhost:8080";
-    //public static baseUrl = "http://api.myreads.samng.me";
+    //public static baseUrl = "http://localhost:8080";
+    public static baseUrl = "http://api.myreads.samng.me";
 
     constructor(
         private lso: LocalStorageObjectService,
